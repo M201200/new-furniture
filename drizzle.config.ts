@@ -6,7 +6,7 @@ dotenv.config({
 })
 
 export default {
-  schema: "./src/db/schema.ts",
+  schema: "./src/app/db/schema.ts",
   driver: "mysql2",
   dbCredentials: {
     host: process.env.DATABASE_HOST!,

@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "@/app/db"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
