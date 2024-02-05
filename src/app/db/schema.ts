@@ -10,6 +10,9 @@ import {
   tinyint,
   bigint,
   uniqueIndex,
+  text,
+  index,
+  boolean,
 } from "drizzle-orm/mysql-core"
 
 // Categories
@@ -33,29 +36,154 @@ export const categories = mysqlTable(
 
 export type Category = typeof categories.$inferInsert
 
-// Wares
+//////////
+// Items
 
-export const wares = mysqlTable("wares", {
+export const items = mysqlTable("items", {
   id: serial("id").primaryKey(),
   categoryPath: bigint("category_path", {
     mode: "number",
     unsigned: true,
   }).notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
+  amount: int("amount", { unsigned: true }).notNull(),
   price: int("price($)", { unsigned: true }).notNull(),
   discount: int("discount(%)", { unsigned: true }),
 })
 
 export const categoryRelations = relations(categories, ({ many }) => ({
-  wares: many(wares),
+  items: many(items),
 }))
 
-export const waresRelations = relations(wares, ({ one }) => ({
+export const itemsRelations = relations(items, ({ one }) => ({
   category: one(categories, {
-    fields: [wares.categoryPath],
+    fields: [items.categoryPath],
     references: [categories.path],
   }),
 }))
+
+//////////
+
+export const itemsName = mysqlTable(
+  "itemsName",
+  {
+    id: serial("items_id").primaryKey(),
+    itemId: bigint("itemId", {
+      mode: "number",
+      unsigned: true,
+    })
+      .notNull()
+      .unique(),
+    en: varchar("en", { length: 128 }).notNull(),
+    ro: varchar("ro", { length: 128 }).notNull(),
+    ru: varchar("ru", { length: 128 }).notNull(),
+  },
+  (table) => {
+    return {
+      itemId_idx: uniqueIndex("itemId_idx").on(table.itemId),
+    }
+  }
+)
+
+export const itemsNameRelations = relations(itemsName, ({ one }) => ({
+  items: one(items, {
+    fields: [itemsName.itemId],
+    references: [items.id],
+  }),
+}))
+
+//////////
+
+export const itemsDescription = mysqlTable(
+  "itemsDescription",
+  {
+    id: serial("items_id").primaryKey(),
+    itemId: bigint("itemId", {
+      mode: "number",
+      unsigned: true,
+    })
+      .notNull()
+      .unique(),
+    en: text("en").notNull(),
+    ro: text("ro").notNull(),
+    ru: text("ru").notNull(),
+  },
+  (table) => {
+    return {
+      itemId_idx: uniqueIndex("itemId_idx").on(table.itemId),
+    }
+  }
+)
+
+export const itemsDescriptionRelations = relations(
+  itemsDescription,
+  ({ one }) => ({
+    items: one(items, {
+      fields: [itemsDescription.itemId],
+      references: [items.id],
+    }),
+  })
+)
+
+//////////
+
+export const itemsImageURLs = mysqlTable(
+  "itemsImageURLs",
+  {
+    id: serial("items_id").primaryKey(),
+    itemId: bigint("itemId", {
+      mode: "number",
+      unsigned: true,
+    }).notNull(),
+    url: varchar("url", { length: 2083 }).notNull(),
+    isThumbnail: boolean("is_thumbnail").default(true).notNull(),
+    notes: varchar("notes", { length: 128 }),
+  },
+  (table) => {
+    return {
+      itemId_idx: index("itemId_idx").on(table.itemId),
+    }
+  }
+)
+
+export const itemsImageURLsRelations = relations(itemsImageURLs, ({ one }) => ({
+  items: one(items, {
+    fields: [itemsImageURLs.itemId],
+    references: [items.id],
+  }),
+}))
+
+//////////
+// Characteristics
+
+export const characteristics = mysqlTable(
+  "characteristics",
+  {
+    id: serial("id").primaryKey(),
+    categoryPath: bigint("category_path", {
+      mode: "number",
+      unsigned: true,
+    }).notNull(),
+    en: varchar("en", { length: 64 }).notNull(),
+    ro: varchar("ro", { length: 64 }).notNull(),
+    ru: varchar("ru", { length: 64 }).notNull(),
+  },
+  (table) => {
+    return {
+      categoryPath_idx: index("categoryPath_idx").on(table.categoryPath),
+    }
+  }
+)
+
+export const characteristicsRelations = relations(
+  characteristics,
+  ({ one }) => ({
+    category: one(categories, {
+      fields: [characteristics.categoryPath],
+      references: [categories.path],
+    }),
+  })
+)
+
 //////////
 // NextAuth
 
@@ -69,6 +197,8 @@ export const users = mysqlTable("user", {
   }).defaultNow(),
   image: varchar("image", { length: 255 }),
 })
+
+//////////
 
 export const accounts = mysqlTable(
   "account",
@@ -96,6 +226,8 @@ export const accounts = mysqlTable(
   })
 )
 
+//////////
+
 export const sessions = mysqlTable("session", {
   sessionToken: varchar("sessionToken", { length: 255 }).notNull().primaryKey(),
   userId: varchar("userId", { length: 255 })
@@ -103,6 +235,8 @@ export const sessions = mysqlTable("session", {
     .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 })
+
+//////////
 
 export const verificationTokens = mysqlTable(
   "verificationToken",
