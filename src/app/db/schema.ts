@@ -33,6 +33,8 @@ export const categories = mysqlTable(
 
 export type Category = typeof categories.$inferInsert
 
+// Wares
+
 export const wares = mysqlTable("wares", {
   id: serial("id").primaryKey(),
   categoryPath: bigint("category_path", {

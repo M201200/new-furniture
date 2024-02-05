@@ -1,16 +1,15 @@
 import { drizzle } from "drizzle-orm/planetscale-serverless"
 import { connect } from "@planetscale/database"
 import * as schema from "./schema"
-import * as dotenv from "dotenv"
+import { loadEnvConfig } from "@next/env"
+import { cwd } from "process"
 
-dotenv.config({
-  path: ".env.local",
-})
+loadEnvConfig(cwd())
 
 const connection = connect({
-  host: process.env.DATABASE_HOST,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
+  host: process.env.PLANETSCALE_DB_HOST,
+  username: process.env.PLANETSCALE_DB_USERNAME,
+  password: process.env.PLANETSCALE_DB_PASSWORD,
 })
 
 export const db = drizzle(connection, { schema })

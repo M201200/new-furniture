@@ -1,20 +1,17 @@
 import type { Config } from "drizzle-kit"
-import * as dotenv from "dotenv"
+import { loadEnvConfig } from "@next/env"
+import { cwd } from "process"
 
-dotenv.config({
-  path: ".env.local",
-})
+loadEnvConfig(cwd())
 
 export default {
   schema: "./src/app/db/schema.ts",
   driver: "mysql2",
   dbCredentials: {
-    host: process.env.DATABASE_HOST!,
-    user: process.env.DATABASE_USERNAME,
-    password: process.env.DATABASE_PASSWORD,
-    database: "e-commerce-store",
-    // uri: process.env.DATABASE_URL!,
+    host: process.env.PLANETSCALE_DB_HOST!,
+    user: process.env.PLANETSCALE_DB_USERNAME!,
+    password: process.env.PLANETSCALE_DB_PASSWORD!,
+    database: process.env.PLANETSCALE_DB!,
   },
   out: "./migrations",
-  strict: true,
 } satisfies Config
