@@ -1,8 +1,8 @@
 import type { Config } from "drizzle-kit"
-import { loadEnvConfig } from "@next/env"
-import { cwd } from "process"
+// import { loadEnvConfig } from "@next/env"
+// import { cwd } from "process"
 
-loadEnvConfig(cwd())
+// loadEnvConfig(cwd())
 
 export default {
   schema: "./src/app/db/schema.ts",

@@ -1,10 +1,10 @@
 import { drizzle } from "drizzle-orm/planetscale-serverless"
 import { connect } from "@planetscale/database"
 import * as schema from "./schema"
-import { loadEnvConfig } from "@next/env"
-import { cwd } from "process"
+// import { loadEnvConfig } from "@next/env"
+// import { cwd } from "process"
 
-loadEnvConfig(cwd())
+// loadEnvConfig(cwd())
 
 const connection = connect({
   host: process.env.PLANETSCALE_DB_HOST,
