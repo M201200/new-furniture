@@ -1,4 +1,5 @@
 import type { AdapterAccount } from "@auth/core/adapters"
+import { relations } from "drizzle-orm"
 import {
   mysqlTable,
   varchar,
@@ -6,84 +7,53 @@ import {
   timestamp,
   primaryKey,
   serial,
+  tinyint,
+  bigint,
+  uniqueIndex,
 } from "drizzle-orm/mysql-core"
-import { categoriesArr } from "./categories/topLevel"
-import {
-  booksArr,
-  clothesArr,
-  electronicsArr,
-  shoesArr,
-  stationeryArr,
-} from "./categories/secondLevel"
 
-function createCategoryTable(tableName: string) {
-  const formattedName = tableName
-    .replaceAll(/\s/g, "_")
-    .replaceAll(/\W/g, "")
-    .toLowerCase()
-  return mysqlTable(formattedName, {
+// Categories
+
+export const categories = mysqlTable(
+  "categories",
+  {
     id: serial("id").primaryKey(),
-    en: varchar("en", { length: 64 }).unique(),
-    ro: varchar("ro", { length: 64 }),
-    ru: varchar("ru", { length: 64 }),
-  })
-}
+    path: bigint("path", { mode: "number", unsigned: true }).unique().notNull(), // 0 is delimiter
+    en: varchar("en", { length: 64 }).notNull(),
+    ro: varchar("ro", { length: 64 }).notNull(),
+    ru: varchar("ru", { length: 64 }).notNull(),
+    layer: tinyint("layer", { unsigned: true }).notNull(),
+  },
+  (table) => {
+    return {
+      path_idx: uniqueIndex("path_idx").on(table.path),
+    }
+  }
+)
 
-export const categories = createCategoryTable("Categories")
 export type Category = typeof categories.$inferInsert
 
-export const electronics = createCategoryTable(categoriesArr[0].en!)
-export const clothes = createCategoryTable(categoriesArr[1].en!)
-export const shoes = createCategoryTable(categoriesArr[2].en!)
-export const stationery = createCategoryTable(categoriesArr[3].en!)
-export const books = createCategoryTable(categoriesArr[4].en!)
+export const wares = mysqlTable("wares", {
+  id: serial("id").primaryKey(),
+  categoryPath: bigint("category_path", {
+    mode: "number",
+    unsigned: true,
+  }).notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
+  price: int("price($)", { unsigned: true }).notNull(),
+  discount: int("discount(%)", { unsigned: true }),
+})
 
-// electronics
+export const categoryRelations = relations(categories, ({ many }) => ({
+  wares: many(wares),
+}))
 
-export const phones = createCategoryTable(electronicsArr[0].en!)
-export const computers = createCategoryTable(electronicsArr[1].en!)
-export const gamingConsoles = createCategoryTable(electronicsArr[2].en!)
-export const videoEquipment = createCategoryTable(electronicsArr[3].en!)
-export const headphones = createCategoryTable(electronicsArr[4].en!)
-export const accessories = createCategoryTable(electronicsArr[5].en!)
-
-//////////
-// clothes
-
-export const clothesForMen = createCategoryTable(`clothes_${clothesArr[0].en!}`)
-export const clothesForWomen = createCategoryTable(
-  `clothes_${clothesArr[1].en!}`
-)
-export const clothesForChildren = createCategoryTable(
-  `clothes_${clothesArr[2].en!}`
-)
-export const clothesUnisex = createCategoryTable(`clothes_${clothesArr[3].en!}`)
-
-//////////
-// shoes
-
-export const shoesForMen = createCategoryTable(`shoes_${shoesArr[0].en!}`)
-export const shoesForWomen = createCategoryTable(`shoes_${shoesArr[1].en!}`)
-export const shoesForChildren = createCategoryTable(`shoes_${shoesArr[2].en!}`)
-export const shoesUnisex = createCategoryTable(`shoes_${shoesArr[3].en!}`)
-
-//////////
-// stationery
-
-export const writingSupplies = createCategoryTable(stationeryArr[0].en!)
-export const paperProducts = createCategoryTable(stationeryArr[1].en!)
-export const paper = createCategoryTable(stationeryArr[2].en!)
-export const foldersAndFiles = createCategoryTable(stationeryArr[3].en!)
-export const officeSupplies = createCategoryTable(stationeryArr[4].en!)
-
-//////////
-// books
-
-export const fiction = createCategoryTable(booksArr[0].en!)
-export const comics = createCategoryTable(booksArr[1].en!)
-export const manga = createCategoryTable(booksArr[2].en!)
-export const educationalLiterature = createCategoryTable(booksArr[3].en!)
-
+export const waresRelations = relations(wares, ({ one }) => ({
+  category: one(categories, {
+    fields: [wares.categoryPath],
+    references: [categories.path],
+  }),
+}))
 //////////
 // NextAuth
 

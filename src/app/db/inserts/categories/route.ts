@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm"
 import { db } from "../.."
 import { categories } from "../../schema"
-import { categoriesArr } from "../../categories/values"
+import { categoriesArr } from "../../values/categories"
 
 export const runtime = "edge"
 

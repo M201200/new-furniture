@@ -13,6 +13,8 @@ export default {
     user: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
     database: "e-commerce-store",
+    // uri: process.env.DATABASE_URL!,
   },
   out: "./migrations",
+  strict: true,
 } satisfies Config

@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a07e00ee-397c-46bc-9c30-64b2c0488867",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "1ec81e9f-98d5-4f85-8344-4a2b46a15d91",
+  "prevId": "a07e00ee-397c-46bc-9c30-64b2c0488867",
   "tables": {
     "account": {
       "name": "account",
@@ -321,6 +321,57 @@
           "columns": [
             "identifier",
             "token"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "wares": {
+      "name": "wares",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "category_path": {
+          "name": "category_path",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "price($)": {
+          "name": "price($)",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "discount(%)": {
+          "name": "discount(%)",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "wares_id": {
+          "name": "wares_id",
+          "columns": [
+            "id"
           ]
         }
       },
