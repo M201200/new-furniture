@@ -1,5 +1,5 @@
 import type { AdapterAccount } from "@auth/core/adapters"
-import { relations } from "drizzle-orm"
+import { relations, sql } from "drizzle-orm"
 import {
   mysqlTable,
   varchar,
@@ -13,6 +13,7 @@ import {
   text,
   index,
   boolean,
+  customType,
 } from "drizzle-orm/mysql-core"
 
 // Categories
@@ -21,7 +22,9 @@ export const categories = mysqlTable(
   "categories",
   {
     id: serial("id").primaryKey(),
-    path: bigint("path", { mode: "number", unsigned: true }).unique().notNull(), // 0 is delimiter
+    // Starts from 1. Each subcategory also starts from 1. 0 is delimiter (example 10302)
+    code: bigint("code", { mode: "number", unsigned: true }).notNull().unique(),
+    //
     en: varchar("en", { length: 64 }).notNull(),
     ro: varchar("ro", { length: 64 }).notNull(),
     ru: varchar("ru", { length: 64 }).notNull(),
@@ -29,7 +32,7 @@ export const categories = mysqlTable(
   },
   (table) => {
     return {
-      path_idx: uniqueIndex("path_idx").on(table.path),
+      code_idx: uniqueIndex("code_idx").on(table.code),
     }
   }
 )
@@ -39,38 +42,80 @@ export type Category = typeof categories.$inferInsert
 //////////
 // Items
 
-export const items = mysqlTable("items", {
-  id: serial("id").primaryKey(),
-  categoryPath: bigint("category_path", {
-    mode: "number",
-    unsigned: true,
-  }).notNull(),
-  amount: int("amount", { unsigned: true }).notNull(),
-  price: int("price($)", { unsigned: true }).notNull(),
-  discount: int("discount(%)", { unsigned: true }),
+export const generatedConcatColumns = customType<{
+  data: string
+  driverData: string
+  config: {
+    columns: string[]
+  }
+}>({
+  dataType(config) {
+    return `varchar(64) AS (concat("-", ${config?.columns.join(", ")}))`
+  },
 })
 
-export const categoryRelations = relations(categories, ({ many }) => ({
+export const items = mysqlTable(
+  "items",
+  {
+    id: serial("id").primaryKey(),
+    category_code: bigint("category_code", {
+      mode: "number",
+      unsigned: true,
+    }).notNull(),
+    // Starts from 1 in each category.
+    serial_number: bigint("serial_number", {
+      mode: "number",
+      unsigned: true,
+    }).notNull(),
+    //
+    // This is variation of base item. Reference to item characteristics table.
+    // Default configuration marked as "base", variations marked as:
+    // "v[column number in item characteristics table]_[variation number]/..."
+    // Example: "v3_2/4_1/5_3"
+    variation: varchar("variation", { length: 32 }).notNull().default("base"),
+    //
+    vendor_code: generatedConcatColumns("vendor_code", {
+      columns: ["category_code", "serial_number", "variation"],
+    }),
+    amount: int("amount", { unsigned: true }).notNull(),
+    price: int("price($)", { unsigned: true }).notNull(),
+    discount: tinyint("discount(%)", { unsigned: true }).notNull().default(0),
+    created_at: timestamp("created_at").defaultNow().notNull(),
+    updated_at: timestamp("updated_at").onUpdateNow(),
+  },
+  (table) => {
+    return {
+      vendor_code_compound_idx: uniqueIndex("vendor_code_compound_idx").on(
+        table.category_code,
+        table.serial_number,
+        table.variation
+      ),
+      vendor_code_idx: uniqueIndex("vendor_code_idx").on(table.vendor_code),
+    }
+  }
+)
+
+export type Items = typeof items.$inferInsert
+
+export const categoriesItemsRelations = relations(categories, ({ many }) => ({
   items: many(items),
 }))
 
-export const itemsRelations = relations(items, ({ one }) => ({
-  category: one(categories, {
-    fields: [items.categoryPath],
-    references: [categories.path],
+export const itemsCategoriesRelations = relations(items, ({ one }) => ({
+  categories: one(categories, {
+    fields: [items.category_code],
+    references: [categories.code],
   }),
 }))
 
 //////////
 
 export const itemsName = mysqlTable(
-  "itemsName",
+  "items_name",
   {
-    id: serial("items_id").primaryKey(),
-    itemId: bigint("itemId", {
-      mode: "number",
-      unsigned: true,
-    })
+    id: serial("id").primaryKey(),
+    vendor_code: varchar("vendor_code", { length: 64 })
+      .notNull()
       .notNull()
       .unique(),
     en: varchar("en", { length: 128 }).notNull(),
@@ -79,28 +124,26 @@ export const itemsName = mysqlTable(
   },
   (table) => {
     return {
-      itemId_idx: uniqueIndex("itemId_idx").on(table.itemId),
+      vendor_code_idx: uniqueIndex("vendor_code_idx").on(table.vendor_code),
     }
   }
 )
 
 export const itemsNameRelations = relations(itemsName, ({ one }) => ({
   items: one(items, {
-    fields: [itemsName.itemId],
-    references: [items.id],
+    fields: [itemsName.vendor_code],
+    references: [items.vendor_code],
   }),
 }))
 
 //////////
 
 export const itemsDescription = mysqlTable(
-  "itemsDescription",
+  "items_description",
   {
-    id: serial("items_id").primaryKey(),
-    itemId: bigint("itemId", {
-      mode: "number",
-      unsigned: true,
-    })
+    id: serial("id").primaryKey(),
+    vendor_code: varchar("vendor_code", { length: 64 })
+      .notNull()
       .notNull()
       .unique(),
     en: text("en").notNull(),
@@ -109,7 +152,7 @@ export const itemsDescription = mysqlTable(
   },
   (table) => {
     return {
-      itemId_idx: uniqueIndex("itemId_idx").on(table.itemId),
+      vendor_code_idx: uniqueIndex("vendor_code_idx").on(table.vendor_code),
     }
   }
 )
@@ -118,71 +161,52 @@ export const itemsDescriptionRelations = relations(
   itemsDescription,
   ({ one }) => ({
     items: one(items, {
-      fields: [itemsDescription.itemId],
-      references: [items.id],
+      fields: [itemsDescription.vendor_code],
+      references: [items.vendor_code],
     }),
   })
 )
 
 //////////
 
-export const itemsImageURLs = mysqlTable(
-  "itemsImageURLs",
+export const itemImageURLs = mysqlTable(
+  "item_image_URLs",
   {
-    id: serial("items_id").primaryKey(),
-    itemId: bigint("itemId", {
-      mode: "number",
-      unsigned: true,
-    }).notNull(),
+    id: serial("id").primaryKey(),
+    vendor_code: varchar("vendor_code", { length: 64 }).notNull().notNull(),
     url: varchar("url", { length: 2083 }).notNull(),
-    isThumbnail: boolean("is_thumbnail").default(true).notNull(),
+    is_thumbnail: boolean("is_thumbnail").default(true).notNull(),
     notes: varchar("notes", { length: 128 }),
   },
   (table) => {
     return {
-      itemId_idx: index("itemId_idx").on(table.itemId),
+      vendor_code: index("vendor_code").on(table.vendor_code),
     }
   }
 )
 
-export const itemsImageURLsRelations = relations(itemsImageURLs, ({ one }) => ({
+export const itemsToURLRelations = relations(items, ({ many }) => ({
+  itemImageURLs: many(itemImageURLs),
+}))
+
+export const itemsImageURLsRelations = relations(itemImageURLs, ({ one }) => ({
   items: one(items, {
-    fields: [itemsImageURLs.itemId],
-    references: [items.id],
+    fields: [itemImageURLs.vendor_code],
+    references: [items.vendor_code],
   }),
 }))
 
 //////////
 // Characteristics
 
-export const characteristics = mysqlTable(
-  "characteristics",
-  {
-    id: serial("id").primaryKey(),
-    categoryPath: bigint("category_path", {
-      mode: "number",
-      unsigned: true,
-    }).notNull(),
-    en: varchar("en", { length: 64 }).notNull(),
-    ro: varchar("ro", { length: 64 }).notNull(),
-    ru: varchar("ru", { length: 64 }).notNull(),
-  },
-  (table) => {
-    return {
-      categoryPath_idx: index("categoryPath_idx").on(table.categoryPath),
-    }
-  }
-)
+export const characteristics = mysqlTable("characteristics", {
+  id: serial("id").primaryKey(),
+  en: varchar("en", { length: 64 }).notNull().unique(),
+  ro: varchar("ro", { length: 64 }).notNull(),
+  ru: varchar("ru", { length: 64 }).notNull(),
+})
 
-export const characteristicsRelations = relations(
-  characteristics,
-  ({ one }) => ({
-    category: one(categories, {
-      fields: [characteristics.categoryPath],
-      references: [categories.path],
-    }),
-  })
-)
+export type Characteristics = typeof characteristics.$inferInsert
 
 //////////
 // NextAuth
