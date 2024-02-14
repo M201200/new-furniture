@@ -135,7 +135,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v2-1",
+    variation: "v3-1",
     amount: 18,
     price: 270,
     discount: 15,
@@ -143,7 +143,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v2-2",
+    variation: "v3-2",
     amount: 20,
     price: 270,
     discount: 10,
@@ -151,7 +151,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v2-3",
+    variation: "v3-3",
     amount: 10,
     price: 270,
     discount: 30,
@@ -167,7 +167,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v1-1_2-1",
+    variation: "v1-1_3-1",
     amount: 20,
     price: 270,
     discount: 15,
@@ -175,7 +175,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v1-1_2-2",
+    variation: "v1-1_3-2",
     amount: 15,
     price: 270,
     discount: 30,
@@ -183,7 +183,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v1-1_2-3",
+    variation: "v1-1_3-3",
     amount: 10,
     price: 270,
     discount: 30,
@@ -199,7 +199,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v1-2_2-1",
+    variation: "v1-2_3-1",
     amount: 20,
     price: 270,
     discount: 20,
@@ -207,7 +207,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v1-2_2-2",
+    variation: "v1-2_3-2",
     amount: 20,
     price: 270,
     discount: 20,
@@ -215,7 +215,7 @@ export const itemsArr: Items[] = [
   {
     category_code: 10101,
     serial_number: 5,
-    variation: "v1-2_2-3",
+    variation: "v1-2_3-3",
     amount: 20,
     price: 270,
     discount: 20,

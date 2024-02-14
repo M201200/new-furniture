@@ -200,7 +200,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v2-1",
+    vendor_code: "10101/5/v3-1",
     color: "dark_gray",
     material: "micro_velvet",
     width: 150,
@@ -211,7 +211,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v2-2",
+    vendor_code: "10101/5/v3-2",
     color: "dark_gray",
     material: "micro_velvet",
     width: 170,
@@ -222,7 +222,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v2-3",
+    vendor_code: "10101/5/v3-3",
     color: "dark_gray",
     material: "micro_velvet",
     width: 185,
@@ -244,7 +244,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v1-1_2-1",
+    vendor_code: "10101/5/v1-1_3-1",
     color: "gray",
     material: "micro_velvet",
     width: 150,
@@ -255,7 +255,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v1-1_2-2",
+    vendor_code: "10101/5/v1-1_3-2",
     color: "gray",
     material: "micro_velvet",
     width: 170,
@@ -266,7 +266,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v1-1_2-3",
+    vendor_code: "10101/5/v1-1_3-3",
     color: "gray",
     material: "micro_velvet",
     width: 185,
@@ -288,7 +288,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v1-2_2-1",
+    vendor_code: "10101/5/v1-2_3-1",
     color: "beige",
     material: "micro_velvet",
     width: 150,
@@ -299,7 +299,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v1-2_2-2",
+    vendor_code: "10101/5/v1-2_3-2",
     color: "beige",
     material: "micro_velvet",
     width: 170,
@@ -310,7 +310,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
     warranty: 24,
   },
   {
-    vendor_code: "10101/5/v1-2_2-3",
+    vendor_code: "10101/5/v1-2_3-3",
     color: "beige",
     material: "micro_velvet",
     width: 185,
