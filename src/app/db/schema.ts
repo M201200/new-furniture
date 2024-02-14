@@ -14,6 +14,7 @@ import {
   index,
   boolean,
   customType,
+  smallint,
 } from "drizzle-orm/mysql-core"
 
 // Categories
@@ -50,7 +51,7 @@ export const generatedConcatColumns = customType<{
   }
 }>({
   dataType(config) {
-    return `varchar(64) AS (concat("-", ${config?.columns.join(", ")}))`
+    return `varchar(64) AS (concat("/", ${config?.columns.join(", ")}))`
   },
 })
 
@@ -71,7 +72,7 @@ export const items = mysqlTable(
     // This is variation of base item. Reference to item characteristics table.
     // Default configuration marked as "base", variations marked as:
     // "v[column number in item characteristics table]_[variation number]/..."
-    // Example: "v3_2/4_1/5_3"
+    // Example: "v1-2_2-1_4-3"
     variation: varchar("variation", { length: 32 }).notNull().default("base"),
     //
     vendor_code: generatedConcatColumns("vendor_code", {
@@ -129,6 +130,8 @@ export const itemsName = mysqlTable(
   }
 )
 
+export type ItemsName = typeof itemsName.$inferInsert
+
 export const itemsNameRelations = relations(itemsName, ({ one }) => ({
   items: one(items, {
     fields: [itemsName.vendor_code],
@@ -157,6 +160,8 @@ export const itemsDescription = mysqlTable(
   }
 )
 
+export type ItemsDescription = typeof itemsDescription.$inferInsert
+
 export const itemsDescriptionRelations = relations(
   itemsDescription,
   ({ one }) => ({
@@ -169,29 +174,31 @@ export const itemsDescriptionRelations = relations(
 
 //////////
 
-export const itemImageURLs = mysqlTable(
+export const itemsImageURL = mysqlTable(
   "item_image_URLs",
   {
     id: serial("id").primaryKey(),
-    vendor_code: varchar("vendor_code", { length: 64 }).notNull().notNull(),
+    vendor_code: varchar("vendor_code", { length: 64 }).notNull(),
     url: varchar("url", { length: 2083 }).notNull(),
     is_thumbnail: boolean("is_thumbnail").default(true).notNull(),
     notes: varchar("notes", { length: 128 }),
   },
   (table) => {
     return {
-      vendor_code: index("vendor_code").on(table.vendor_code),
+      vendor_code: index("vendor_code_idx").on(table.vendor_code),
     }
   }
 )
 
+export type ItemsImageURL = typeof itemsImageURL.$inferInsert
+
 export const itemsToURLRelations = relations(items, ({ many }) => ({
-  itemImageURLs: many(itemImageURLs),
+  itemImageURLs: many(itemsImageURL),
 }))
 
-export const itemsImageURLsRelations = relations(itemImageURLs, ({ one }) => ({
+export const itemsImageURLsRelations = relations(itemsImageURL, ({ one }) => ({
   items: one(items, {
-    fields: [itemImageURLs.vendor_code],
+    fields: [itemsImageURL.vendor_code],
     references: [items.vendor_code],
   }),
 }))
@@ -199,14 +206,48 @@ export const itemsImageURLsRelations = relations(itemImageURLs, ({ one }) => ({
 //////////
 // Characteristics
 
-export const characteristics = mysqlTable("characteristics", {
-  id: serial("id").primaryKey(),
-  en: varchar("en", { length: 64 }).notNull().unique(),
-  ro: varchar("ro", { length: 64 }).notNull(),
-  ru: varchar("ru", { length: 64 }).notNull(),
-})
+// export const characteristics = mysqlTable("characteristics", {
+//   id: serial("id").primaryKey(),
+//   en: varchar("en", { length: 64 }).notNull().unique(),
+//   ro: varchar("ro", { length: 64 }).notNull(),
+//   ru: varchar("ru", { length: 64 }).notNull(),
+// })
 
-export type Characteristics = typeof characteristics.$inferInsert
+// export type Characteristics = typeof characteristics.$inferInsert
+
+export const characteristicsFurniture = mysqlTable(
+  "characteristics_furniture",
+  {
+    id: serial("id").primaryKey(),
+    vendor_code: varchar("vendor_code", { length: 64 }).notNull().unique(),
+    color: varchar("1-color", { length: 32 }).notNull(),
+    material: varchar("2-material", { length: 32 }).notNull(),
+    width: smallint("3-width(sm)", { unsigned: true }).notNull(),
+    height: smallint("4-height(sm)", { unsigned: true }).notNull(),
+    depth: smallint("5-depth(sm)", { unsigned: true }).notNull(),
+    weight: smallint("6-weight(kg)", { unsigned: true }).notNull(),
+    folding: boolean("7-folding").notNull(),
+    warranty: tinyint("8-warranty", { unsigned: true }).notNull(),
+  },
+  (table) => {
+    return {
+      vendor_code: uniqueIndex("vendor_code_idx").on(table.vendor_code),
+    }
+  }
+)
+
+export type CharacteristicsFurniture =
+  typeof characteristicsFurniture.$inferInsert
+
+export const itemsCharacteristicsFurnitureRelations = relations(
+  characteristicsFurniture,
+  ({ one }) => ({
+    items: one(items, {
+      fields: [characteristicsFurniture.vendor_code],
+      references: [items.vendor_code],
+    }),
+  })
+)
 
 //////////
 // NextAuth
