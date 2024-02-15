@@ -51,7 +51,7 @@ export const generatedConcatColumns = customType<{
   }
 }>({
   dataType(config) {
-    return `varchar(64) AS (concat("/", ${config?.columns.join(", ")}))`
+    return `varchar(64) AS (concat_ws("/", ${config?.columns.join(", ")}))`
   },
 })
 
@@ -71,7 +71,7 @@ export const items = mysqlTable(
     //
     // This is variation of base item. Reference to item characteristics table.
     // Default configuration marked as "base", variations marked as:
-    // "v[column number in item characteristics table]_[variation number]/..."
+    // "v[column number in item characteristics table]-[variation number]_..."
     // Example: "v1-2_2-1_4-3"
     variation: varchar("variation", { length: 32 }).notNull().default("base"),
     //
