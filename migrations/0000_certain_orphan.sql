@@ -35,7 +35,7 @@ CREATE TABLE `characteristics_furniture` (
 	`5-depth(sm)` smallint unsigned NOT NULL,
 	`6-weight(kg)` smallint unsigned NOT NULL,
 	`7-folding` boolean NOT NULL,
-	`8-warranty` tinyint unsigned NOT NULL,
+	`8-warranty(month)` tinyint unsigned NOT NULL,
 	CONSTRAINT `characteristics_furniture_id` PRIMARY KEY(`id`),
 	CONSTRAINT `characteristics_furniture_vendor_code_unique` UNIQUE(`vendor_code`),
 	CONSTRAINT `vendor_code_idx` UNIQUE(`vendor_code`)

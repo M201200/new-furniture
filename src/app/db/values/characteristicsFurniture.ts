@@ -2,17 +2,6 @@ import { CharacteristicsFurniture } from "../schema"
 
 export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
   {
-    vendor_code: "10101/",
-    color: "",
-    material: "",
-    width: 0,
-    height: 0,
-    depth: 0,
-    weight: 0,
-    folding: true,
-    warranty: 0,
-  },
-  {
     vendor_code: "10101/1/base",
     color: "beige",
     material: "micro_velvet",

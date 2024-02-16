@@ -227,7 +227,7 @@ export const characteristicsFurniture = mysqlTable(
     depth: smallint("5-depth(sm)", { unsigned: true }).notNull(),
     weight: smallint("6-weight(kg)", { unsigned: true }).notNull(),
     folding: boolean("7-folding").notNull(),
-    warranty: tinyint("8-warranty", { unsigned: true }).notNull(),
+    warranty: tinyint("8-warranty(month)", { unsigned: true }).notNull(),
   },
   (table) => {
     return {
