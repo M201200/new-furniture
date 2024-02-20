@@ -16,11 +16,11 @@ function getItemsImageURLArr() {
 
   function pushURLs({ category, serial, variations }: imagesInfo) {
     for (let i = 0; i < variations.length; i++) {
-      for (let j = 1; i < variations[i].images + 1; j++) {
+      for (let j = 0; j < variations[i].images; j++) {
         itemsImageURLArr.push({
           vendor_code: `${category}/${serial}/${i === 0 ? "base" : "v1-" + i}`,
-          image_number: j,
-          is_thumbnail: j === variations[i].thumbnail ? true : false,
+          image_number: j + 1,
+          is_thumbnail: j + 1 === variations[i].thumbnail ? true : false,
         })
       }
     }
@@ -48,6 +48,7 @@ function getItemsImageURLArr() {
       },
     ],
   })
+
   pushURLs({
     category: 10101,
     serial: 2,
