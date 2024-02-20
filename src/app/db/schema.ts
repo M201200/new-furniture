@@ -19,24 +19,16 @@ import {
 
 // Categories
 
-export const categories = mysqlTable(
-  "categories",
-  {
-    id: serial("id").primaryKey(),
-    // Starts from 1. Each subcategory also starts from 1. 0 is delimiter (example 10302)
-    code: bigint("code", { mode: "number", unsigned: true }).notNull().unique(),
-    //
-    en: varchar("en", { length: 64 }).notNull(),
-    ro: varchar("ro", { length: 64 }).notNull(),
-    ru: varchar("ru", { length: 64 }).notNull(),
-    layer: tinyint("layer", { unsigned: true }).notNull(),
-  },
-  (table) => {
-    return {
-      code_idx: uniqueIndex("code_idx").on(table.code),
-    }
-  }
-)
+export const categories = mysqlTable("categories", {
+  id: serial("id").primaryKey(),
+  // Starts from 1. Each subcategory also starts from 1. 0 is delimiter (example 10302)
+  code: bigint("code", { mode: "number", unsigned: true }).notNull().unique(),
+  //
+  en: varchar("en", { length: 64 }).notNull(),
+  ro: varchar("ro", { length: 64 }).notNull(),
+  ru: varchar("ru", { length: 64 }).notNull(),
+  layer: tinyint("layer", { unsigned: true }).notNull(),
+})
 
 export type Category = typeof categories.$inferInsert
 
@@ -48,10 +40,14 @@ export const generatedConcatColumns = customType<{
   driverData: string
   config: {
     columns: string[]
+    charLength: number
+    delimiter: string
   }
 }>({
   dataType(config) {
-    return `varchar(64) AS (concat_ws("/", ${config?.columns.join(", ")}))`
+    return `varchar(${config?.charLength}) AS (concat_ws("${
+      config?.delimiter
+    }", ${config?.columns.join(", ")}))`
   },
 })
 
@@ -76,7 +72,9 @@ export const items = mysqlTable(
     variation: varchar("variation", { length: 32 }).notNull().default("base"),
     //
     vendor_code: generatedConcatColumns("vendor_code", {
+      charLength: 64,
       columns: ["category_code", "serial_number", "variation"],
+      delimiter: "/",
     }),
     amount: int("amount", { unsigned: true }).notNull(),
     price: int("price($)", { unsigned: true }).notNull(),
@@ -111,24 +109,16 @@ export const itemsCategoriesRelations = relations(items, ({ one }) => ({
 
 //////////
 
-export const itemsName = mysqlTable(
-  "items_name",
-  {
-    id: serial("id").primaryKey(),
-    vendor_code: varchar("vendor_code", { length: 64 })
-      .notNull()
-      .notNull()
-      .unique(),
-    en: varchar("en", { length: 128 }).notNull(),
-    ro: varchar("ro", { length: 128 }).notNull(),
-    ru: varchar("ru", { length: 128 }).notNull(),
-  },
-  (table) => {
-    return {
-      vendor_code_idx: uniqueIndex("vendor_code_idx").on(table.vendor_code),
-    }
-  }
-)
+export const itemsName = mysqlTable("items_name", {
+  id: serial("id").primaryKey(),
+  vendor_code: varchar("vendor_code", { length: 64 })
+    .notNull()
+    .notNull()
+    .unique(),
+  en: varchar("en", { length: 128 }).notNull(),
+  ro: varchar("ro", { length: 128 }).notNull(),
+  ru: varchar("ru", { length: 128 }).notNull(),
+})
 
 export type ItemsName = typeof itemsName.$inferInsert
 
@@ -141,24 +131,16 @@ export const itemsNameRelations = relations(itemsName, ({ one }) => ({
 
 //////////
 
-export const itemsDescription = mysqlTable(
-  "items_description",
-  {
-    id: serial("id").primaryKey(),
-    vendor_code: varchar("vendor_code", { length: 64 })
-      .notNull()
-      .notNull()
-      .unique(),
-    en: text("en").notNull(),
-    ro: text("ro").notNull(),
-    ru: text("ru").notNull(),
-  },
-  (table) => {
-    return {
-      vendor_code_idx: uniqueIndex("vendor_code_idx").on(table.vendor_code),
-    }
-  }
-)
+export const itemsDescription = mysqlTable("items_description", {
+  id: serial("id").primaryKey(),
+  vendor_code: varchar("vendor_code", { length: 64 })
+    .notNull()
+    .notNull()
+    .unique(),
+  en: text("en").notNull(),
+  ro: text("ro").notNull(),
+  ru: text("ru").notNull(),
+})
 
 export type ItemsDescription = typeof itemsDescription.$inferInsert
 
@@ -178,14 +160,25 @@ export const itemsImageURL = mysqlTable(
   "item_image_URLs",
   {
     id: serial("id").primaryKey(),
+    root_catalog: varchar("root_catalog", { length: 64 })
+      .default("images")
+      .notNull(),
     vendor_code: varchar("vendor_code", { length: 64 }).notNull(),
-    url: varchar("url", { length: 2083 }).notNull(),
-    is_thumbnail: boolean("is_thumbnail").default(true).notNull(),
+    image_number: tinyint("image_number").notNull(),
+    url: generatedConcatColumns("url", {
+      charLength: 256,
+      columns: ["root_catalog", "vendor_code", "image_number"],
+      delimiter: "/",
+    }),
+    is_thumbnail: boolean("is_thumbnail").default(false).notNull(),
     notes: varchar("notes", { length: 128 }),
   },
   (table) => {
     return {
-      vendor_code: index("vendor_code_idx").on(table.vendor_code),
+      compound_idx: uniqueIndex("compound_idx").on(
+        table.url,
+        table.is_thumbnail
+      ),
     }
   }
 )
@@ -204,16 +197,6 @@ export const itemsImageURLsRelations = relations(itemsImageURL, ({ one }) => ({
 }))
 
 //////////
-// Characteristics
-
-// export const characteristics = mysqlTable("characteristics", {
-//   id: serial("id").primaryKey(),
-//   en: varchar("en", { length: 64 }).notNull().unique(),
-//   ro: varchar("ro", { length: 64 }).notNull(),
-//   ru: varchar("ru", { length: 64 }).notNull(),
-// })
-
-// export type Characteristics = typeof characteristics.$inferInsert
 
 export const characteristicsFurniture = mysqlTable(
   "characteristics_furniture",
@@ -228,11 +211,6 @@ export const characteristicsFurniture = mysqlTable(
     weight: smallint("6-weight(kg)", { unsigned: true }).notNull(),
     folding: boolean("7-folding").notNull(),
     warranty: tinyint("8-warranty(month)", { unsigned: true }).notNull(),
-  },
-  (table) => {
-    return {
-      vendor_code: uniqueIndex("vendor_code_idx").on(table.vendor_code),
-    }
   }
 )
 

@@ -21,8 +21,7 @@ CREATE TABLE `categories` (
 	`ru` varchar(64) NOT NULL,
 	`layer` tinyint unsigned NOT NULL,
 	CONSTRAINT `categories_id` PRIMARY KEY(`id`),
-	CONSTRAINT `categories_code_unique` UNIQUE(`code`),
-	CONSTRAINT `code_idx` UNIQUE(`code`)
+	CONSTRAINT `categories_code_unique` UNIQUE(`code`)
 );
 --> statement-breakpoint
 CREATE TABLE `characteristics_furniture` (
@@ -37,8 +36,7 @@ CREATE TABLE `characteristics_furniture` (
 	`7-folding` boolean NOT NULL,
 	`8-warranty(month)` tinyint unsigned NOT NULL,
 	CONSTRAINT `characteristics_furniture_id` PRIMARY KEY(`id`),
-	CONSTRAINT `characteristics_furniture_vendor_code_unique` UNIQUE(`vendor_code`),
-	CONSTRAINT `vendor_code_idx` UNIQUE(`vendor_code`)
+	CONSTRAINT `characteristics_furniture_vendor_code_unique` UNIQUE(`vendor_code`)
 );
 --> statement-breakpoint
 CREATE TABLE `items` (
@@ -64,17 +62,19 @@ CREATE TABLE `items_description` (
 	`ro` text NOT NULL,
 	`ru` text NOT NULL,
 	CONSTRAINT `items_description_id` PRIMARY KEY(`id`),
-	CONSTRAINT `items_description_vendor_code_unique` UNIQUE(`vendor_code`),
-	CONSTRAINT `vendor_code_idx` UNIQUE(`vendor_code`)
+	CONSTRAINT `items_description_vendor_code_unique` UNIQUE(`vendor_code`)
 );
 --> statement-breakpoint
 CREATE TABLE `item_image_URLs` (
 	`id` serial AUTO_INCREMENT NOT NULL,
+	`root_catalog` varchar(64) NOT NULL DEFAULT 'images',
 	`vendor_code` varchar(64) NOT NULL,
-	`url` varchar(2083) NOT NULL,
-	`is_thumbnail` boolean NOT NULL DEFAULT true,
+	`image_number` tinyint NOT NULL,
+	`url` varchar(256) AS (concat_ws("/", root_catalog, vendor_code, image_number)),
+	`is_thumbnail` boolean NOT NULL DEFAULT false,
 	`notes` varchar(128),
-	CONSTRAINT `item_image_URLs_id` PRIMARY KEY(`id`)
+	CONSTRAINT `item_image_URLs_id` PRIMARY KEY(`id`),
+	CONSTRAINT `compound_idx` UNIQUE(`url`,`is_thumbnail`)
 );
 --> statement-breakpoint
 CREATE TABLE `items_name` (
@@ -84,8 +84,7 @@ CREATE TABLE `items_name` (
 	`ro` varchar(128) NOT NULL,
 	`ru` varchar(128) NOT NULL,
 	CONSTRAINT `items_name_id` PRIMARY KEY(`id`),
-	CONSTRAINT `items_name_vendor_code_unique` UNIQUE(`vendor_code`),
-	CONSTRAINT `vendor_code_idx` UNIQUE(`vendor_code`)
+	CONSTRAINT `items_name_vendor_code_unique` UNIQUE(`vendor_code`)
 );
 --> statement-breakpoint
 CREATE TABLE `session` (
@@ -111,6 +110,5 @@ CREATE TABLE `verificationToken` (
 	CONSTRAINT `verificationToken_identifier_token_pk` PRIMARY KEY(`identifier`,`token`)
 );
 --> statement-breakpoint
-CREATE INDEX `vendor_code_idx` ON `item_image_URLs` (`vendor_code`);--> statement-breakpoint
 ALTER TABLE `account` ADD CONSTRAINT `account_userId_user_id_fk` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `session` ADD CONSTRAINT `session_userId_user_id_fk` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;

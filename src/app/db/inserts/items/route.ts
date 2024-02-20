@@ -6,7 +6,7 @@ import { itemsArr } from "../../values/items"
 export const runtime = "edge"
 
 export async function POST() {
-  const newCategory = await db
+  const newItems = await db
     .insert(items)
     .values(itemsArr)
     .onDuplicateKeyUpdate({
@@ -14,5 +14,5 @@ export async function POST() {
     })
     .execute()
 
-  return new Response(JSON.stringify(newCategory))
+  return new Response(JSON.stringify(newItems))
 }

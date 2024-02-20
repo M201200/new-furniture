@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "4d473f75-85a4-4818-9556-de387b28d242",
+  "id": "1e2a3992-5dd2-4d25-8b0b-fba0df9bc316",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -158,15 +158,7 @@
           "autoincrement": false
         }
       },
-      "indexes": {
-        "code_idx": {
-          "name": "code_idx",
-          "columns": [
-            "code"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "categories_id": {
@@ -251,23 +243,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "8-warranty": {
-          "name": "8-warranty",
+        "8-warranty(month)": {
+          "name": "8-warranty(month)",
           "type": "tinyint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         }
       },
-      "indexes": {
-        "vendor_code_idx": {
-          "name": "vendor_code_idx",
-          "columns": [
-            "vendor_code"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "characteristics_furniture_id": {
@@ -432,15 +416,7 @@
           "autoincrement": false
         }
       },
-      "indexes": {
-        "vendor_code_idx": {
-          "name": "vendor_code_idx",
-          "columns": [
-            "vendor_code"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "items_description_id": {
@@ -469,6 +445,14 @@
           "notNull": true,
           "autoincrement": true
         },
+        "root_catalog": {
+          "name": "root_catalog",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'images'"
+        },
         "vendor_code": {
           "name": "vendor_code",
           "type": "varchar(64)",
@@ -476,11 +460,18 @@
           "notNull": true,
           "autoincrement": false
         },
-        "url": {
-          "name": "url",
-          "type": "varchar(2083)",
+        "image_number": {
+          "name": "image_number",
+          "type": "tinyint",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar(256) AS (concat_ws(\"/\", root_catalog, vendor_code, image_number))",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "is_thumbnail": {
@@ -489,7 +480,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": true
+          "default": false
         },
         "notes": {
           "name": "notes",
@@ -500,12 +491,13 @@
         }
       },
       "indexes": {
-        "vendor_code_idx": {
-          "name": "vendor_code_idx",
+        "compound_idx": {
+          "name": "compound_idx",
           "columns": [
-            "vendor_code"
+            "url",
+            "is_thumbnail"
           ],
-          "isUnique": false
+          "isUnique": true
         }
       },
       "foreignKeys": {},
@@ -558,15 +550,7 @@
           "autoincrement": false
         }
       },
-      "indexes": {
-        "vendor_code_idx": {
-          "name": "vendor_code_idx",
-          "columns": [
-            "vendor_code"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "items_name_id": {

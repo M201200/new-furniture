@@ -6,7 +6,7 @@ import { characteristicsFurnitureArr } from "../../values/characteristicsFurnitu
 export const runtime = "edge"
 
 export async function POST() {
-  const newCategory = await db
+  const newCharacteristics = await db
     .insert(characteristicsFurniture)
     .values(characteristicsFurnitureArr)
     .onDuplicateKeyUpdate({
@@ -14,5 +14,5 @@ export async function POST() {
     })
     .execute()
 
-  return new Response(JSON.stringify(newCategory))
+  return new Response(JSON.stringify(newCharacteristics))
 }
