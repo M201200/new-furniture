@@ -44,7 +44,7 @@ CREATE TABLE `items` (
 	`category_code` bigint unsigned NOT NULL,
 	`serial_number` bigint unsigned NOT NULL,
 	`variation` varchar(32) NOT NULL DEFAULT 'base',
-	`vendor_code` varchar(64) AS (concat_ws("/", category_code, serial_number, variation)),
+	`vendor_code` varchar(64) AS (concat_ws("--", category_code, serial_number, variation)),
 	`amount` int unsigned NOT NULL,
 	`price($)` int unsigned NOT NULL,
 	`discount(%)` tinyint unsigned NOT NULL DEFAULT 0,
@@ -68,13 +68,18 @@ CREATE TABLE `items_description` (
 CREATE TABLE `item_image_URLs` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`root_catalog` varchar(64) NOT NULL DEFAULT 'images',
-	`vendor_code` varchar(64) NOT NULL,
+	`category_code` bigint unsigned NOT NULL,
+	`item_serial_number` bigint unsigned NOT NULL,
+	`item_variation` varchar(32) NOT NULL DEFAULT 'base',
+	`vendor_code` varchar(64) AS (concat_ws("--", category_code, item_serial_number, item_variation)),
 	`image_number` tinyint NOT NULL,
-	`url` varchar(256) AS (concat_ws("/", root_catalog, vendor_code, image_number)),
-	`is_thumbnail` boolean NOT NULL DEFAULT false,
+	`image_type` varchar(8) NOT NULL DEFAULT 'webp',
+	`url` varchar(256) AS (concat("/", root_catalog, "/", category_code, "/", item_serial_number, "/", item_variation, "/", image_number, ".", image_type)),
+	`is_thumbnail` boolean,
 	`notes` varchar(128),
 	CONSTRAINT `item_image_URLs_id` PRIMARY KEY(`id`),
-	CONSTRAINT `compound_idx` UNIQUE(`url`,`is_thumbnail`)
+	CONSTRAINT `compound_idx` UNIQUE(`url`,`is_thumbnail`),
+	CONSTRAINT `thumbnail_idx` UNIQUE(`vendor_code`,`is_thumbnail`)
 );
 --> statement-breakpoint
 CREATE TABLE `items_name` (

@@ -11,7 +11,6 @@ import {
   bigint,
   uniqueIndex,
   text,
-  index,
   boolean,
   customType,
   smallint,
@@ -74,7 +73,7 @@ export const items = mysqlTable(
     vendor_code: generatedConcatColumns("vendor_code", {
       charLength: 64,
       columns: ["category_code", "serial_number", "variation"],
-      delimiter: "/",
+      delimiter: "--",
     }),
     amount: int("amount", { unsigned: true }).notNull(),
     price: int("price($)", { unsigned: true }).notNull(),
@@ -111,10 +110,7 @@ export const itemsCategoriesRelations = relations(items, ({ one }) => ({
 
 export const itemsName = mysqlTable("items_name", {
   id: serial("id").primaryKey(),
-  vendor_code: varchar("vendor_code", { length: 64 })
-    .notNull()
-    .notNull()
-    .unique(),
+  vendor_code: varchar("vendor_code", { length: 64 }).notNull().unique(),
   en: varchar("en", { length: 128 }).notNull(),
   ro: varchar("ro", { length: 128 }).notNull(),
   ru: varchar("ru", { length: 128 }).notNull(),
@@ -133,10 +129,7 @@ export const itemsNameRelations = relations(itemsName, ({ one }) => ({
 
 export const itemsDescription = mysqlTable("items_description", {
   id: serial("id").primaryKey(),
-  vendor_code: varchar("vendor_code", { length: 64 })
-    .notNull()
-    .notNull()
-    .unique(),
+  vendor_code: varchar("vendor_code", { length: 64 }).notNull().unique(),
   en: text("en").notNull(),
   ro: text("ro").notNull(),
   ru: text("ru").notNull(),
@@ -156,6 +149,24 @@ export const itemsDescriptionRelations = relations(
 
 //////////
 
+export const generatedImageURL = customType<{
+  data: string
+  driverData: string
+  config: {
+    root_catalog: string
+    category: string
+    serialNumber: string
+    variation: string
+    imageNumber: string
+    imageType: string
+    charLength: number
+  }
+}>({
+  dataType(config) {
+    return `varchar(${config?.charLength}) AS (concat("/", ${config?.root_catalog}, "/", ${config?.category}, "/", ${config?.serialNumber}, "/", ${config?.variation}, "/", ${config?.imageNumber}, ".", ${config?.imageType}))`
+  },
+})
+
 export const itemsImageURL = mysqlTable(
   "item_image_URLs",
   {
@@ -163,20 +174,44 @@ export const itemsImageURL = mysqlTable(
     root_catalog: varchar("root_catalog", { length: 64 })
       .default("images")
       .notNull(),
-    vendor_code: varchar("vendor_code", { length: 64 }).notNull(),
-    image_number: tinyint("image_number").notNull(),
-    url: generatedConcatColumns("url", {
-      charLength: 256,
-      columns: ["root_catalog", "vendor_code", "image_number"],
-      delimiter: "/",
+    category_code: bigint("category_code", {
+      mode: "number",
+      unsigned: true,
+    }).notNull(),
+    item_serial_number: bigint("item_serial_number", {
+      mode: "number",
+      unsigned: true,
+    }).notNull(),
+    item_variation: varchar("item_variation", { length: 32 })
+      .notNull()
+      .default("base"),
+    vendor_code: generatedConcatColumns("vendor_code", {
+      charLength: 64,
+      columns: ["category_code", "item_serial_number", "item_variation"],
+      delimiter: "--",
     }),
-    is_thumbnail: boolean("is_thumbnail").default(false).notNull(),
+    image_number: tinyint("image_number").notNull(),
+    image_type: varchar("image_type", { length: 8 }).default("webp").notNull(),
+    url: generatedImageURL("url", {
+      charLength: 256,
+      root_catalog: "root_catalog",
+      category: "category_code",
+      serialNumber: "item_serial_number",
+      variation: "item_variation",
+      imageNumber: "image_number",
+      imageType: "image_type",
+    }),
+    is_thumbnail: boolean("is_thumbnail"),
     notes: varchar("notes", { length: 128 }),
   },
   (table) => {
     return {
       compound_idx: uniqueIndex("compound_idx").on(
         table.url,
+        table.is_thumbnail
+      ),
+      thumbnail_idx: uniqueIndex("thumbnail_idx").on(
+        table.vendor_code,
         table.is_thumbnail
       ),
     }

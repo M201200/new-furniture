@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "1e2a3992-5dd2-4d25-8b0b-fba0df9bc316",
+  "id": "63d6feac-1dc5-4fc2-8968-affdcba99bc3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -304,7 +304,7 @@
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64) AS (concat_ws(\"/\", category_code, serial_number, variation))",
+          "type": "varchar(64) AS (concat_ws(\"--\", category_code, serial_number, variation))",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -453,11 +453,33 @@
           "autoincrement": false,
           "default": "'images'"
         },
-        "vendor_code": {
-          "name": "vendor_code",
-          "type": "varchar(64)",
+        "category_code": {
+          "name": "category_code",
+          "type": "bigint unsigned",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "item_serial_number": {
+          "name": "item_serial_number",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "item_variation": {
+          "name": "item_variation",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'base'"
+        },
+        "vendor_code": {
+          "name": "vendor_code",
+          "type": "varchar(64) AS (concat_ws(\"--\", category_code, item_serial_number, item_variation))",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "image_number": {
@@ -467,9 +489,17 @@
           "notNull": true,
           "autoincrement": false
         },
+        "image_type": {
+          "name": "image_type",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'webp'"
+        },
         "url": {
           "name": "url",
-          "type": "varchar(256) AS (concat_ws(\"/\", root_catalog, vendor_code, image_number))",
+          "type": "varchar(256) AS (concat(\"/\", root_catalog, \"/\", category_code, \"/\", item_serial_number, \"/\", item_variation, \"/\", image_number, \".\", image_type))",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -478,9 +508,8 @@
           "name": "is_thumbnail",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
+          "notNull": false,
+          "autoincrement": false
         },
         "notes": {
           "name": "notes",
@@ -495,6 +524,14 @@
           "name": "compound_idx",
           "columns": [
             "url",
+            "is_thumbnail"
+          ],
+          "isUnique": true
+        },
+        "thumbnail_idx": {
+          "name": "thumbnail_idx",
+          "columns": [
+            "vendor_code",
             "is_thumbnail"
           ],
           "isUnique": true

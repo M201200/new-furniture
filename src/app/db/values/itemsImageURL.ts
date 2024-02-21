@@ -18,9 +18,11 @@ function getItemsImageURLArr() {
     for (let i = 0; i < variations.length; i++) {
       for (let j = 0; j < variations[i].images; j++) {
         itemsImageURLArr.push({
-          vendor_code: `${category}/${serial}/${i === 0 ? "base" : "v1-" + i}`,
+          category_code: category,
+          item_serial_number: serial,
+          item_variation: i === 0 ? "base" : "v1-" + i,
           image_number: j + 1,
-          is_thumbnail: j + 1 === variations[i].thumbnail ? true : false,
+          is_thumbnail: j + 1 === variations[i].thumbnail ? true : null,
         })
       }
     }
