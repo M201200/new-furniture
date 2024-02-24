@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "63d6feac-1dc5-4fc2-8968-affdcba99bc3",
+  "id": "a92ab5d5-86cb-40bd-848c-5392c31e5ed5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -156,6 +156,22 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true
         }
       },
       "indexes": {},
@@ -194,61 +210,77 @@
           "notNull": true,
           "autoincrement": false
         },
-        "1-color": {
-          "name": "1-color",
+        "color_1": {
+          "name": "color_1",
           "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "2-material": {
-          "name": "2-material",
+        "material_2": {
+          "name": "material_2",
           "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "3-width(sm)": {
-          "name": "3-width(sm)",
+        "width_3(sm)": {
+          "name": "width_3(sm)",
           "type": "smallint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "4-height(sm)": {
-          "name": "4-height(sm)",
+        "height_4(sm)": {
+          "name": "height_4(sm)",
           "type": "smallint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "5-depth(sm)": {
-          "name": "5-depth(sm)",
+        "depth_5(sm)": {
+          "name": "depth_5(sm)",
           "type": "smallint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "6-weight(kg)": {
-          "name": "6-weight(kg)",
+        "weight(kg)": {
+          "name": "weight(kg)",
           "type": "smallint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "7-folding": {
-          "name": "7-folding",
+        "folding": {
+          "name": "folding",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "8-warranty(month)": {
-          "name": "8-warranty(month)",
+        "warranty(month)": {
+          "name": "warranty(month)",
           "type": "tinyint unsigned",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true
         }
       },
       "indexes": {},
@@ -299,12 +331,11 @@
           "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'base'"
+          "autoincrement": false
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64) AS (concat_ws(\"--\", category_code, serial_number, variation))",
+          "type": "varchar(64) AS (concat_ws(\"-\", category_code, serial_number, variation))",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -414,6 +445,22 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true
         }
       },
       "indexes": {},
@@ -477,7 +524,7 @@
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64) AS (concat_ws(\"--\", category_code, item_serial_number, item_variation))",
+          "type": "varchar(64) AS (concat_ws(\"-\", category_code, item_serial_number, item_variation))",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -517,6 +564,22 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true
         }
       },
       "indexes": {
@@ -585,6 +648,22 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true
         }
       },
       "indexes": {},

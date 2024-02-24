@@ -1,5 +1,5 @@
 import type { AdapterAccount } from "@auth/core/adapters"
-import { relations, sql } from "drizzle-orm"
+import { relations } from "drizzle-orm"
 import {
   mysqlTable,
   varchar,
@@ -27,6 +27,8 @@ export const categories = mysqlTable("categories", {
   ro: varchar("ro", { length: 64 }).notNull(),
   ru: varchar("ru", { length: 64 }).notNull(),
   layer: tinyint("layer", { unsigned: true }).notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").onUpdateNow(),
 })
 
 export type Category = typeof categories.$inferInsert
@@ -65,15 +67,14 @@ export const items = mysqlTable(
     }).notNull(),
     //
     // This is variation of base item. Reference to item characteristics table.
-    // Default configuration marked as "base", variations marked as:
-    // "v[column number in item characteristics table]-[variation number]_..."
-    // Example: "v1-2_2-1_4-3"
-    variation: varchar("variation", { length: 32 }).notNull().default("base"),
+    // Default configuration for furniture is marked as "c0m0w0h0d0", where: c - color, m - material, w - width, h - height, d - depth
+    // Example: "c1m0w2h0d1" - this exact order must be preserved!
+    variation: varchar("variation", { length: 32 }).notNull(),
     //
     vendor_code: generatedConcatColumns("vendor_code", {
       charLength: 64,
       columns: ["category_code", "serial_number", "variation"],
-      delimiter: "--",
+      delimiter: "-",
     }),
     amount: int("amount", { unsigned: true }).notNull(),
     price: int("price($)", { unsigned: true }).notNull(),
@@ -114,6 +115,8 @@ export const itemsName = mysqlTable("items_name", {
   en: varchar("en", { length: 128 }).notNull(),
   ro: varchar("ro", { length: 128 }).notNull(),
   ru: varchar("ru", { length: 128 }).notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").onUpdateNow(),
 })
 
 export type ItemsName = typeof itemsName.$inferInsert
@@ -133,6 +136,8 @@ export const itemsDescription = mysqlTable("items_description", {
   en: text("en").notNull(),
   ro: text("ro").notNull(),
   ru: text("ru").notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").onUpdateNow(),
 })
 
 export type ItemsDescription = typeof itemsDescription.$inferInsert
@@ -188,7 +193,7 @@ export const itemsImageURL = mysqlTable(
     vendor_code: generatedConcatColumns("vendor_code", {
       charLength: 64,
       columns: ["category_code", "item_serial_number", "item_variation"],
-      delimiter: "--",
+      delimiter: "-",
     }),
     image_number: tinyint("image_number").notNull(),
     image_type: varchar("image_type", { length: 8 }).default("webp").notNull(),
@@ -203,6 +208,8 @@ export const itemsImageURL = mysqlTable(
     }),
     is_thumbnail: boolean("is_thumbnail"),
     notes: varchar("notes", { length: 128 }),
+    created_at: timestamp("created_at").defaultNow().notNull(),
+    updated_at: timestamp("updated_at").onUpdateNow(),
   },
   (table) => {
     return {
@@ -238,14 +245,16 @@ export const characteristicsFurniture = mysqlTable(
   {
     id: serial("id").primaryKey(),
     vendor_code: varchar("vendor_code", { length: 64 }).notNull().unique(),
-    color: varchar("1-color", { length: 32 }).notNull(),
-    material: varchar("2-material", { length: 32 }).notNull(),
-    width: smallint("3-width(sm)", { unsigned: true }).notNull(),
-    height: smallint("4-height(sm)", { unsigned: true }).notNull(),
-    depth: smallint("5-depth(sm)", { unsigned: true }).notNull(),
-    weight: smallint("6-weight(kg)", { unsigned: true }).notNull(),
-    folding: boolean("7-folding").notNull(),
-    warranty: tinyint("8-warranty(month)", { unsigned: true }).notNull(),
+    color: varchar("color_1", { length: 32 }).notNull(),
+    material: varchar("material_2", { length: 32 }).notNull(),
+    width: smallint("width_3(sm)", { unsigned: true }).notNull(),
+    height: smallint("height_4(sm)", { unsigned: true }).notNull(),
+    depth: smallint("depth_5(sm)", { unsigned: true }).notNull(),
+    weight: smallint("weight(kg)", { unsigned: true }).notNull(),
+    folding: boolean("folding").notNull(),
+    warranty: tinyint("warranty(month)", { unsigned: true }).notNull(),
+    created_at: timestamp("created_at").defaultNow().notNull(),
+    updated_at: timestamp("updated_at").onUpdateNow(),
   }
 )
 

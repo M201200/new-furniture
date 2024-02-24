@@ -20,6 +20,8 @@ CREATE TABLE `categories` (
 	`ro` varchar(64) NOT NULL,
 	`ru` varchar(64) NOT NULL,
 	`layer` tinyint unsigned NOT NULL,
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `categories_id` PRIMARY KEY(`id`),
 	CONSTRAINT `categories_code_unique` UNIQUE(`code`)
 );
@@ -27,14 +29,16 @@ CREATE TABLE `categories` (
 CREATE TABLE `characteristics_furniture` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`vendor_code` varchar(64) NOT NULL,
-	`1-color` varchar(32) NOT NULL,
-	`2-material` varchar(32) NOT NULL,
-	`3-width(sm)` smallint unsigned NOT NULL,
-	`4-height(sm)` smallint unsigned NOT NULL,
-	`5-depth(sm)` smallint unsigned NOT NULL,
-	`6-weight(kg)` smallint unsigned NOT NULL,
-	`7-folding` boolean NOT NULL,
-	`8-warranty(month)` tinyint unsigned NOT NULL,
+	`color_1` varchar(32) NOT NULL,
+	`material_2` varchar(32) NOT NULL,
+	`width_3(sm)` smallint unsigned NOT NULL,
+	`height_4(sm)` smallint unsigned NOT NULL,
+	`depth_5(sm)` smallint unsigned NOT NULL,
+	`weight(kg)` smallint unsigned NOT NULL,
+	`folding` boolean NOT NULL,
+	`warranty(month)` tinyint unsigned NOT NULL,
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `characteristics_furniture_id` PRIMARY KEY(`id`),
 	CONSTRAINT `characteristics_furniture_vendor_code_unique` UNIQUE(`vendor_code`)
 );
@@ -43,8 +47,8 @@ CREATE TABLE `items` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`category_code` bigint unsigned NOT NULL,
 	`serial_number` bigint unsigned NOT NULL,
-	`variation` varchar(32) NOT NULL DEFAULT 'base',
-	`vendor_code` varchar(64) AS (concat_ws("--", category_code, serial_number, variation)),
+	`variation` varchar(32) NOT NULL,
+	`vendor_code` varchar(64) AS (concat_ws("-", category_code, serial_number, variation)),
 	`amount` int unsigned NOT NULL,
 	`price($)` int unsigned NOT NULL,
 	`discount(%)` tinyint unsigned NOT NULL DEFAULT 0,
@@ -61,6 +65,8 @@ CREATE TABLE `items_description` (
 	`en` text NOT NULL,
 	`ro` text NOT NULL,
 	`ru` text NOT NULL,
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `items_description_id` PRIMARY KEY(`id`),
 	CONSTRAINT `items_description_vendor_code_unique` UNIQUE(`vendor_code`)
 );
@@ -71,12 +77,14 @@ CREATE TABLE `item_image_URLs` (
 	`category_code` bigint unsigned NOT NULL,
 	`item_serial_number` bigint unsigned NOT NULL,
 	`item_variation` varchar(32) NOT NULL DEFAULT 'base',
-	`vendor_code` varchar(64) AS (concat_ws("--", category_code, item_serial_number, item_variation)),
+	`vendor_code` varchar(64) AS (concat_ws("-", category_code, item_serial_number, item_variation)),
 	`image_number` tinyint NOT NULL,
 	`image_type` varchar(8) NOT NULL DEFAULT 'webp',
 	`url` varchar(256) AS (concat("/", root_catalog, "/", category_code, "/", item_serial_number, "/", item_variation, "/", image_number, ".", image_type)),
 	`is_thumbnail` boolean,
 	`notes` varchar(128),
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `item_image_URLs_id` PRIMARY KEY(`id`),
 	CONSTRAINT `compound_idx` UNIQUE(`url`,`is_thumbnail`),
 	CONSTRAINT `thumbnail_idx` UNIQUE(`vendor_code`,`is_thumbnail`)
@@ -88,6 +96,8 @@ CREATE TABLE `items_name` (
 	`en` varchar(128) NOT NULL,
 	`ro` varchar(128) NOT NULL,
 	`ru` varchar(128) NOT NULL,
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `items_name_id` PRIMARY KEY(`id`),
 	CONSTRAINT `items_name_vendor_code_unique` UNIQUE(`vendor_code`)
 );

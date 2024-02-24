@@ -43,7 +43,7 @@ export default async function Items({
     <section>
       {allItems.map((item) => (
         <div key={item.vendorCode}>
-          <Link href={`/${params.locale}/item/${item.vendorCode}`}>
+          <Link href={`/${params.locale}/furniture/${item.vendorCode}`}>
             <Image
               src={item.thumbnailURL!}
               width={300}
@@ -51,7 +51,7 @@ export default async function Items({
               alt="thumbnail"
             />
           </Link>
-          <Link href={`/${params.locale}/item/${item.vendorCode}`}>
+          <Link href={`/${params.locale}/furniture/${item.vendorCode}`}>
             {item.name}
           </Link>
           <span> |{item.price * ((100 - item.discount) / 100)}$</span>

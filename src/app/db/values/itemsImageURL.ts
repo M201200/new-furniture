@@ -20,7 +20,7 @@ function getItemsImageURLArr() {
         itemsImageURLArr.push({
           category_code: category,
           item_serial_number: serial,
-          item_variation: i === 0 ? "base" : "v1-" + i,
+          item_variation: "c" + i + "m0w0h0d0",
           image_number: j + 1,
           is_thumbnail: j + 1 === variations[i].thumbnail ? true : null,
         })
