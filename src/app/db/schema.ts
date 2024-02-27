@@ -13,7 +13,9 @@ import {
   text,
   boolean,
   customType,
-  smallint,
+  double,
+  float,
+  index,
 } from "drizzle-orm/mysql-core"
 
 // Categories
@@ -48,7 +50,20 @@ export const generatedConcatColumns = customType<{
   dataType(config) {
     return `varchar(${config?.charLength}) AS (concat_ws("${
       config?.delimiter
-    }", ${config?.columns.join(", ")}))`
+    }", ${config?.columns.join(", ")})) STORED`
+  },
+})
+
+export const generatedFinalPrice = customType<{
+  data: string
+  driverData: string
+  config: {
+    price: string
+    discount: string
+  }
+}>({
+  dataType(config) {
+    return `DOUBLE(10,2) AS (\`${config?.price}\`*((100 - \`${config?.discount}\`) / 100)) STORED`
   },
 })
 
@@ -77,8 +92,12 @@ export const items = mysqlTable(
       delimiter: "-",
     }),
     amount: int("amount", { unsigned: true }).notNull(),
-    price: int("price($)", { unsigned: true }).notNull(),
+    price: double("price($)", { precision: 10, scale: 2 }).notNull(),
     discount: tinyint("discount(%)", { unsigned: true }).notNull().default(0),
+    final_price: generatedFinalPrice("final_price($)", {
+      price: "price($)",
+      discount: "discount(%)",
+    }),
     created_at: timestamp("created_at").defaultNow().notNull(),
     updated_at: timestamp("updated_at").onUpdateNow(),
   },
@@ -90,6 +109,7 @@ export const items = mysqlTable(
         table.variation
       ),
       vendor_code_idx: uniqueIndex("vendor_code_idx").on(table.vendor_code),
+      final_price_idx: index("final_price_idx").on(table.final_price),
     }
   }
 )
@@ -240,6 +260,37 @@ export const itemsImageURLsRelations = relations(itemsImageURL, ({ one }) => ({
 
 //////////
 
+export const colors = mysqlTable("colors", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 32 }).notNull().unique(),
+  en: varchar("en", { length: 64 }).notNull(),
+  ro: varchar("ro", { length: 64 }).notNull(),
+  ru: varchar("ru", { length: 64 }).notNull(),
+  // format as #000000 or #111111,#222222,... Max hex-codes is 6
+  hex: varchar("hex", { length: 47 }).notNull(),
+  //
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").onUpdateNow(),
+})
+
+export type Colors = typeof colors.$inferInsert
+
+//////////
+
+export const materials = mysqlTable("materials", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 32 }).notNull().unique(),
+  en: varchar("en", { length: 64 }).notNull(),
+  ro: varchar("ro", { length: 64 }).notNull(),
+  ru: varchar("ru", { length: 64 }).notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").onUpdateNow(),
+})
+
+export type Materials = typeof materials.$inferInsert
+
+//////////
+
 export const characteristicsFurniture = mysqlTable(
   "characteristics_furniture",
   {
@@ -247,14 +298,21 @@ export const characteristicsFurniture = mysqlTable(
     vendor_code: varchar("vendor_code", { length: 64 }).notNull().unique(),
     color: varchar("color_1", { length: 32 }).notNull(),
     material: varchar("material_2", { length: 32 }).notNull(),
-    width: smallint("width_3(sm)", { unsigned: true }).notNull(),
-    height: smallint("height_4(sm)", { unsigned: true }).notNull(),
-    depth: smallint("depth_5(sm)", { unsigned: true }).notNull(),
-    weight: smallint("weight(kg)", { unsigned: true }).notNull(),
+    width: float("width_3(sm)").notNull(),
+    height: float("height_4(sm)").notNull(),
+    depth: float("depth_5(sm)").notNull(),
+    weight: float("weight(kg)").notNull(),
     folding: boolean("folding").notNull(),
     warranty: tinyint("warranty(month)", { unsigned: true }).notNull(),
     created_at: timestamp("created_at").defaultNow().notNull(),
     updated_at: timestamp("updated_at").onUpdateNow(),
+  },
+  (table) => {
+    return {
+      width_idx: index("width_idx").on(table.width),
+      height_idx: index("height_idx").on(table.height),
+      depth_idx: index("depth_idx").on(table.depth),
+    }
   }
 )
 
@@ -271,6 +329,39 @@ export const itemsCharacteristicsFurnitureRelations = relations(
   })
 )
 
+export const colorsToCharacteristicsFurnitureRelations = relations(
+  colors,
+  ({ many }) => ({
+    itemImageURLs: many(characteristicsFurniture),
+  })
+)
+
+export const colorsCharacteristicsFurnitureRelations = relations(
+  characteristicsFurniture,
+  ({ one }) => ({
+    items: one(colors, {
+      fields: [characteristicsFurniture.color],
+      references: [colors.name],
+    }),
+  })
+)
+
+export const materialsToCharacteristicsFurnitureRelations = relations(
+  materials,
+  ({ many }) => ({
+    itemImageURLs: many(characteristicsFurniture),
+  })
+)
+
+export const materialsCharacteristicsFurnitureRelations = relations(
+  characteristicsFurniture,
+  ({ one }) => ({
+    items: one(materials, {
+      fields: [characteristicsFurniture.material],
+      references: [materials.name],
+    }),
+  })
+)
 //////////
 // NextAuth
 

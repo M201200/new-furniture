@@ -179,7 +179,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
   },
   {
     vendor_code: "10101-5-c0m0w0h0d0",
-    color: "dark_gray",
+    color: "dark-gray",
     material: "micro_velvet",
     width: 210,
     height: 88,
@@ -190,7 +190,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
   },
   {
     vendor_code: "10101-5-c0m0w1h0d0",
-    color: "dark_gray",
+    color: "dark-gray",
     material: "micro_velvet",
     width: 150,
     height: 88,
@@ -201,7 +201,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
   },
   {
     vendor_code: "10101-5-c0m0w2h0d0",
-    color: "dark_gray",
+    color: "dark-gray",
     material: "micro_velvet",
     width: 170,
     height: 88,
@@ -212,7 +212,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
   },
   {
     vendor_code: "10101-5-c0m0w3h0d0",
-    color: "dark_gray",
+    color: "dark-gray",
     material: "micro_velvet",
     width: 185,
     height: 88,
@@ -367,7 +367,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
   {
     vendor_code: "10101-8-c0m0w0h0d0",
     color: "blue",
-    material: "Micro-flock",
+    material: "micro-flock",
     width: 210,
     height: 92,
     depth: 92,
@@ -378,7 +378,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
   {
     vendor_code: "10101-8-c1m0w0h0d0",
     color: "gray",
-    material: "Micro-flock",
+    material: "micro-flock",
     width: 210,
     height: 92,
     depth: 92,
@@ -389,7 +389,7 @@ export const characteristicsFurnitureArr: CharacteristicsFurniture[] = [
   {
     vendor_code: "10101-8-c2m0w0h0d0",
     color: "brown",
-    material: "Micro-flock",
+    material: "micro-flock",
     width: 210,
     height: 92,
     depth: 92,

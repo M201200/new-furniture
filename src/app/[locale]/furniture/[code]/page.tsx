@@ -26,6 +26,7 @@ export default async function Item({
       amount: items.amount,
       price: items.price,
       discount: items.discount,
+      finalPrice: items.final_price,
       color: characteristicsFurniture.color,
       material: characteristicsFurniture.material,
       width: characteristicsFurniture.width,
@@ -100,7 +101,6 @@ export default async function Item({
 
   const itemVariants = await db
     .select({
-      vendorCode: characteristicsFurniture.vendor_code,
       color: characteristicsFurniture.color,
       material: characteristicsFurniture.material,
       width: characteristicsFurniture.width,
@@ -158,7 +158,7 @@ export default async function Item({
   return (
     <section>
       <h1>{itemNameDescription.name}</h1>
-      <p>Price: {item.price * ((100 - item.discount) / 100)}$</p>
+      <p>Price: {item.finalPrice}$</p>
       {itemVariants.length > 1 ? (
         <div>
           <ul>

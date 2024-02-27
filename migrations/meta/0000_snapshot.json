@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a92ab5d5-86cb-40bd-848c-5392c31e5ed5",
+  "id": "cfb9749e-ae46-4b94-b28b-4fb46255176b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -226,28 +226,28 @@
         },
         "width_3(sm)": {
           "name": "width_3(sm)",
-          "type": "smallint unsigned",
+          "type": "float",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "height_4(sm)": {
           "name": "height_4(sm)",
-          "type": "smallint unsigned",
+          "type": "float",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "depth_5(sm)": {
           "name": "depth_5(sm)",
-          "type": "smallint unsigned",
+          "type": "float",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "weight(kg)": {
           "name": "weight(kg)",
-          "type": "smallint unsigned",
+          "type": "float",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -283,7 +283,29 @@
           "onUpdate": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "width_idx": {
+          "name": "width_idx",
+          "columns": [
+            "width_3(sm)"
+          ],
+          "isUnique": false
+        },
+        "height_idx": {
+          "name": "height_idx",
+          "columns": [
+            "height_4(sm)"
+          ],
+          "isUnique": false
+        },
+        "depth_idx": {
+          "name": "depth_idx",
+          "columns": [
+            "depth_5(sm)"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "characteristics_furniture_id": {
@@ -298,6 +320,87 @@
           "name": "characteristics_furniture_vendor_code_unique",
           "columns": [
             "vendor_code"
+          ]
+        }
+      }
+    },
+    "colors": {
+      "name": "colors",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "en": {
+          "name": "en",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ro": {
+          "name": "ro",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ru": {
+          "name": "ru",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hex": {
+          "name": "hex",
+          "type": "varchar(47)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "colors_id": {
+          "name": "colors_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "colors_name_unique": {
+          "name": "colors_name_unique",
+          "columns": [
+            "name"
           ]
         }
       }
@@ -335,7 +438,7 @@
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64) AS (concat_ws(\"-\", category_code, serial_number, variation))",
+          "type": "varchar(64) AS (concat_ws(\"-\", category_code, serial_number, variation)) STORED",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -349,7 +452,7 @@
         },
         "price($)": {
           "name": "price($)",
-          "type": "int unsigned",
+          "type": "double(10,2)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -361,6 +464,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": 0
+        },
+        "final_price($)": {
+          "name": "final_price($)",
+          "type": "DOUBLE(10,2) AS (`price($)`*((100 - `discount(%)`) / 100)) STORED",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "created_at": {
           "name": "created_at",
@@ -395,6 +505,13 @@
             "vendor_code"
           ],
           "isUnique": true
+        },
+        "final_price_idx": {
+          "name": "final_price_idx",
+          "columns": [
+            "final_price($)"
+          ],
+          "isUnique": false
         }
       },
       "foreignKeys": {},
@@ -524,7 +641,7 @@
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64) AS (concat_ws(\"-\", category_code, item_serial_number, item_variation))",
+          "type": "varchar(64) AS (concat_ws(\"-\", category_code, item_serial_number, item_variation)) STORED",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -681,6 +798,80 @@
           "name": "items_name_vendor_code_unique",
           "columns": [
             "vendor_code"
+          ]
+        }
+      }
+    },
+    "materials": {
+      "name": "materials",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "en": {
+          "name": "en",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ro": {
+          "name": "ro",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ru": {
+          "name": "ru",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "onUpdate": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "materials_id": {
+          "name": "materials_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "materials_name_unique": {
+          "name": "materials_name_unique",
+          "columns": [
+            "name"
           ]
         }
       }
