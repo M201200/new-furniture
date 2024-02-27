@@ -1,15 +1,4 @@
-import {
-  and,
-  between,
-  count,
-  desc,
-  eq,
-  isNull,
-  like,
-  max,
-  min,
-  or,
-} from "drizzle-orm"
+import { and, between, count, desc, eq, isNull, like, or } from "drizzle-orm"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -48,6 +37,8 @@ type Params = {
 }
 
 export default async function Items({ searchParams, params }: Params) {
+  const highestValue = 450
+  const highestPrice = 3500
   const searchParamsProcessed = searchParams
     ? {
         page: processString(searchParams?.page) || 1,
@@ -103,21 +94,27 @@ export default async function Items({ searchParams, params }: Params) {
 
     if (minW || maxW) {
       conditions.push(
-        between(characteristicsFurniture.width, minW || 0, maxW || 1000)
+        between(characteristicsFurniture.width, minW || 0, maxW || highestValue)
       )
     }
     if (minH || maxH) {
       conditions.push(
-        between(characteristicsFurniture.height, minH || 0, maxH || 1000)
+        between(
+          characteristicsFurniture.height,
+          minH || 0,
+          maxH || highestValue
+        )
       )
     }
     if (minD || maxD) {
       conditions.push(
-        between(characteristicsFurniture.depth, minD || 0, maxD || 1000)
+        between(characteristicsFurniture.depth, minD || 0, maxD || highestValue)
       )
     }
     if (minP || maxP) {
-      conditions.push(between(items.price, minP || 0, maxP || 100000))
+      conditions.push(
+        between(items.final_price, minP || 0, maxP || highestPrice)
+      )
     }
     if (clr.length) {
       const mappedColors = clr.map((color) =>
@@ -138,14 +135,6 @@ export default async function Items({ searchParams, params }: Params) {
   const valuesQuery = db
     .select({
       totalItems: count(items.id),
-      minWidth: min(characteristicsFurniture.width),
-      maxWidth: max(characteristicsFurniture.width),
-      minHeight: min(characteristicsFurniture.height),
-      maxHeight: max(characteristicsFurniture.height),
-      minDepth: min(characteristicsFurniture.depth),
-      maxDepth: max(characteristicsFurniture.depth),
-      minPrice: min(items.final_price),
-      maxPrice: max(items.final_price),
     })
     .from(items)
     .innerJoin(
@@ -204,15 +193,14 @@ export default async function Items({ searchParams, params }: Params) {
 
   const values = valuesArr[0]
 
-  const minWidth = searchParamsProcessed?.minW || values.minWidth || 0
-  const maxWidth = searchParamsProcessed?.maxW || values.maxWidth || 1000
-  const minHeight = searchParamsProcessed?.minH || values.minHeight || 0
-  const maxHeight = searchParamsProcessed?.maxH || values.maxHeight || 1000
-  const minDepth = searchParamsProcessed?.minD || values.minDepth || 0
-  const maxDepth = searchParamsProcessed?.maxD || values.maxDepth || 1000
-  const minPrice = searchParamsProcessed?.minP || Number(values.minPrice) || 0
-  const maxPrice =
-    searchParamsProcessed?.maxP || Number(values.maxPrice) || 100000
+  const minWidth = searchParamsProcessed?.minW || 0
+  const maxWidth = searchParamsProcessed?.maxW || highestValue
+  const minHeight = searchParamsProcessed?.minH || 0
+  const maxHeight = searchParamsProcessed?.maxH || highestValue
+  const minDepth = searchParamsProcessed?.minD || 0
+  const maxDepth = searchParamsProcessed?.maxD || highestValue
+  const minPrice = searchParamsProcessed?.minP || 0
+  const maxPrice = searchParamsProcessed?.maxP || highestPrice
 
   const allItems = await db
     .select({
@@ -263,26 +251,26 @@ export default async function Items({ searchParams, params }: Params) {
     <section>
       <FilterFurniture
         prices={{
-          lowest: Number(values.minPrice) || 0,
-          highest: Number(values.maxPrice) || 100000,
+          lowest: 0,
+          highest: highestPrice,
           min: minPrice,
           max: maxPrice,
         }}
         widths={{
-          lowest: values.minWidth || 0,
-          highest: values.maxWidth || 1000,
+          lowest: 0,
+          highest: highestValue,
           min: minWidth,
           max: maxWidth,
         }}
         heights={{
-          lowest: values.minHeight || 0,
-          highest: values.maxHeight || 1000,
+          lowest: 0,
+          highest: highestValue,
           min: minHeight,
           max: maxHeight,
         }}
         depths={{
-          lowest: values.minDepth || 0,
-          highest: values.maxDepth || 1000,
+          lowest: 0,
+          highest: highestValue,
           min: minDepth,
           max: maxDepth,
         }}

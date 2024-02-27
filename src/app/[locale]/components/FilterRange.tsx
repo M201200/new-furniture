@@ -1,4 +1,4 @@
-import { KeyboardEvent, SetStateAction } from "react"
+import { FocusEvent, KeyboardEvent, SetStateAction } from "react"
 
 import { useRouter } from "next/navigation"
 import { URLSearchParams } from "url"
@@ -29,35 +29,52 @@ export default function FilterRange({
 }: RangeProps) {
   const router = useRouter()
   function setParams(
-    event: KeyboardEvent<HTMLInputElement>,
+    event: KeyboardEvent<HTMLInputElement> | FocusEvent<HTMLInputElement>,
     value: "min" | "max"
   ) {
-    if (event.key !== "Enter") return
+    if ("key" in event && event.key !== "Enter") return
+
+    const val = value === "min" ? param.min : param.max
+
     searchParams.delete("page")
-    const currentParam = value === "min" ? param.min : param.max
-    const comparisonValue = value === "min" ? range.lowest : range.highest
 
-    if (currentParam <= param.max && currentParam >= comparisonValue) {
-      searchParams.set(`${value}${sign}`, currentParam.toString())
-    } else if (
-      currentParam < comparisonValue ||
-      currentParam === null ||
-      Number.isNaN(currentParam)
-    ) {
-      setter({
-        ...param,
-        [value]: comparisonValue,
-      })
-      searchParams.set(`${value}${sign}`, comparisonValue.toString())
-    } else if (currentParam > param.max) {
-      setter({
-        ...param,
-        [value]: param.max,
-      })
-      searchParams.set(`${value}${sign}`, param.max.toString())
+    if (value === "min") {
+      if (val === Number(searchParams.get(`min${sign}`))) return
+      if (val <= param.max && val >= range.lowest) {
+        searchParams.set(`${value}${sign}`, val.toString())
+      } else if (val < range.lowest || val === null || isNaN(+val)) {
+        setter({
+          ...param,
+          min: range.lowest,
+        })
+        searchParams.set(`min${sign}`, range.lowest.toString())
+      } else if (val > param.max) {
+        setter({
+          ...param,
+          min: param.max,
+        })
+        searchParams.set(`min${sign}`, param.max.toString())
+      }
+      router.push(`${pathname}?${searchParams.toString()}`, { scroll: false })
+    } else {
+      if (val === Number(searchParams.get(`max${sign}`))) return
+      if (val >= param.min && val <= range.highest) {
+        searchParams.set(`max${sign}`, val.toString())
+      } else if (val > range.highest || val === null || isNaN(+val)) {
+        setter({
+          ...param,
+          max: range.highest,
+        })
+        searchParams.set(`max${sign}`, range.lowest.toString())
+      } else if (val < param.min) {
+        setter({
+          ...param,
+          max: param.min,
+        })
+        searchParams.set(`max${sign}`, param.min.toString())
+      }
+      router.push(`${pathname}?${searchParams.toString()}`, { scroll: false })
     }
-
-    router.push(`${pathname}?${searchParams.toString()}`, { scroll: false })
   }
 
   return (
@@ -75,6 +92,7 @@ export default function FilterRange({
             })
           }
           onKeyDown={(e) => setParams(e, "min")}
+          onBlur={(e) => setParams(e, "min")}
           type="text"
           inputMode="numeric"
         />
@@ -89,6 +107,7 @@ export default function FilterRange({
             })
           }
           onKeyDown={(e) => setParams(e, "max")}
+          onBlur={(e) => setParams(e, "max")}
           type="text"
           inputMode="numeric"
         />

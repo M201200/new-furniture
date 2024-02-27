@@ -1,22 +1,23 @@
-import type { AdapterAccount } from "@auth/core/adapters"
 import { relations } from "drizzle-orm"
 import {
-  mysqlTable,
-  varchar,
-  int,
-  timestamp,
-  primaryKey,
-  serial,
-  tinyint,
   bigint,
-  uniqueIndex,
-  text,
   boolean,
   customType,
   double,
   float,
   index,
+  int,
+  mysqlTable,
+  primaryKey,
+  serial,
+  text,
+  timestamp,
+  tinyint,
+  uniqueIndex,
+  varchar,
 } from "drizzle-orm/mysql-core"
+
+import type { AdapterAccount } from "@auth/core/adapters"
 
 // Categories
 
@@ -55,8 +56,8 @@ export const generatedConcatColumns = customType<{
 })
 
 export const generatedFinalPrice = customType<{
-  data: string
-  driverData: string
+  data: number
+  driverData: number
   config: {
     price: string
     discount: string
