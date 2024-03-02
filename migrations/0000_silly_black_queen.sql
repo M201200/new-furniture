@@ -95,13 +95,11 @@ CREATE TABLE `item_image_URLs` (
 	`image_number` tinyint NOT NULL,
 	`image_type` varchar(8) NOT NULL DEFAULT 'webp',
 	`url` varchar(256) AS (concat("/", root_catalog, "/", category_code, "/", item_serial_number, "/", item_variation, "/", image_number, ".", image_type)),
-	`is_thumbnail` boolean,
 	`notes` varchar(128),
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `item_image_URLs_id` PRIMARY KEY(`id`),
-	CONSTRAINT `compound_idx` UNIQUE(`url`,`is_thumbnail`),
-	CONSTRAINT `thumbnail_idx` UNIQUE(`vendor_code`,`is_thumbnail`)
+	CONSTRAINT `compound_idx` UNIQUE(`category_code`,`item_serial_number`,`item_variation`,`image_number`)
 );
 --> statement-breakpoint
 CREATE TABLE `items_name` (

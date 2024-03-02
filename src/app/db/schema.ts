@@ -227,7 +227,6 @@ export const itemsImageURL = mysqlTable(
       imageNumber: "image_number",
       imageType: "image_type",
     }),
-    is_thumbnail: boolean("is_thumbnail"),
     notes: varchar("notes", { length: 128 }),
     created_at: timestamp("created_at").defaultNow().notNull(),
     updated_at: timestamp("updated_at").onUpdateNow(),
@@ -235,12 +234,10 @@ export const itemsImageURL = mysqlTable(
   (table) => {
     return {
       compound_idx: uniqueIndex("compound_idx").on(
-        table.url,
-        table.is_thumbnail
-      ),
-      thumbnail_idx: uniqueIndex("thumbnail_idx").on(
-        table.vendor_code,
-        table.is_thumbnail
+        table.category_code,
+        table.item_serial_number,
+        table.item_variation,
+        table.image_number
       ),
     }
   }

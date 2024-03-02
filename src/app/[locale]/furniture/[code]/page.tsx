@@ -1,3 +1,7 @@
+import { and, asc, desc, eq, like, or } from "drizzle-orm"
+import Image from "next/image"
+import Link from "next/link"
+
 import { db } from "@/app/db"
 import {
   characteristicsFurniture,
@@ -6,11 +10,8 @@ import {
   itemsImageURL,
   itemsName,
 } from "@/app/db/schema"
-import { and, asc, desc, eq, like, not, or } from "drizzle-orm"
-import Image from "next/image"
-import Link from "next/link"
 
-export default async function Item({
+export default async function ItemPage({
   params,
 }: {
   params: { code: string; locale: string }
@@ -82,7 +83,7 @@ export default async function Item({
     .select({ url: itemsImageURL.url })
     .from(itemsImageURL)
     .where(eq(itemsImageURL.vendor_code, imageCodeBase))
-    .orderBy(desc(itemsImageURL.is_thumbnail), asc(itemsImageURL.image_number))
+    .orderBy(asc(itemsImageURL.image_number))
 
   const [itemArr, itemNameDescriptionArr, images] = await Promise.all([
     itemArrQuery,

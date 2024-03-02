@@ -1,6 +1,4 @@
 import { and, between, count, desc, eq, isNull, like, or } from "drizzle-orm"
-import Image from "next/image"
-import Link from "next/link"
 
 import { db } from "@/app/db"
 import {
@@ -11,8 +9,11 @@ import {
   itemsName,
   materials,
 } from "@/app/db/schema"
+import processArray from "@/utils/functions/processArray"
+import processStringToNumber from "@/utils/functions/processStringToNumber"
 
 import FilterFurniture from "../../components/FilterFurniture"
+import ItemComponent from "../../components/ItemComponent"
 import Pagination from "../../components/Pagination"
 
 type Params = {
@@ -32,42 +33,30 @@ type Params = {
   }
   params: {
     code: string
-    locale: string
+    locale: Locale
   }
 }
 
 export default async function Items({ searchParams, params }: Params) {
   const highestValue = 450
   const highestPrice = 3500
+  const maxItemsOnPage = 12
   const searchParamsProcessed = searchParams
     ? {
-        page: processString(searchParams?.page) || 1,
-        minW: processString(searchParams?.minW),
-        maxW: processString(searchParams?.maxW),
-        minH: processString(searchParams?.minH),
-        maxH: processString(searchParams?.maxH),
-        minD: processString(searchParams?.minD),
-        maxD: processString(searchParams?.maxD),
-        minP: processString(searchParams?.minP),
-        maxP: processString(searchParams?.maxP),
+        page: processStringToNumber(searchParams?.page) || 1,
+        minW: processStringToNumber(searchParams?.minW),
+        maxW: processStringToNumber(searchParams?.maxW),
+        minH: processStringToNumber(searchParams?.minH),
+        maxH: processStringToNumber(searchParams?.maxH),
+        minD: processStringToNumber(searchParams?.minD),
+        maxD: processStringToNumber(searchParams?.maxD),
+        minP: processStringToNumber(searchParams?.minP),
+        maxP: processStringToNumber(searchParams?.maxP),
         var: searchParams?.var === "true" ? true : false,
         clr: processArray(searchParams.clr),
         mat: processArray(searchParams.mat),
       }
     : null
-
-  function processString(str: string | null | undefined) {
-    if (!str) return null
-    return !isNaN(+str.replace(/\D/g, "")) ? +str.replace(/\D/g, "") : null
-  }
-
-  function processArray(array: string[] | string | null | undefined) {
-    if (!array) return []
-    else if (Array.isArray(array))
-      return array.map((item) => item.replace(/[^\w-]/g, ""))
-    else if (typeof array === "string") return [array.replace(/[^\w-]/g, "")]
-    else return []
-  }
 
   function setConditions() {
     const conditions = [
@@ -132,7 +121,7 @@ export default async function Items({ searchParams, params }: Params) {
 
     return conditions
   }
-  const valuesQuery = db
+  const itemsCountQuery = db
     .select({
       totalItems: count(items.id),
     })
@@ -185,13 +174,13 @@ export default async function Items({ searchParams, params }: Params) {
     .where(like(characteristicsFurniture.vendor_code, `${params.code}%`))
     .orderBy(desc(materials.name))
 
-  const [valuesArr, colorsArr, materialsArr] = await Promise.all([
-    valuesQuery,
+  const [itemsCountArr, colorsArr, materialsArr] = await Promise.all([
+    itemsCountQuery,
     allColorsQuery,
     allMaterialsQuery,
   ])
 
-  const values = valuesArr[0]
+  const itemsCount = itemsCountArr[0]
 
   const minWidth = searchParamsProcessed?.minW || 0
   const maxWidth = searchParamsProcessed?.maxW || highestValue
@@ -234,18 +223,22 @@ export default async function Items({ searchParams, params }: Params) {
     )
     .where(
       or(
-        and(eq(itemsImageURL.is_thumbnail, true), ...setConditions()),
+        and(eq(itemsImageURL.image_number, 1), ...setConditions()),
         and(isNull(itemsImageURL.vendor_code), ...setConditions())
       )
     )
     .orderBy(items.id)
     .offset(
-      searchParamsProcessed?.page ? (searchParamsProcessed?.page - 1) * 10 : 0
+      searchParamsProcessed?.page
+        ? (searchParamsProcessed?.page - 1) * maxItemsOnPage
+        : 0
     )
-    .limit(10)
+    .limit(12)
 
   const totalPages =
-    values.totalItems > 10 ? Math.ceil(values.totalItems / 10) : 1
+    itemsCount.totalItems > maxItemsOnPage
+      ? Math.ceil(itemsCount.totalItems / maxItemsOnPage)
+      : 1
 
   return (
     <section>
@@ -280,32 +273,25 @@ export default async function Items({ searchParams, params }: Params) {
         selectedMaterials={searchParamsProcessed?.mat || []}
         includeVariants={searchParamsProcessed?.var}
       />
-      {allItems.map((item, idx, arr) => (
-        <div key={item.vendorCode}>
-          <Link href={`/${params.locale}/furniture/${item.vendorCode}`}>
-            <Image
-              src={
-                item.thumbnailURL
-                  ? item.thumbnailURL
-                  : arr.find(
-                      (i) =>
-                        i.vendorCode ===
-                        item.vendorCode?.replace(
-                          /m\d+w\d+h\d+d\d+/gi,
-                          "m0w0h0d0"
-                        )
-                    )?.thumbnailURL!
-              }
-              width={300}
-              height={300}
-              alt="thumbnail"
-            />
-          </Link>
-          <Link href={`/${params.locale}/furniture/${item.vendorCode}`}>
-            {item.name}
-          </Link>
-          <span> |{item.final_price}$</span>
-        </div>
+      {allItems.map((item) => (
+        <ItemComponent
+          key={item.vendorCode}
+          vendorCode={item.vendorCode!}
+          locale={params.locale}
+          imageURL={
+            item.thumbnailURL
+              ? item.thumbnailURL
+              : "/images/" +
+                item.vendorCode
+                  ?.replace(/\-/gi, "/")
+                  .replace(/m\d+w\d+h\d+d\d+/gi, "m0w0h0d0") +
+                "/1.webp"
+          }
+          name={item.name!}
+          price={item.price}
+          discount={item.discount}
+          finalPrice={item.final_price!}
+        />
       ))}
       <Pagination totalPages={totalPages} />
     </section>

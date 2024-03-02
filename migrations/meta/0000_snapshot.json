@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "cfb9749e-ae46-4b94-b28b-4fb46255176b",
+  "id": "a5354d43-0bee-4f7f-a5c5-63c3918f0216",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -668,13 +668,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "is_thumbnail": {
-          "name": "is_thumbnail",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "notes": {
           "name": "notes",
           "type": "varchar(128)",
@@ -703,16 +696,10 @@
         "compound_idx": {
           "name": "compound_idx",
           "columns": [
-            "url",
-            "is_thumbnail"
-          ],
-          "isUnique": true
-        },
-        "thumbnail_idx": {
-          "name": "thumbnail_idx",
-          "columns": [
-            "vendor_code",
-            "is_thumbnail"
+            "category_code",
+            "item_serial_number",
+            "item_variation",
+            "image_number"
           ],
           "isUnique": true
         }
