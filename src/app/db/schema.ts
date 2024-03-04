@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm"
 import {
   bigint,
   boolean,
+  char,
   customType,
   double,
   float,
@@ -10,6 +11,7 @@ import {
   mysqlTable,
   primaryKey,
   serial,
+  smallint,
   text,
   timestamp,
   tinyint,
@@ -330,7 +332,7 @@ export const itemsCharacteristicsFurnitureRelations = relations(
 export const colorsToCharacteristicsFurnitureRelations = relations(
   colors,
   ({ many }) => ({
-    itemImageURLs: many(characteristicsFurniture),
+    characteristicsFurniture: many(characteristicsFurniture),
   })
 )
 
@@ -347,7 +349,7 @@ export const colorsCharacteristicsFurnitureRelations = relations(
 export const materialsToCharacteristicsFurnitureRelations = relations(
   materials,
   ({ many }) => ({
-    itemImageURLs: many(characteristicsFurniture),
+    characteristicsFurniture: many(characteristicsFurniture),
   })
 )
 
@@ -425,3 +427,99 @@ export const verificationTokens = mysqlTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   })
 )
+
+//////////
+// Profile
+
+export const user_profile = mysqlTable("user_profile", {
+  id: serial("id").primaryKey(),
+  user_email: varchar("user_email", { length: 255 }).notNull().unique(),
+  language: varchar("language", { length: 10 }),
+  theme: varchar("theme", { length: 10 }),
+  currency: varchar("currency", { length: 10 }),
+})
+
+export const profileUsersRelations = relations(user_profile, ({ one }) => ({
+  items: one(users, {
+    fields: [user_profile.user_email],
+    references: [users.id],
+  }),
+}))
+
+//////////
+// Favorites
+
+export const favorites = mysqlTable("favorites", {
+  id: serial("id").primaryKey(),
+  user_email: varchar("user_email", { length: 255 }).notNull(),
+  item_vendor_code: varchar("item_vendor_code", { length: 64 })
+    .notNull()
+    .unique(),
+})
+
+export const profileFavoritesUsersRelations = relations(
+  favorites,
+  ({ one }) => ({
+    items: one(users, {
+      fields: [favorites.user_email],
+      references: [users.id],
+    }),
+  })
+)
+
+export const profileFavoritesItemsRelations = relations(
+  favorites,
+  ({ one }) => ({
+    items: one(items, {
+      fields: [favorites.item_vendor_code],
+      references: [items.vendor_code],
+    }),
+  })
+)
+
+export const profileFavoritesToItemsRelations = relations(
+  items,
+  ({ many }) => ({
+    favorites: many(favorites),
+  })
+)
+
+//////////
+// Cart
+
+export const cart = mysqlTable("cart", {
+  id: serial("id").primaryKey(),
+  user_email: varchar("user_email", { length: 255 }).notNull(),
+  item_vendor_code: varchar("item_vendor_code", { length: 64 })
+    .notNull()
+    .unique(),
+  amount: smallint("amount", { unsigned: true }).notNull(),
+})
+
+export const cartUsersRelations = relations(cart, ({ one }) => ({
+  items: one(users, {
+    fields: [cart.user_email],
+    references: [users.id],
+  }),
+}))
+
+export const cartToUsersRelations = relations(users, ({ many }) => ({
+  cart: many(cart),
+}))
+
+export const cartItemsRelations = relations(cart, ({ one }) => ({
+  items: one(items, {
+    fields: [cart.item_vendor_code],
+    references: [items.vendor_code],
+  }),
+}))
+
+//////////
+// Currency Exchange Rates
+
+export const exchange_rates_USD = mysqlTable("exchange_rates_USD", {
+  id: serial("id").primaryKey(),
+  EUR: float("EUR").notNull(),
+  MDL: float("MDL").notNull(),
+  date: char("date", { length: 10 }).notNull(),
+})

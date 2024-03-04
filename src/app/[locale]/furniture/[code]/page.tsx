@@ -44,6 +44,7 @@ export default async function ItemPage({
       eq(characteristicsFurniture.vendor_code, items.vendor_code)
     )
     .orderBy(asc(items.vendor_code))
+    .execute()
 
   const itemNameDescriptionArrQuery = db
     .select({
@@ -76,6 +77,7 @@ export default async function ItemPage({
       eq(itemsDescription.vendor_code, itemsName.vendor_code)
     )
     .orderBy(desc(itemsName.vendor_code))
+    .execute()
 
   const imageCodeBase = params.code.replace(/m\d+w\d+h\d+d\d+/gi, "m0w0h0d0")
 
@@ -84,6 +86,7 @@ export default async function ItemPage({
     .from(itemsImageURL)
     .where(eq(itemsImageURL.vendor_code, imageCodeBase))
     .orderBy(asc(itemsImageURL.image_number))
+    .execute()
 
   const [itemArr, itemNameDescriptionArr, images] = await Promise.all([
     itemArrQuery,
@@ -116,6 +119,7 @@ export default async function ItemPage({
       )
     )
     .orderBy(asc(characteristicsFurniture.vendor_code))
+    .execute()
 
   const colors: Set<string> = new Set()
   const materials: Set<string> = new Set()

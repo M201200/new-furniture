@@ -2,7 +2,7 @@ import { and, count, eq, isNull, like, or } from "drizzle-orm"
 
 import { db } from "@/app/db"
 import { items, itemsImageURL, itemsName } from "@/app/db/schema"
-import processStringToNumber from "@/utils/functions/processStringToNumber"
+import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
 import ItemComponent from "../components/ItemComponent"
 import Pagination from "../components/Pagination"
@@ -18,14 +18,14 @@ type Search = {
 }
 export default async function Search({ params, searchParams }: Search) {
   const maxItemsOnPage = 12
-  const processedPage = processStringToNumber(searchParams?.page) || 1
-  const processedQuery = searchParams?.query
+  const sanitizedPage = sanitizeStringToNumber(searchParams?.page) || 1
+  const sanitizedQuery = searchParams?.query
     ? decodeURI(searchParams?.query)?.replace(
         /[^a-zA-Zа-яА-Я0-9\s\(\)\-]/gi,
         ""
       )
     : ""
-  console.log(processedQuery)
+  console.log(sanitizedQuery)
   const itemName =
     params.locale === "en"
       ? itemsName.en
@@ -38,7 +38,8 @@ export default async function Search({ params, searchParams }: Search) {
   const searchCountArrQuery = db
     .select({ totalItems: count(itemsName.id) })
     .from(itemsName)
-    .where(like(itemName, `%${processedQuery}%`))
+    .where(like(itemName, `%${sanitizedQuery}%`))
+    .execute()
 
   const searchResultsQuery = db
     .select({
@@ -53,11 +54,11 @@ export default async function Search({ params, searchParams }: Search) {
     .where(
       or(
         and(
-          like(itemName, `%${processedQuery}%`),
+          like(itemName, `%${sanitizedQuery}%`),
           eq(itemsImageURL.image_number, 1)
         ),
         and(
-          like(itemName, `%${processedQuery}%`),
+          like(itemName, `%${sanitizedQuery}%`),
           isNull(itemsImageURL.vendor_code)
         )
       )
@@ -68,7 +69,8 @@ export default async function Search({ params, searchParams }: Search) {
       eq(itemsName.vendor_code, itemsImageURL.vendor_code)
     )
     .limit(maxItemsOnPage)
-    .offset(processedPage ? (processedPage - 1) * maxItemsOnPage : 0)
+    .offset(sanitizedPage ? (sanitizedPage - 1) * maxItemsOnPage : 0)
+    .execute()
 
   const [searchCountArr, searchResults] = await Promise.all([
     searchCountArrQuery,

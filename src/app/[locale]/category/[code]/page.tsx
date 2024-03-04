@@ -9,8 +9,8 @@ import {
   itemsName,
   materials,
 } from "@/app/db/schema"
-import processArray from "@/utils/functions/processArray"
-import processStringToNumber from "@/utils/functions/processStringToNumber"
+import sanitizeArray from "@/utils/functions/sanitizeArray"
+import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
 import FilterFurniture from "../../components/FilterFurniture"
 import ItemComponent from "../../components/ItemComponent"
@@ -41,20 +41,20 @@ export default async function Items({ searchParams, params }: Params) {
   const highestValue = 450
   const highestPrice = 3500
   const maxItemsOnPage = 12
-  const searchParamsProcessed = searchParams
+  const searchParamsSanitized = searchParams
     ? {
-        page: processStringToNumber(searchParams?.page) || 1,
-        minW: processStringToNumber(searchParams?.minW),
-        maxW: processStringToNumber(searchParams?.maxW),
-        minH: processStringToNumber(searchParams?.minH),
-        maxH: processStringToNumber(searchParams?.maxH),
-        minD: processStringToNumber(searchParams?.minD),
-        maxD: processStringToNumber(searchParams?.maxD),
-        minP: processStringToNumber(searchParams?.minP),
-        maxP: processStringToNumber(searchParams?.maxP),
+        page: sanitizeStringToNumber(searchParams?.page) || 1,
+        minW: sanitizeStringToNumber(searchParams?.minW),
+        maxW: sanitizeStringToNumber(searchParams?.maxW),
+        minH: sanitizeStringToNumber(searchParams?.minH),
+        maxH: sanitizeStringToNumber(searchParams?.maxH),
+        minD: sanitizeStringToNumber(searchParams?.minD),
+        maxD: sanitizeStringToNumber(searchParams?.maxD),
+        minP: sanitizeStringToNumber(searchParams?.minP),
+        maxP: sanitizeStringToNumber(searchParams?.maxP),
         var: searchParams?.var === "true" ? true : false,
-        clr: processArray(searchParams.clr),
-        mat: processArray(searchParams.mat),
+        clr: sanitizeArray(searchParams.clr),
+        mat: sanitizeArray(searchParams.mat),
       }
     : null
 
@@ -65,7 +65,7 @@ export default async function Items({ searchParams, params }: Params) {
         like(items.category_code, `${params.code}%`)
       ),
     ]
-    if (!searchParamsProcessed) return conditions
+    if (!searchParamsSanitized) return conditions
 
     const {
       minW,
@@ -79,7 +79,7 @@ export default async function Items({ searchParams, params }: Params) {
       clr,
       mat,
       var: varFlag,
-    } = searchParamsProcessed
+    } = searchParamsSanitized
 
     if (minW || maxW) {
       conditions.push(
@@ -153,6 +153,7 @@ export default async function Items({ searchParams, params }: Params) {
     )
     .where(like(characteristicsFurniture.vendor_code, `${params.code}%`))
     .orderBy(desc(colors.name))
+    .execute()
 
   const allMaterialsQuery = db
     .selectDistinct({
@@ -173,6 +174,7 @@ export default async function Items({ searchParams, params }: Params) {
     )
     .where(like(characteristicsFurniture.vendor_code, `${params.code}%`))
     .orderBy(desc(materials.name))
+    .execute()
 
   const [itemsCountArr, colorsArr, materialsArr] = await Promise.all([
     itemsCountQuery,
@@ -182,14 +184,14 @@ export default async function Items({ searchParams, params }: Params) {
 
   const itemsCount = itemsCountArr[0]
 
-  const minWidth = searchParamsProcessed?.minW || 0
-  const maxWidth = searchParamsProcessed?.maxW || highestValue
-  const minHeight = searchParamsProcessed?.minH || 0
-  const maxHeight = searchParamsProcessed?.maxH || highestValue
-  const minDepth = searchParamsProcessed?.minD || 0
-  const maxDepth = searchParamsProcessed?.maxD || highestValue
-  const minPrice = searchParamsProcessed?.minP || 0
-  const maxPrice = searchParamsProcessed?.maxP || highestPrice
+  const minWidth = searchParamsSanitized?.minW || 0
+  const maxWidth = searchParamsSanitized?.maxW || highestValue
+  const minHeight = searchParamsSanitized?.minH || 0
+  const maxHeight = searchParamsSanitized?.maxH || highestValue
+  const minDepth = searchParamsSanitized?.minD || 0
+  const maxDepth = searchParamsSanitized?.maxD || highestValue
+  const minPrice = searchParamsSanitized?.minP || 0
+  const maxPrice = searchParamsSanitized?.maxP || highestPrice
 
   const allItems = await db
     .select({
@@ -229,11 +231,12 @@ export default async function Items({ searchParams, params }: Params) {
     )
     .orderBy(items.id)
     .offset(
-      searchParamsProcessed?.page
-        ? (searchParamsProcessed?.page - 1) * maxItemsOnPage
+      searchParamsSanitized?.page
+        ? (searchParamsSanitized?.page - 1) * maxItemsOnPage
         : 0
     )
     .limit(12)
+    .execute()
 
   const totalPages =
     itemsCount.totalItems > maxItemsOnPage
@@ -269,9 +272,9 @@ export default async function Items({ searchParams, params }: Params) {
         }}
         materialsArr={materialsArr}
         colorsArr={colorsArr}
-        selectedColors={searchParamsProcessed?.clr || []}
-        selectedMaterials={searchParamsProcessed?.mat || []}
-        includeVariants={searchParamsProcessed?.var}
+        selectedColors={searchParamsSanitized?.clr || []}
+        selectedMaterials={searchParamsSanitized?.mat || []}
+        includeVariants={searchParamsSanitized?.var}
       />
       {allItems.map((item) => (
         <ItemComponent

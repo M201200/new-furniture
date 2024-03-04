@@ -13,6 +13,15 @@ CREATE TABLE `account` (
 	CONSTRAINT `account_provider_providerAccountId_pk` PRIMARY KEY(`provider`,`providerAccountId`)
 );
 --> statement-breakpoint
+CREATE TABLE `cart` (
+	`id` serial AUTO_INCREMENT NOT NULL,
+	`user_email` varchar(255) NOT NULL,
+	`item_vendor_code` varchar(64) NOT NULL,
+	`amount` smallint unsigned NOT NULL,
+	CONSTRAINT `cart_id` PRIMARY KEY(`id`),
+	CONSTRAINT `cart_item_vendor_code_unique` UNIQUE(`item_vendor_code`)
+);
+--> statement-breakpoint
 CREATE TABLE `categories` (
 	`id` serial AUTO_INCREMENT NOT NULL,
 	`code` bigint unsigned NOT NULL,
@@ -54,6 +63,22 @@ CREATE TABLE `colors` (
 	`updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `colors_id` PRIMARY KEY(`id`),
 	CONSTRAINT `colors_name_unique` UNIQUE(`name`)
+);
+--> statement-breakpoint
+CREATE TABLE `exchange_rates_USD` (
+	`id` serial AUTO_INCREMENT NOT NULL,
+	`EUR` float NOT NULL,
+	`MDL` float NOT NULL,
+	`date` char(10) NOT NULL,
+	CONSTRAINT `exchange_rates_USD_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `favorites` (
+	`id` serial AUTO_INCREMENT NOT NULL,
+	`user_email` varchar(255) NOT NULL,
+	`item_vendor_code` varchar(64) NOT NULL,
+	CONSTRAINT `favorites_id` PRIMARY KEY(`id`),
+	CONSTRAINT `favorites_item_vendor_code_unique` UNIQUE(`item_vendor_code`)
 );
 --> statement-breakpoint
 CREATE TABLE `items` (
@@ -131,6 +156,16 @@ CREATE TABLE `session` (
 	`userId` varchar(255) NOT NULL,
 	`expires` timestamp NOT NULL,
 	CONSTRAINT `session_sessionToken` PRIMARY KEY(`sessionToken`)
+);
+--> statement-breakpoint
+CREATE TABLE `user_profile` (
+	`id` serial AUTO_INCREMENT NOT NULL,
+	`user_email` varchar(255) NOT NULL,
+	`language` varchar(10),
+	`theme` varchar(10),
+	`currency` varchar(10),
+	CONSTRAINT `user_profile_id` PRIMARY KEY(`id`),
+	CONSTRAINT `user_profile_user_email_unique` UNIQUE(`user_email`)
 );
 --> statement-breakpoint
 CREATE TABLE `user` (

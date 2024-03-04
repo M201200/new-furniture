@@ -7,6 +7,6 @@ export default async function SignIn() {
   return !session ? (
     <Link href={"/api/auth/signin"}>Sign in</Link>
   ) : (
-    <Link href={"#"}>{session.user?.name}</Link>
+    <Link href={"/api/auth/signout"}>Sign out</Link>
   )
 }

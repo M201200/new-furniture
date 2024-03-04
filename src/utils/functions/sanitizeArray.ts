@@ -1,4 +1,4 @@
-export default function processArray(
+export default function sanitizeArray(
   array: string[] | string | null | undefined
 ) {
   if (!array) return []

@@ -1,21 +1,21 @@
 import Link from "next/link"
 
 import { Categories } from "./Categories"
-import LanguageSwitcher from "./LanguageSwitcher"
+import Profile from "./Profile"
 import SearchBar from "./SearchBar"
-import SignIn from "./SignIn"
-import ThemeToggle from "./ThemeToggle"
 
-export function Header(params: { locale: Locale }) {
+type HeaderParams = {
+  locale: Locale
+}
+
+export function Header({ locale }: HeaderParams) {
   return (
     <header className="flex gap-2">
-      <Link href={`/${params.locale}/`}>Logo</Link>
+      <Link href={`/${locale}/`}>Logo</Link>
       <ul className="flex gap-2">
-        <SearchBar locale={params.locale} />
-        <Categories locale={params.locale} />
-        <LanguageSwitcher locale={params.locale} />
-        <ThemeToggle locale={params.locale} />
-        <SignIn />
+        <SearchBar locale={locale} />
+        <Categories locale={locale} />
+        <Profile locale={locale} />
       </ul>
     </header>
   )
