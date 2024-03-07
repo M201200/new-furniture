@@ -5,3 +5,7 @@ type Rates = {
   EUR: number
   MDL: number
 }
+type CartItem = {
+  vendor_code: string
+  amount: number
+}

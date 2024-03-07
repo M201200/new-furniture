@@ -1,7 +1,10 @@
 import { and, count, eq, isNull, like, or } from "drizzle-orm"
 
+import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
 import { db } from "@/app/db"
 import { items, itemsImageURL, itemsName } from "@/app/db/schema"
+import { auth } from "@/app/lib/auth"
+import { getUserPreferences } from "@/utils/functions/getUserPreferences"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
 import ItemComponent from "../components/ItemComponent"
@@ -79,6 +82,20 @@ export default async function Search({ params, searchParams }: Search) {
 
   const totalItems = searchCountArr[0].totalItems
 
+  const session = await auth()
+  const user_email = session?.user?.email || null
+
+  const userPreferences = await getUserPreferences()
+  const userCart = userPreferences.cart
+  const userFavorites = userPreferences.favorites
+  const currentCurrency = userPreferences.currency
+
+  const conversions = await getCurrencyConversion()
+  const rates: Rates = {
+    EUR: conversions.EUR,
+    MDL: conversions.MDL,
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       {totalItems > 0 && searchResults?.length ? (
@@ -101,6 +118,11 @@ export default async function Search({ params, searchParams }: Search) {
               price={item.price}
               discount={item.discount}
               finalPrice={item.finalPrice!}
+              cartArr={userCart}
+              favoritesArr={userFavorites}
+              currentCurrency={currentCurrency}
+              user_email={user_email}
+              rates={rates}
             />
           ))}
         </ul>

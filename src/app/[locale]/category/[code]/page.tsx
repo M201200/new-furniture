@@ -1,5 +1,6 @@
 import { and, between, count, desc, eq, isNull, like, or } from "drizzle-orm"
 
+import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
 import { db } from "@/app/db"
 import {
   characteristicsFurniture,
@@ -9,6 +10,8 @@ import {
   itemsName,
   materials,
 } from "@/app/db/schema"
+import { auth } from "@/app/lib/auth"
+import { getUserPreferences } from "@/utils/functions/getUserPreferences"
 import sanitizeArray from "@/utils/functions/sanitizeArray"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
@@ -235,8 +238,22 @@ export default async function Items({ searchParams, params }: Params) {
         ? (searchParamsSanitized?.page - 1) * maxItemsOnPage
         : 0
     )
-    .limit(12)
+    .limit(maxItemsOnPage)
     .execute()
+
+  const session = await auth()
+  const user_email = session?.user?.email || null
+
+  const userPreferences = await getUserPreferences()
+  const userCart = userPreferences.cart
+  const userFavorites = userPreferences.favorites
+  const currentCurrency = userPreferences.currency
+
+  const conversions = await getCurrencyConversion()
+  const rates: Rates = {
+    EUR: conversions.EUR,
+    MDL: conversions.MDL,
+  }
 
   const totalPages =
     itemsCount.totalItems > maxItemsOnPage
@@ -294,6 +311,11 @@ export default async function Items({ searchParams, params }: Params) {
           price={item.price}
           discount={item.discount}
           finalPrice={item.final_price!}
+          cartArr={userCart}
+          favoritesArr={userFavorites}
+          currentCurrency={currentCurrency}
+          user_email={user_email}
+          rates={rates}
         />
       ))}
       <Pagination totalPages={totalPages} />

@@ -2,6 +2,7 @@ import { and, asc, desc, eq, like, or } from "drizzle-orm"
 import Image from "next/image"
 import Link from "next/link"
 
+import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
 import { db } from "@/app/db"
 import {
   characteristicsFurniture,
@@ -9,7 +10,11 @@ import {
   itemsDescription,
   itemsImageURL,
   itemsName,
+  user_profile,
 } from "@/app/db/schema"
+import { auth } from "@/app/lib/auth"
+
+import PriceTag from "../../components/PriceTag"
 
 export default async function ItemPage({
   params,
@@ -160,10 +165,36 @@ export default async function ItemPage({
     ) : null
   }
 
+  const conversions = await getCurrencyConversion()
+  const rates: Rates = {
+    EUR: conversions.EUR,
+    MDL: conversions.MDL,
+  }
+  const session = await auth()
+
+  let currentCurrency
+
+  if (session) {
+    const preferredCurrencyArr = await db
+      .select()
+      .from(user_profile)
+      .where(eq(user_profile.user_email, session.user?.email || ""))
+      .execute()
+    currentCurrency = preferredCurrencyArr[0].currency as Currency
+  } else {
+    currentCurrency = null
+  }
+
   return (
     <section>
       <h1>{itemNameDescription.name}</h1>
-      <p>Price: {item.finalPrice}$</p>
+      <PriceTag
+        price={item.price}
+        discount={item.discount}
+        finalPrice={item.finalPrice!}
+        currentCurrency={currentCurrency}
+        exchangeRates={rates}
+      />
       {itemVariants.length > 1 ? (
         <div>
           <ul>

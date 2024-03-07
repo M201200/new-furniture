@@ -1,6 +1,8 @@
 "use client"
 import { useEffect, useState, useTransition } from "react"
 
+import { useRouter } from "next/navigation"
+
 import updatePreferredCurrency from "@/utils/actions/updatePreferredCurrency"
 import { getValues } from "@/utils/functions/LocalStorageActions"
 
@@ -13,13 +15,16 @@ export default function CurrencySwitcher({
   user_email,
   currentCurrency,
 }: CurrencySwitcherParams) {
+  const router = useRouter()
   const [currency, setCurrency] = useState<Currency | null>(currentCurrency)
   const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
-    const storage = getValues("currency") as Currency | null
-    setCurrency(storage ? storage : "USD")
-  }, [])
+    if (!user_email) {
+      const storage = getValues("currency") as Currency | null
+      setCurrency(storage ? storage : "USD")
+    } else setCurrency(currentCurrency)
+  }, [user_email, currentCurrency])
 
   return (
     <select
@@ -37,6 +42,7 @@ export default function CurrencySwitcher({
           setCurrency(e.target.value as Currency)
           localStorage.setItem("currency", e.target.value)
         }
+        router.refresh()
       }}
     >
       <option value="USD">{"USD"}</option>

@@ -2,8 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 
 import CartButton from "./CartButton"
-import FavoritesButton from "./FavoritesButton"
 import PriceTag from "./PriceTag"
+import RemoveFromFavorites from "./RemoveFromFavorites"
 
 type ItemProps = {
   locale: Locale
@@ -14,13 +14,12 @@ type ItemProps = {
   discount: number
   finalPrice: number
   cartArr: CartItem[] | null
-  favoritesArr: string[] | null
   user_email: string | null | undefined
   rates: Rates
   currentCurrency: Currency | null
 }
 
-export default function ItemComponent({
+export default function FavoriteItem({
   locale,
   vendorCode,
   name,
@@ -29,7 +28,6 @@ export default function ItemComponent({
   discount,
   finalPrice,
   cartArr,
-  favoritesArr,
   user_email,
   currentCurrency,
   rates,
@@ -53,10 +51,9 @@ export default function ItemComponent({
         user_email={user_email}
         cartArr={cartArr}
       />
-      <FavoritesButton
+      <RemoveFromFavorites
         currentVendorCode={vendorCode}
         user_email={user_email}
-        favoritesArr={favoritesArr}
       />
     </li>
   )

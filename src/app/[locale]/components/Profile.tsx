@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm"
+import Link from "next/link"
 
 import { db } from "@/app/db"
 import { user_profile } from "@/app/db/schema"
@@ -52,13 +53,19 @@ export default async function Profile({ locale }: ProfileParams) {
       <button>{session ? session.user?.name : "Guest"}</button>
       <ul>
         <li>
+          <Link href={`/${locale}/profile`}>Profile</Link>
+        </li>
+        <li>
           <LanguageSwitcher locale={preferredLocale} user_email={userEmail} />
         </li>
         <li>
           <ThemeToggle currentTheme={theme} user_email={userEmail} />
         </li>
         <li>
-          <CurrencySwitcher user_email={userEmail} currentCurrency={null} />
+          <CurrencySwitcher
+            user_email={userEmail}
+            currentCurrency={userPreferences?.currency as Currency | null}
+          />
         </li>
         <li>
           <SignIn />
