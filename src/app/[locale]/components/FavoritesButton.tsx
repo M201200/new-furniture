@@ -6,11 +6,8 @@ import { useRouter } from "next/navigation"
 
 import addToFavorites from "@/utils/actions/FavoritesActions/addToFavorites"
 import removeFromFavorites from "@/utils/actions/FavoritesActions/removeFromFavorites"
-import {
-  addItem,
-  getValues,
-  removeItem,
-} from "@/utils/functions/LocalStorageActions"
+import { addItem, removeItem } from "@/utils/functions/LocalStorageActions"
+import { useGuestFavorites } from "@/utils/hooks/zustand/useGuestFavorites"
 
 type AddToCartProps = {
   user_email: string | null | undefined
@@ -26,21 +23,21 @@ export default function FavoritesButton({
   const [isAdded, setIsAdded] = useState<boolean | undefined | null>()
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
+  const favorites = useGuestFavorites()
 
   useEffect(() => {
     if (user_email) {
-      const item = favoritesArr?.find(
-        (vendor_code) => vendor_code === currentVendorCode
+      setIsAdded(
+        favoritesArr?.some((vendor_code) => vendor_code === currentVendorCode)
       )
-      setIsAdded(item ? true : false)
     } else {
-      const values = getValues("favorites") as string[] | null
-      const item = values?.find(
-        (vendor_code) => vendor_code === currentVendorCode
+      setIsAdded(
+        favorites.entries?.some(
+          (vendor_code) => vendor_code === currentVendorCode
+        )
       )
-      setIsAdded(item ? true : false)
     }
-  }, [user_email, favoritesArr, currentVendorCode])
+  }, [user_email, favoritesArr, currentVendorCode, favorites])
 
   return isPending ? (
     <span>Pending</span>
@@ -53,10 +50,11 @@ export default function FavoritesButton({
             startTransition(() => {
               addToFavorites(user_email, currentVendorCode)
             })
+            router.refresh()
           } else {
+            favorites.add(currentVendorCode)
             addItem("favorites", currentVendorCode)
           }
-          router.refresh()
         }}
       >
         Add to favorites
@@ -71,10 +69,11 @@ export default function FavoritesButton({
             startTransition(() => {
               removeFromFavorites(user_email, currentVendorCode)
             })
+            router.refresh()
           } else {
+            favorites.remove(currentVendorCode)
             removeItem("favorites", currentVendorCode)
           }
-          router.refresh()
         }}
       >
         Remove from favorites

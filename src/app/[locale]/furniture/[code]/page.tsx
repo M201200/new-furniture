@@ -165,11 +165,7 @@ export default async function ItemPage({
     ) : null
   }
 
-  const conversions = await getCurrencyConversion()
-  const rates: Rates = {
-    EUR: conversions.EUR,
-    MDL: conversions.MDL,
-  }
+  const rates: Rates = await getCurrencyConversion()
   const session = await auth()
 
   let currentCurrency

@@ -249,11 +249,7 @@ export default async function Items({ searchParams, params }: Params) {
   const userFavorites = userPreferences.favorites
   const currentCurrency = userPreferences.currency
 
-  const conversions = await getCurrencyConversion()
-  const rates: Rates = {
-    EUR: conversions.EUR,
-    MDL: conversions.MDL,
-  }
+  const rates: Rates = await getCurrencyConversion()
 
   const totalPages =
     itemsCount.totalItems > maxItemsOnPage

@@ -29,7 +29,7 @@ export function getValues(
 
 export function addItem(
   key: "theme" | "currency" | "cart" | "favorites",
-  code: string | string[] | CartItem[]
+  code: string | CartItem
 ) {
   const storageValues = localStorage.getItem(key)
   if (key === "cart" || key === "favorites") {
@@ -57,9 +57,11 @@ export function removeItem(
     const filtered = storageValues.filter(
       (item) => item.vendor_code !== vendor_code
     )
-    !filtered.length
-      ? localStorage.removeItem(storageKey)
-      : localStorage.setItem(storageKey, JSON.stringify(filtered))
+    if (!filtered.length) {
+      localStorage.removeItem(storageKey)
+    } else {
+      localStorage.setItem(storageKey, JSON.stringify(filtered))
+    }
   } else {
     const storageValues = JSON.parse(
       localStorage.getItem(storageKey)!

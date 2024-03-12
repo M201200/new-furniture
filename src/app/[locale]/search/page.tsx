@@ -90,11 +90,7 @@ export default async function Search({ params, searchParams }: Search) {
   const userFavorites = userPreferences.favorites
   const currentCurrency = userPreferences.currency
 
-  const conversions = await getCurrencyConversion()
-  const rates: Rates = {
-    EUR: conversions.EUR,
-    MDL: conversions.MDL,
-  }
+  const rates: Rates = await getCurrencyConversion()
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">

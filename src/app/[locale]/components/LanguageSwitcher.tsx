@@ -1,9 +1,10 @@
 "use client"
-import { useTransition } from "react"
+import { useEffect, useTransition } from "react"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
-import updatePreferredLanguage from "@/utils/actions/updatePreferredLanguage"
+import updatePreferredLanguage from "@/utils/actions/ProfileActions/updatePreferredLanguage"
+import { usePreferences } from "@/utils/hooks/zustand/usePreferences"
 
 type LanguageSwitcherParams = {
   locale: Locale
@@ -20,8 +21,16 @@ export default function LanguageSwitcher({
   const searchParams = useSearchParams()
   const router = useRouter()
   const url = `${currentPath}?${searchParams}`
+  const userLocale = usePreferences((state) => state.locale)
+  const setLocale = usePreferences((state) => state.setLocale)
 
-  return (
+  useEffect(() => {
+    locale !== userLocale ? setLocale(locale) : null
+  }, [locale, setLocale, userLocale])
+
+  return isPending ? (
+    <span>Pending...</span>
+  ) : (
     <select
       className="cursor-pointer bg-primary"
       defaultValue={locale}
@@ -30,7 +39,9 @@ export default function LanguageSwitcher({
           startTransition(() => {
             updatePreferredLanguage(user_email, e.target.value as Locale)
           })
+          router.refresh()
         }
+        setLocale(e.target.value as Locale)
         router.replace(url.replace(/\/en|\/ro|\/ru/, `/${e.target.value}`))
       }}
     >

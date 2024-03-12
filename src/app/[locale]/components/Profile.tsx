@@ -28,6 +28,7 @@ export default async function Profile({ locale }: ProfileParams) {
         })
         .from(user_profile)
         .where(eq(user_profile.user_email, session.user?.email || ""))
+        .execute()
     : null
 
   const userPreferences = userPreferencesResult
@@ -54,6 +55,12 @@ export default async function Profile({ locale }: ProfileParams) {
       <ul>
         <li>
           <Link href={`/${locale}/profile`}>Profile</Link>
+        </li>
+        <li>
+          <Link href={`/${locale}/cart`}>Cart</Link>
+        </li>
+        <li>
+          <Link href={`/${locale}/favorites`}>Favorites</Link>
         </li>
         <li>
           <LanguageSwitcher locale={preferredLocale} user_email={userEmail} />

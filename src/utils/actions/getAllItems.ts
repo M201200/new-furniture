@@ -4,13 +4,11 @@ import { and, eq, inArray, isNull, or } from "drizzle-orm"
 import { db } from "@/app/db"
 import { items, itemsImageURL, itemsName } from "@/app/db/schema"
 
-export default async function getGuestFavorites(
-  vendor_codes: string[],
-  locale: Locale,
-  page: number,
-  maxItemsOnPage: number
+export default async function getAllItems(
+  vendor_codes: string[] | null | undefined,
+  locale: Locale
 ) {
-  "use server"
+  if (!vendor_codes?.length) return
   return await db
     .select({
       vendor_code: items.vendor_code,
@@ -38,7 +36,5 @@ export default async function getGuestFavorites(
     .innerJoin(itemsName, eq(items.vendor_code, itemsName.vendor_code))
     .leftJoin(itemsImageURL, eq(items.vendor_code, itemsImageURL.vendor_code))
     .orderBy(items.id)
-    .offset(page ? (page - 1) * maxItemsOnPage : 0)
-    .limit(maxItemsOnPage)
     .execute()
 }

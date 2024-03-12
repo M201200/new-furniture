@@ -1,8 +1,11 @@
 "use client"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useTransition } from "react"
 
-import updatePreferredTheme from "@/utils/actions/updatePreferredTheme"
+import { useRouter } from "next/navigation"
+
+import updatePreferredTheme from "@/utils/actions/ProfileActions/updatePreferredTheme"
 import { useMediaQuery } from "@/utils/hooks/useMediaQuery"
+import { usePreferences } from "@/utils/hooks/zustand/usePreferences"
 
 type ThemeToggleParams = {
   currentTheme: Theme | null
@@ -14,19 +17,28 @@ export default function ThemeToggle({
   user_email,
 }: ThemeToggleParams) {
   const isDarkMode = useMediaQuery("(prefers-color-scheme:dark)")
-  const [theme, setTheme] = useState<Theme | null>(currentTheme)
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
+
+  const theme = usePreferences((state) => state.theme)
+  const setTheme = usePreferences((state) => state.setTheme)
 
   useEffect(() => {
-    if (currentTheme) document.body.className = currentTheme
-    else {
+    if (currentTheme) {
+      setTheme(currentTheme)
+      document.body.className = currentTheme
+    } else {
       const storage = localStorage.getItem("theme") as Theme | null
       setTheme(storage ? storage : isDarkMode ? "dark" : "light")
-      document.body.className = theme || "dark"
+      theme !== document.body.className
+        ? (document.body.className = theme || "dark")
+        : null
     }
-  }, [theme, isDarkMode, currentTheme])
+  }, [theme, setTheme, isDarkMode, currentTheme])
 
-  return (
+  return isPending ? (
+    <span>Pending...</span>
+  ) : (
     <select
       title={"Theme"}
       className="w-full cursor-pointer bg-primary"
@@ -39,6 +51,7 @@ export default function ThemeToggle({
           })
           setTheme(e.target.value as Theme)
           document.body.className = e.target.value
+          router.refresh()
         } else {
           setTheme(e.target.value as Theme)
           document.body.className = e.target.value

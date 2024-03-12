@@ -11,6 +11,7 @@ import {
   getValues,
   removeItem,
 } from "@/utils/functions/LocalStorageActions"
+import { useGuestCart } from "@/utils/hooks/zustand/useGuestCart"
 
 type AddToCartProps = {
   user_email: string | null | undefined
@@ -23,27 +24,27 @@ export default function CartButton({
   cartArr,
   currentVendorCode,
 }: AddToCartProps) {
-  const [isAdded, setIsAdded] = useState<boolean | undefined | null>()
-  const [amount, setAmount] = useState<number | null>(null)
+  const [isAdded, setIsAdded] = useState<boolean>(false)
+  const [amount, setAmount] = useState<number>(0)
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
+  const cart = useGuestCart()
   useEffect(() => {
     if (user_email) {
       const item = cartArr?.find(
         (item) => item.vendor_code === currentVendorCode
       )
       setIsAdded(item ? true : false)
-      setAmount(item ? item.amount : null)
+      setAmount(item ? item.amount : 0)
     } else {
-      const values = getValues("cart") as CartItem[] | null
-      const item = values?.find(
+      const item = cart.entries?.find(
         (item) => item.vendor_code === currentVendorCode
       )
       setIsAdded(item ? true : false)
-      setAmount(item ? item.amount : null)
+      setAmount(item ? item.amount : 0)
     }
-  }, [user_email, cartArr, currentVendorCode, amount, isAdded])
+  }, [user_email, cartArr, currentVendorCode, amount, isAdded, cart])
 
   return isPending ? (
     <span>Pending</span>
@@ -56,12 +57,11 @@ export default function CartButton({
             startTransition(() => {
               addToCart(user_email, currentVendorCode)
             })
+            router.refresh()
           } else {
-            const values = (getValues("cart") || []) as CartItem[]
-            // @ts-ignore
+            cart.add({ vendor_code: currentVendorCode, amount: 1 })
             addItem("cart", { vendor_code: currentVendorCode, amount: 1 })
           }
-          router.refresh()
         }}
       >
         Add to cart
@@ -71,26 +71,29 @@ export default function CartButton({
     <div>
       <button
         onClick={() => {
-          setAmount(amount! - 1)
+          setAmount(amount - 1)
           if (amount! < 1) setIsAdded(false)
           if (user_email) {
             startTransition(() => {
-              updateAmount(user_email, currentVendorCode, amount! - 1)
+              updateAmount(user_email, currentVendorCode, amount - 1)
             })
+            router.refresh()
           } else {
             if (amount! - 1 < 1) {
+              cart.remove(currentVendorCode)
               removeItem("cart", currentVendorCode)
+              router.refresh()
             } else {
               const values = (getValues("cart") || []) as CartItem[]
               values[
                 values.findIndex(
                   (item) => item.vendor_code === currentVendorCode
                 )
-              ].amount = amount! - 1
+              ].amount = amount - 1
               localStorage.setItem("cart", JSON.stringify(values))
+              cart.setAmount(currentVendorCode, amount - 1)
             }
           }
-          router.refresh()
         }}
       >
         -
@@ -98,19 +101,20 @@ export default function CartButton({
       <span>{amount}</span>
       <button
         onClick={() => {
-          setAmount(amount! + 1)
+          setAmount(amount + 1)
           if (user_email) {
             startTransition(() => {
-              updateAmount(user_email, currentVendorCode, amount! + 1)
+              updateAmount(user_email, currentVendorCode, amount + 1)
             })
+            router.refresh()
           } else {
             const values = (getValues("cart") || []) as CartItem[]
             values[
               values.findIndex((item) => item.vendor_code === currentVendorCode)
-            ].amount = amount! + 1
+            ].amount = amount + 1
             localStorage.setItem("cart", JSON.stringify(values))
+            cart.setAmount(currentVendorCode, amount + 1)
           }
-          router.refresh()
         }}
       >
         +

@@ -1,10 +1,11 @@
 "use client"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useTransition } from "react"
 
 import { useRouter } from "next/navigation"
 
-import updatePreferredCurrency from "@/utils/actions/updatePreferredCurrency"
+import updatePreferredCurrency from "@/utils/actions/ProfileActions/updatePreferredCurrency"
 import { getValues } from "@/utils/functions/LocalStorageActions"
+import { usePreferences } from "@/utils/hooks/zustand/usePreferences"
 
 type CurrencySwitcherParams = {
   user_email?: string | null
@@ -16,17 +17,20 @@ export default function CurrencySwitcher({
   currentCurrency,
 }: CurrencySwitcherParams) {
   const router = useRouter()
-  const [currency, setCurrency] = useState<Currency | null>(currentCurrency)
   const [isPending, startTransition] = useTransition()
+  const currency = usePreferences((state) => state.currency)
+  const setCurrency = usePreferences((state) => state.setCurrency)
 
   useEffect(() => {
     if (!user_email) {
       const storage = getValues("currency") as Currency | null
       setCurrency(storage ? storage : "USD")
-    } else setCurrency(currentCurrency)
-  }, [user_email, currentCurrency])
+    } else setCurrency(currentCurrency || "USD")
+  }, [user_email, currentCurrency, setCurrency])
 
-  return (
+  return isPending ? (
+    <span>Pending...</span>
+  ) : (
     <select
       title={"Currency"}
       className="w-full cursor-pointer bg-primary"

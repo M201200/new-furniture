@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   title: "E-commerce",
   description: "Shopping app",
 }
-
 const locales = ["en", "ro", "ru"]
 
 export function generateStaticParams() {
