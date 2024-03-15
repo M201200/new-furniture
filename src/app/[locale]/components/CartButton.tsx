@@ -30,10 +30,10 @@ export default function CartButton({
   const [isPending, startTransition] = useTransition()
 
   return (
-    <div className="text-white rounded-lg text-center grid grid-flow-col">
+    <div className="text-white rounded-lg text-center grid grid-cols-3">
       {!amount ? (
         <button
-          className="px-2 py-3 bg-blue-800 rounded-lg text-center fluid-lg"
+          className="px-2 py-3 bg-blue-800 rounded-lg text-center col-span-3 fluid-lg"
           onClick={() => {
             cart.add({ vendor_code: currentVendorCode, amount: 1 })
             setAmount(1)
@@ -55,8 +55,10 @@ export default function CartButton({
           <button
             className="px-2 py-3 bg-blue-700 rounded-lg fluid-base"
             onClick={() => {
-              if (amount! - 1 < 1) cart.remove(currentVendorCode)
-              else {
+              if (amount - 1 < 1) {
+                cart.remove(currentVendorCode)
+                setAmount(0)
+              } else {
                 setAmount(amount - 1)
                 cart.setAmount(currentVendorCode, amount - 1)
               }
@@ -65,7 +67,7 @@ export default function CartButton({
                   updateAmount(user_email, currentVendorCode, amount - 1)
                 })
               } else {
-                if (amount! - 1 < 1) {
+                if (amount - 1 < 1) {
                   cart.remove(currentVendorCode)
                   removeItem("cart", currentVendorCode)
                 } else {

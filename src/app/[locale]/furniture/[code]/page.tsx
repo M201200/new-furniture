@@ -1,5 +1,4 @@
 import { and, asc, desc, eq, like, or } from "drizzle-orm"
-import Image from "next/image"
 import Link from "next/link"
 
 import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
@@ -14,6 +13,9 @@ import {
 } from "@/app/db/schema"
 import { auth } from "@/app/lib/auth"
 
+import CartButton from "../../components/CartButton"
+import FavoritesButton from "../../components/FavoritesButton"
+import ImageCarousel from "../../components/ImageCarousel"
 import PriceTag from "../../components/PriceTag"
 
 export default async function ItemPage({
@@ -182,51 +184,62 @@ export default async function ItemPage({
   }
 
   return (
-    <section>
-      <h1>{itemNameDescription.name}</h1>
-      <PriceTag
-        price={item.price}
-        discount={item.discount}
-        finalPrice={item.finalPrice!}
-        currentCurrency={currentCurrency}
-        exchangeRates={rates}
-      />
-      {itemVariants.length > 1 ? (
-        <div>
+    <main>
+      <section className="grid grid-cols-3 gap-6 p-2">
+        <ImageCarousel URLs={images.map((image) => image.url!)} />
+        <section className="flex flex-col gap-6 p-2">
+          {itemVariants.length > 1 ? (
+            <div>
+              <h1 className="fluid-lg font-bold">Variants</h1>
+              <ul>
+                {addCharacteristics(colors, "c", "Color")}
+                {addCharacteristics(materials, "m", "Material")}
+                {addCharacteristics(width, "w", "Width")}
+                {addCharacteristics(height, "h", "Height")}
+                {addCharacteristics(depth, "d", "Depth")}
+              </ul>
+            </div>
+          ) : null}
           <ul>
-            {addCharacteristics(colors, "c", "Color")}
-            {addCharacteristics(materials, "m", "Material")}
-            {addCharacteristics(width, "w", "Width")}
-            {addCharacteristics(height, "h", "Height")}
-            {addCharacteristics(depth, "d", "Depth")}
+            <h1 className="fluid-lg font-bold">Characteristics:</h1>
+            <li>Color: {item.color}</li>
+            <li>
+              Sizes: {item.height} x {item.width} x {item.depth}
+            </li>
+            <li>Weight: {item.weight} kg</li>
+            <li>Material: {item.material}</li>
+            <li>Folding: {item.folding === true ? "yes" : "no"}</li>
+            <li>Warranty: {item.warranty} months</li>
           </ul>
-        </div>
-      ) : null}
-      <div>
-        {images.map((image) => (
-          <Image
-            key={image.url}
-            width={300}
-            height={300}
-            src={image.url!}
-            alt="image"
+        </section>
+        <section className="flex flex-col gap-2 p-2">
+          <h1 className="fluid-xl font-bold text-wrap">
+            {itemNameDescription.name}
+          </h1>
+          <PriceTag
+            price={item.price}
+            discount={item.discount}
+            finalPrice={item.finalPrice!}
+            currentCurrency={currentCurrency}
+            exchangeRates={rates}
           />
-        ))}
-      </div>
+          <div className="grid grid-cols-[1fr,3rem] gap-1">
+            <CartButton
+              currentVendorCode={params.code}
+              user_email={session?.user?.email}
+            />
+            <FavoritesButton
+              currentVendorCode={params.code}
+              user_email={session?.user?.email}
+            />
+          </div>
+        </section>
+      </section>
 
-      <div>
-        <ul>
-          <li>Color: {item.color}</li>
-          <li>
-            Sizes: {item.height} x {item.width} x {item.depth}
-          </li>
-          <li>Weight: {item.weight} kg</li>
-          <li>Material: {item.material}</li>
-          <li>Folding: {item.folding === true ? "yes" : "no"}</li>
-          <li>Warranty: {item.warranty} months</li>
-        </ul>
-        <p>Description: {itemNameDescription.desc}</p>
-      </div>
-    </section>
+      <section>
+        <h1 className="fluid-lg font-bold">Description:</h1>
+        <p className="fluid-base">{itemNameDescription.desc}</p>
+      </section>
+    </main>
   )
 }
