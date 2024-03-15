@@ -29,10 +29,12 @@ export default function LanguageSwitcher({
   }, [locale, setLocale, userLocale])
 
   return isPending ? (
-    <span>Pending...</span>
+    <span className="bg-gray-600 text-white fluid-base p-[1px] rounded">
+      Pending...
+    </span>
   ) : (
     <select
-      className="cursor-pointer bg-primary"
+      className="cursor-pointer bg-gray-600 text-white fluid-base p-[1px] rounded"
       defaultValue={locale}
       onChange={(e) => {
         if (user_email) {

@@ -245,8 +245,6 @@ export default async function Items({ searchParams, params }: Params) {
   const user_email = session?.user?.email || null
 
   const userPreferences = await getUserPreferences()
-  const userCart = userPreferences.cart
-  const userFavorites = userPreferences.favorites
   const currentCurrency = userPreferences.currency
 
   const rates: Rates = await getCurrencyConversion()
@@ -257,7 +255,7 @@ export default async function Items({ searchParams, params }: Params) {
       : 1
 
   return (
-    <section>
+    <main className="grid md:grid-cols-[10rem,1fr] gap-8 justify-center p-4">
       <FilterFurniture
         prices={{
           lowest: 0,
@@ -289,32 +287,34 @@ export default async function Items({ searchParams, params }: Params) {
         selectedMaterials={searchParamsSanitized?.mat || []}
         includeVariants={searchParamsSanitized?.var}
       />
-      {allItems.map((item) => (
-        <ItemComponent
-          key={item.vendorCode}
-          vendorCode={item.vendorCode!}
-          locale={params.locale}
-          imageURL={
-            item.thumbnailURL
-              ? item.thumbnailURL
-              : "/images/" +
-                item.vendorCode
-                  ?.replace(/\-/gi, "/")
-                  .replace(/m\d+w\d+h\d+d\d+/gi, "m0w0h0d0") +
-                "/1.webp"
-          }
-          name={item.name!}
-          price={item.price}
-          discount={item.discount}
-          finalPrice={item.final_price!}
-          cartArr={userCart}
-          favoritesArr={userFavorites}
-          currentCurrency={currentCurrency}
-          user_email={user_email}
-          rates={rates}
-        />
-      ))}
-      <Pagination totalPages={totalPages} />
-    </section>
+      <div className="flex flex-col gap-4">
+        <ul className="flex flex-wrap justify-center gap-6">
+          {allItems.map((item) => (
+            <ItemComponent
+              key={item.vendorCode}
+              vendorCode={item.vendorCode!}
+              locale={params.locale}
+              imageURL={
+                item.thumbnailURL
+                  ? item.thumbnailURL
+                  : "/images/" +
+                    item.vendorCode
+                      ?.replace(/\-/gi, "/")
+                      .replace(/m\d+w\d+h\d+d\d+/gi, "m0w0h0d0") +
+                    "/1.webp"
+              }
+              name={item.name!}
+              price={item.price}
+              discount={item.discount}
+              finalPrice={item.final_price!}
+              currentCurrency={currentCurrency}
+              user_email={user_email}
+              rates={rates}
+            />
+          ))}
+        </ul>
+        <Pagination totalPages={totalPages} />
+      </div>
+    </main>
   )
 }

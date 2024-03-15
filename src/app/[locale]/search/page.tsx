@@ -86,8 +86,6 @@ export default async function Search({ params, searchParams }: Search) {
   const user_email = session?.user?.email || null
 
   const userPreferences = await getUserPreferences()
-  const userCart = userPreferences.cart
-  const userFavorites = userPreferences.favorites
   const currentCurrency = userPreferences.currency
 
   const rates: Rates = await getCurrencyConversion()
@@ -114,8 +112,6 @@ export default async function Search({ params, searchParams }: Search) {
               price={item.price}
               discount={item.discount}
               finalPrice={item.finalPrice!}
-              cartArr={userCart}
-              favoritesArr={userFavorites}
               currentCurrency={currentCurrency}
               user_email={user_email}
               rates={rates}

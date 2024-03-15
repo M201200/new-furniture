@@ -1,9 +1,10 @@
 import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
+import { auth } from "@/app/lib/auth"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
-import GuestFavorites from "../../components/GuestFavorites"
+import Favorites from "../components/Favorites"
 
-type ProfilePageParams = {
+type FavoritesPageParams = {
   params: {
     locale: Locale
   }
@@ -12,10 +13,11 @@ type ProfilePageParams = {
   }
 }
 
-export default async function ProfilePage({
+export default async function FavoritesPage({
   params,
   searchParams,
-}: ProfilePageParams) {
+}: FavoritesPageParams) {
+  const session = await auth()
   const maxItemsOnPage = 12
   const searchParamsSanitized = searchParams
     ? {
@@ -27,11 +29,12 @@ export default async function ProfilePage({
 
   return (
     <main>
-      <GuestFavorites
+      <Favorites
         locale={params.locale}
         rates={rates}
         currentPage={searchParamsSanitized?.page || 1}
         maxItemsOnPage={maxItemsOnPage}
+        userEmail={session?.user?.email}
       />
     </main>
   )

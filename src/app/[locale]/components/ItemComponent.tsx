@@ -13,8 +13,6 @@ type ItemProps = {
   price: number
   discount: number
   finalPrice: number
-  cartArr: CartItem[] | null
-  favoritesArr: string[] | null
   user_email: string | null | undefined
   rates: Rates
   currentCurrency: Currency | null
@@ -28,16 +26,19 @@ export default function ItemComponent({
   price,
   discount,
   finalPrice,
-  cartArr,
-  favoritesArr,
   user_email,
   currentCurrency,
   rates,
 }: ItemProps) {
   return (
-    <li>
-      <Link href={`/${locale}/furniture/${vendorCode}`}>
-        <Image src={imageURL} alt={name} width={200} height={200} />
+    <li className="grid gap-1 w-[17rem]">
+      <Link
+        className="rounded drop-shadow-md"
+        href={`/${locale}/furniture/${vendorCode}`}
+      >
+        <Image src={imageURL} alt={name} width={272} height={272} />
+      </Link>
+      <div className="p-2 grid self-end gap-2">
         <PriceTag
           price={price}
           discount={discount}
@@ -46,18 +47,17 @@ export default function ItemComponent({
           exchangeRates={rates}
           user_email={user_email}
         />
-        <h2>{name}</h2>
-      </Link>
-      <CartButton
-        currentVendorCode={vendorCode}
-        user_email={user_email}
-        cartArr={cartArr}
-      />
-      <FavoritesButton
-        currentVendorCode={vendorCode}
-        user_email={user_email}
-        favoritesArr={favoritesArr}
-      />
+        <Link className="truncate" href={`/${locale}/furniture/${vendorCode}`}>
+          <h2 className="fluid-base text-gray-600 truncate">{name}</h2>
+        </Link>
+        <div className="grid grid-cols-[1fr,3rem] gap-1">
+          <CartButton currentVendorCode={vendorCode} user_email={user_email} />
+          <FavoritesButton
+            currentVendorCode={vendorCode}
+            user_email={user_email}
+          />
+        </div>
+      </div>
     </li>
   )
 }

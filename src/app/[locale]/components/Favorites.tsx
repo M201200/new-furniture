@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 
 import getItems from "@/utils/actions/getItems"
-import { useGuestCart } from "@/utils/hooks/zustand/useGuestCart"
-import { useGuestFavorites } from "@/utils/hooks/zustand/useGuestFavorites"
+import { useFavorites } from "@/utils/hooks/zustand/useFavorites"
 import { usePreferences } from "@/utils/hooks/zustand/usePreferences"
 
 import ItemComponent from "./ItemComponent"
@@ -15,13 +14,15 @@ type GuestFavoritesProps = {
   currentPage: number
   maxItemsOnPage: number
   rates: Rates
+  userEmail: string | null | undefined
 }
 
-export default function GuestFavorites({
+export default function Favorites({
   locale,
   currentPage,
   maxItemsOnPage,
   rates,
+  userEmail,
 }: GuestFavoritesProps) {
   const [items, setItems] = useState<
     | {
@@ -42,8 +43,7 @@ export default function GuestFavorites({
   const language = usePreferences((state) => state.locale)
   const currency = usePreferences((state) => state.currency)
 
-  const favorites = useGuestFavorites((state) => state.entries)
-  const cart = useGuestCart((state) => state.entries)
+  const favorites = useFavorites((state) => state.entries)
 
   const loadItems = useCallback(
     () =>
@@ -63,13 +63,13 @@ export default function GuestFavorites({
   }, [loadItems])
 
   return (
-    <section>
-      <h2>Favorites</h2>
-      <ul>
+    <section className="min-h-screen">
+      <h2 className="fluid-3xl font-bold p-4">Favorites</h2>
+      <ul className="flex flex-wrap gap-6">
         {loading ? (
-          <li>Loading...</li>
+          <li className="fluid-xl font-bold p-2">Loading...</li>
         ) : error ? (
-          <li>Error occurred</li>
+          <li className="fluid-xl font-bold p-2">Error occurred</li>
         ) : items?.length ? (
           items.map((item) => (
             <ItemComponent
@@ -80,16 +80,14 @@ export default function GuestFavorites({
               price={item.price}
               discount={item.discount}
               finalPrice={item.final_price!}
-              user_email={null}
+              user_email={userEmail}
               currentCurrency={currency}
               locale={locale}
-              favoritesArr={favorites}
-              cartArr={cart}
               rates={rates}
             />
           ))
         ) : (
-          <li>Nothing found</li>
+          <li className="fluid-xl font-bold p-2">Nothing found</li>
         )}
       </ul>
       <Pagination

@@ -1,6 +1,7 @@
 import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
+import { auth } from "@/app/lib/auth"
 
-import GuestCart from "../../components/GuestCart"
+import Cart from "../components/Cart"
 
 type ProfilePageParams = {
   params: {
@@ -10,10 +11,15 @@ type ProfilePageParams = {
 
 export default async function CartPage({ params }: ProfilePageParams) {
   const rates: Rates = await getCurrencyConversion()
+  const session = await auth()
 
   return (
     <main>
-      <GuestCart locale={params.locale} rates={rates} />
+      <Cart
+        locale={params.locale}
+        rates={rates}
+        userEmail={session?.user?.email}
+      />
     </main>
   )
 }

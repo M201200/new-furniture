@@ -47,27 +47,25 @@ export default function PriceTag({
     price,
     user_email,
   ])
-
-  const exchangeRate =
-    currency === "USD"
-      ? 1
-      : currency === "EUR"
-      ? exchangeRates.EUR
-      : exchangeRates.MDL
   return (
-    <div>
-      <span>
-        Price: {newFinalPrice}
-        {sign}{" "}
-      </span>
+    <div className="flex gap-2 items-baseline flex-wrap">
+      <div>
+        <span className="text-gray-600 fluid-lg font-bold">
+          {newFinalPrice}
+          {sign}{" "}
+        </span>
+      </div>
       {discount > 0 ? (
-        <>
-          <span className="line-through">
+        <div className="flex gap-2 items-baseline">
+          <span className="line-through text-gray-500 fluid-base">
             {newPrice}
             {sign}{" "}
           </span>
-          <span>{discount}%</span>
-        </>
+          <span className="text-red-500 fluid-lg font-semibold">
+            {" "}
+            -{discount}%
+          </span>
+        </div>
       ) : null}
     </div>
   )

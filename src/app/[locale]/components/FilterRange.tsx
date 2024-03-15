@@ -78,39 +78,52 @@ export default function FilterRange({
   }
 
   return (
-    <li>
-      <h2>{paramName}:</h2>
-      <div>
-        <label htmlFor={`${paramName}-min`}>Min</label>
-        <input
-          id={`${paramName}-min`}
-          value={param.min}
-          onChange={(e) =>
-            setter({
-              ...param,
-              min: Number(e.target.value.replace(/\D/g, "")),
-            })
-          }
-          onKeyDown={(e) => setParams(e, "min")}
-          onBlur={(e) => setParams(e, "min")}
-          type="text"
-          inputMode="numeric"
-        />
-        <label htmlFor={`${param}-min`}>Max</label>
-        <input
-          id={`${paramName}-max`}
-          value={param.max}
-          onChange={(e) =>
-            setter({
-              ...param,
-              max: Number(e.target.value.replace(/\D/g, "")),
-            })
-          }
-          onKeyDown={(e) => setParams(e, "max")}
-          onBlur={(e) => setParams(e, "max")}
-          type="text"
-          inputMode="numeric"
-        />
+    <li className="grid gap-2">
+      <h2 className="fluid-lg font-semibold text-gray-800">{paramName}:</h2>
+      <div className="flex gap-1">
+        <div className=" px-1">
+          <label
+            className="text-gray-600 fluid-base"
+            htmlFor={`${paramName}-min`}
+          >
+            from:{" "}
+          </label>
+          <input
+            className="w-16 border-2 border-gray-200 rounded"
+            id={`${paramName}-min`}
+            value={param.min}
+            onChange={(e) =>
+              setter({
+                ...param,
+                min: Number(e.target.value.replace(/\D/g, "")),
+              })
+            }
+            onKeyDown={(e) => setParams(e, "min")}
+            onBlur={(e) => setParams(e, "min")}
+            type="text"
+            inputMode="numeric"
+          />
+        </div>
+        <div className="px-1">
+          <label className="text-gray-600 fluid-base" htmlFor={`${param}-min`}>
+            to:{" "}
+          </label>
+          <input
+            className="w-16 border-2 border-gray-200 rounded"
+            id={`${paramName}-max`}
+            value={param.max}
+            onChange={(e) =>
+              setter({
+                ...param,
+                max: Number(e.target.value.replace(/\D/g, "")),
+              })
+            }
+            onKeyDown={(e) => setParams(e, "max")}
+            onBlur={(e) => setParams(e, "max")}
+            type="text"
+            inputMode="numeric"
+          />
+        </div>
       </div>
     </li>
   )

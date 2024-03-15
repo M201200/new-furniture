@@ -1,7 +1,5 @@
 import { create } from "zustand"
 
-import { getValues } from "@/utils/functions/LocalStorageActions"
-
 type CartState = {
   entries: CartItem[] | null
   set: (items: CartItem[] | null) => void
@@ -10,10 +8,8 @@ type CartState = {
   remove: (vendorCode: string) => void
 }
 
-export const useGuestCart = create<CartState>()((set) => ({
-  entries: window?.localStorage
-    ? (getValues("cart") as CartItem[] | null)
-    : null,
+export const useCart = create<CartState>()((set) => ({
+  entries: null,
   set: (items) => set(() => ({ entries: items })),
   add: (item) =>
     set((state) => ({

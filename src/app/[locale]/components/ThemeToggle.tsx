@@ -37,11 +37,13 @@ export default function ThemeToggle({
   }, [theme, setTheme, isDarkMode, currentTheme])
 
   return isPending ? (
-    <span>Pending...</span>
+    <span className="bg-gray-600 text-white fluid-base p-[1px] rounded">
+      Pending...
+    </span>
   ) : (
     <select
       title={"Theme"}
-      className="w-full cursor-pointer bg-primary"
+      className="cursor-pointer bg-gray-600 text-white fluid-base p-[1px] rounded"
       name="theme select"
       value={theme || "dark"}
       onChange={(e) => {

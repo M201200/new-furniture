@@ -19,15 +19,24 @@ export default async function ProfilePage({
 
   return (
     <main>
-      <h1>User Profile</h1>
-      <ul>
+      <h1 className="fluid-3xl font-bold p-4">User Profile</h1>
+      <ul className="grid gap-2 fluid-lg p-4">
         {session ? (
           <>
-            <li>User name: {session.user?.name}</li>
-            <li>User email: {session.user?.email}</li>
+            <li className="flex gap-1">
+              <span>User name:</span>
+              <span className="font-semibold">{session.user?.name}</span>
+            </li>
+            <li className="flex gap-1">
+              <span>User email:</span>{" "}
+              <span className="font-semibold">{session.user?.email}</span>
+            </li>
           </>
         ) : (
-          <li>User name: Guest</li>
+          <li className="flex gap-1">
+            <span>User name:</span>
+            <span className="font-semibold">Guest</span>
+          </li>
         )}
         <ProfilePreferences />
       </ul>

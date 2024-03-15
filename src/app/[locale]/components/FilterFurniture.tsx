@@ -105,101 +105,106 @@ export default function FilterFurniture({
     router.push(`${pathname}?${newSearchParams.toString()}`, { scroll: false })
   }
   return (
-    <section>
-      <ul>
-        <FilterRange
-          setter={setPrice}
-          param={price}
-          paramName={"Price"}
-          sign={"P"}
-          range={{ lowest: prices.lowest, highest: prices.highest }}
-          searchParams={newSearchParams}
-          pathname={pathname}
+    <ul className="flex flex-col gap-5">
+      <li className="flex gap-2 items-baseline">
+        <h2 className="fluid-lg font-semibold text-gray-800">
+          Exclude Variants:
+        </h2>
+        <input
+          className="w-4 h-4 text-gray-800"
+          type="checkbox"
+          checked={variants}
+          onChange={() => {
+            setVariants(!variants)
+            if (variants) {
+              newSearchParams.delete("page")
+              newSearchParams.delete("var")
+            } else {
+              newSearchParams.delete("page")
+              newSearchParams.set("var", "true")
+            }
+            router.push(`${pathname}?${newSearchParams.toString()}`, {
+              scroll: false,
+            })
+          }}
         />
-        <FilterRange
-          setter={setHeight}
-          param={height}
-          paramName={"Height"}
-          sign={"H"}
-          range={{ lowest: heights.lowest, highest: heights.highest }}
-          searchParams={newSearchParams}
-          pathname={pathname}
-        />
-        <FilterRange
-          setter={setWidth}
-          param={width}
-          paramName={"Width"}
-          sign={"W"}
-          range={{ lowest: widths.lowest, highest: widths.highest }}
-          searchParams={newSearchParams}
-          pathname={pathname}
-        />
-        <FilterRange
-          setter={setDepth}
-          param={depth}
-          paramName={"Depth"}
-          sign={"D"}
-          range={{ lowest: depths.lowest, highest: depths.highest }}
-          searchParams={newSearchParams}
-          pathname={pathname}
-        />
-        <li>
-          <h2>Materials:</h2>
-          <ul>
-            {materialsArr.map((material) => (
-              <li key={material.name}>
-                <label htmlFor="materials">{material.locale}</label>
-                <input
-                  type="checkbox"
-                  id="materials"
-                  checked={materials.includes(material.name)}
-                  onChange={() => handleMaterialChange(material.name)}
-                />
-              </li>
-            ))}
-          </ul>
-        </li>
-        <li>
-          <h2>Colors:</h2>
-          <ul>
-            {colorsArr.map((color) => (
-              <li key={color.name}>
-                <span
-                  style={{ backgroundColor: color.hex }}
-                  className="w-4 h-4"
-                ></span>
-                <label htmlFor="colors">{color.locale}</label>
-                <input
-                  type="checkbox"
-                  id="colors"
-                  checked={colors.includes(color.name)}
-                  onChange={() => handleColorChange(color.name)}
-                />
-              </li>
-            ))}
-          </ul>
-        </li>
-        <li>
-          <h2>Exclude Variants:</h2>
-          <input
-            type="checkbox"
-            checked={variants}
-            onChange={() => {
-              setVariants(!variants)
-              if (variants) {
-                newSearchParams.delete("page")
-                newSearchParams.delete("var")
-              } else {
-                newSearchParams.delete("page")
-                newSearchParams.set("var", "true")
-              }
-              router.push(`${pathname}?${newSearchParams.toString()}`, {
-                scroll: false,
-              })
-            }}
-          />
-        </li>
-      </ul>
-    </section>
+      </li>
+      <FilterRange
+        setter={setPrice}
+        param={price}
+        paramName={"Price"}
+        sign={"P"}
+        range={{ lowest: prices.lowest, highest: prices.highest }}
+        searchParams={newSearchParams}
+        pathname={pathname}
+      />
+      <FilterRange
+        setter={setHeight}
+        param={height}
+        paramName={"Height"}
+        sign={"H"}
+        range={{ lowest: heights.lowest, highest: heights.highest }}
+        searchParams={newSearchParams}
+        pathname={pathname}
+      />
+      <FilterRange
+        setter={setWidth}
+        param={width}
+        paramName={"Width"}
+        sign={"W"}
+        range={{ lowest: widths.lowest, highest: widths.highest }}
+        searchParams={newSearchParams}
+        pathname={pathname}
+      />
+      <FilterRange
+        setter={setDepth}
+        param={depth}
+        paramName={"Depth"}
+        sign={"D"}
+        range={{ lowest: depths.lowest, highest: depths.highest }}
+        searchParams={newSearchParams}
+        pathname={pathname}
+      />
+      <li className="grid gap-2">
+        <h2 className="fluid-lg font-semibold text-gray-800">Materials:</h2>
+        <ul className="flex flex-col gap-2 max-h-72 overflow-auto">
+          {materialsArr.map((material) => (
+            <li className="flex gap-2 items-center" key={material.name}>
+              <input
+                type="checkbox"
+                id="materials"
+                checked={materials.includes(material.name)}
+                onChange={() => handleMaterialChange(material.name)}
+              />
+              <label className="text-gray-700 fluid-base" htmlFor="materials">
+                {material.locale}
+              </label>
+            </li>
+          ))}
+        </ul>
+      </li>
+      <li className="grid gap-2">
+        <h2 className="fluid-lg font-semibold text-gray-800">Colors:</h2>
+        <ul className="flex flex-col gap-2 max-h-72 overflow-auto">
+          {colorsArr.map((color) => (
+            <li className="flex gap-2 items-center" key={color.name}>
+              <input
+                type="checkbox"
+                id="colors"
+                checked={colors.includes(color.name)}
+                onChange={() => handleColorChange(color.name)}
+              />
+              <span
+                style={{ backgroundColor: color.hex }}
+                className="w-4 h-4 border border-gray-400 rounded-full"
+              ></span>
+              <label className="text-gray-700 fluid-base" htmlFor="colors">
+                {color.locale}
+              </label>
+            </li>
+          ))}
+        </ul>
+      </li>
+    </ul>
   )
 }

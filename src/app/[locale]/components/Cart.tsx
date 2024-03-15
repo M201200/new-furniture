@@ -3,18 +3,18 @@
 import { useCallback, useEffect, useState } from "react"
 
 import getAllItems from "@/utils/actions/getAllItems"
-import { useGuestCart } from "@/utils/hooks/zustand/useGuestCart"
-import { useGuestFavorites } from "@/utils/hooks/zustand/useGuestFavorites"
+import { useCart } from "@/utils/hooks/zustand/useCart"
 import { usePreferences } from "@/utils/hooks/zustand/usePreferences"
 
 import ItemComponent from "./ItemComponent"
 
-type GuestFavoritesProps = {
+type CartProps = {
   locale: Locale
   rates: Rates
+  userEmail: string | null | undefined
 }
 
-export default function GuestCart({ locale, rates }: GuestFavoritesProps) {
+export default function Cart({ locale, rates, userEmail }: CartProps) {
   const [items, setItems] = useState<
     | {
         vendor_code: string | null
@@ -29,6 +29,9 @@ export default function GuestCart({ locale, rates }: GuestFavoritesProps) {
     | undefined
   >(null)
   const [totalPrice, setTotalPrice] = useState(0)
+  const [vendorCodes, setVendorCodes] = useState<string[] | null | undefined>(
+    null
+  )
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -38,14 +41,18 @@ export default function GuestCart({ locale, rates }: GuestFavoritesProps) {
   const currentRate =
     currency === "EUR" ? rates.EUR : currency === "MDL" ? rates.MDL : 1
 
-  const favorites = useGuestFavorites((state) => state.entries)
-  const cart = useGuestCart((state) => state.entries)
+  const sign = currency === "EUR" ? "€" : currency === "MDL" ? "MDL" : "$"
+
+  const cart = useCart((state) => state.entries)
+  console.log(cart)
+
+  useEffect(() => {
+    setVendorCodes(cart?.map((item) => item.vendor_code))
+  }, [cart])
 
   const loadItems = useCallback(() => {
-    getAllItems(
-      cart?.map((item) => item.vendor_code),
-      language
-    )
+    // const cartVendorCodes = cart?.map((item) => item.vendor_code)
+    getAllItems(vendorCodes, language)
       .then((data) => {
         setItems(data)
         setTotalPrice(
@@ -66,31 +73,29 @@ export default function GuestCart({ locale, rates }: GuestFavoritesProps) {
       .catch((err) => {
         setError(true)
       })
-  }, [language, cart])
+  }, [language, cart, vendorCodes])
 
   useEffect(() => {
     loadItems()
   }, [loadItems])
 
-  console.log(totalPrice)
-
   return (
-    <section>
-      <h2>Cart</h2>
-      {loading ? (
-        <li>Loading...</li>
-      ) : error ? (
-        <li>Error occurred</li>
-      ) : totalPrice ? (
-        <p>
-          Total price: {(+totalPrice * currentRate).toFixed(2)} {currency}
-        </p>
+    <section className="min-h-screen">
+      <h1 className="fluid-3xl font-bold p-4">Cart</h1>
+      {totalPrice ? (
+        <ul className="p-2 flex gap-2">
+          <li className="fluid-lg">Total price:</li>
+          <li className="fluid-lg font-bold">
+            {(+totalPrice * currentRate).toFixed(2)}
+            {sign}
+          </li>
+        </ul>
       ) : null}
-      <ul>
+      <ul className="flex flex-wrap gap-6">
         {loading ? (
-          <li>Loading...</li>
+          <li className="fluid-xl font-bold p-2">Loading...</li>
         ) : error ? (
-          <li>Error occurred</li>
+          <li className="fluid-xl font-bold p-2">Error occurred</li>
         ) : items?.length ? (
           items.map((item) => (
             <ItemComponent
@@ -101,16 +106,14 @@ export default function GuestCart({ locale, rates }: GuestFavoritesProps) {
               price={item.price}
               discount={item.discount}
               finalPrice={item.final_price!}
-              user_email={null}
+              user_email={userEmail}
               currentCurrency={currency}
               locale={locale}
-              favoritesArr={favorites}
-              cartArr={cart}
               rates={rates}
             />
           ))
         ) : (
-          <li>Nothing found</li>
+          <li className="fluid-xl font-bold p-2">Nothing found</li>
         )}
       </ul>
     </section>

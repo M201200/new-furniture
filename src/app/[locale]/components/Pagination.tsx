@@ -1,13 +1,12 @@
 "use client"
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
-
-// import {
-//   BsChevronDoubleLeft,
-//   BsChevronDoubleRight,
-//   BsChevronLeft,
-//   BsChevronRight,
-// } from "react-icons/bs"
+import {
+  BsChevronDoubleLeft,
+  BsChevronDoubleRight,
+  BsChevronLeft,
+  BsChevronRight,
+} from "react-icons/bs"
 
 type Props = {
   totalPages: number
@@ -83,8 +82,7 @@ export default function Pagination({ totalPages }: Props) {
           href={setPage(currentPage - 1)}
           className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary min-w-[2rem] items-center fluid-base transition-color rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
         >
-          {/* <BsChevronLeft /> */}
-          Left
+          <BsChevronLeft />
         </Link>
       )}
       {currentPage === 1 ? null : (
@@ -93,8 +91,7 @@ export default function Pagination({ totalPages }: Props) {
           href={setPage(1)}
           className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary min-w-[2rem] items-center fluid-base transition-color rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
         >
-          {/* <BsChevronDoubleLeft /> */}
-          To the start
+          <BsChevronDoubleLeft />
         </Link>
       )}
 
@@ -115,8 +112,7 @@ export default function Pagination({ totalPages }: Props) {
           aria-disabled={currentPage === lastPage}
           className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary items-center min-w-[2rem] fluid-base transition-color rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
         >
-          {/* <BsChevronDoubleRight /> */}
-          Right
+          <BsChevronDoubleRight />
         </Link>
       )}
       {currentPage === lastPage ? null : (
@@ -126,8 +122,7 @@ export default function Pagination({ totalPages }: Props) {
           aria-disabled={currentPage === lastPage}
           className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary items-center min-w-[2rem] fluid-base transition-color rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
         >
-          {/* <BsChevronRight /> */}
-          To the end
+          <BsChevronRight />
         </Link>
       )}
     </div>

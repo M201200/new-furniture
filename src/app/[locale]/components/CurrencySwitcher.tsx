@@ -29,11 +29,13 @@ export default function CurrencySwitcher({
   }, [user_email, currentCurrency, setCurrency])
 
   return isPending ? (
-    <span>Pending...</span>
+    <span className="bg-gray-600 text-white fluid-base p-[1px] rounded">
+      Pending...
+    </span>
   ) : (
     <select
       title={"Currency"}
-      className="w-full cursor-pointer bg-primary"
+      className="cursor-pointer bg-gray-600 text-white fluid-base p-[1px] rounded"
       name="currency select"
       value={currency || "USD"}
       onChange={(e) => {

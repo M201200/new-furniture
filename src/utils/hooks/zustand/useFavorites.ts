@@ -1,7 +1,5 @@
 import { create } from "zustand"
 
-import { getValues } from "@/utils/functions/LocalStorageActions"
-
 type FavoritesState = {
   entries: string[] | null
   set: (items: string[] | null) => void
@@ -9,10 +7,8 @@ type FavoritesState = {
   remove: (item: string) => void
 }
 
-export const useGuestFavorites = create<FavoritesState>()((set) => ({
-  entries: window?.localStorage
-    ? (getValues("favorites") as string[] | null)
-    : null,
+export const useFavorites = create<FavoritesState>()((set) => ({
+  entries: null,
   set: (items) => set(() => ({ entries: items })),
   add: (item) =>
     set((state) => ({

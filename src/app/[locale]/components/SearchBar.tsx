@@ -8,8 +8,6 @@ import sanitizeString from "@/utils/functions/sanitizeString"
 
 // import { dictionarySearchBar } from "../../../../../messages/dictionary/clientSide"
 
-// import { BsSearch } from "react-icons/bs"
-
 export default function SearchBar({ locale }: { locale: Locale }) {
   const [query, setQuery] = useState("")
   // const t = dictionarySearchBar(locale)
@@ -22,7 +20,7 @@ export default function SearchBar({ locale }: { locale: Locale }) {
   return (
     <div className="flex fluid-base drop-shadow">
       <input
-        className="content-center px-2 text-textPrimary bg-background w-36 lg:w-auto 2xl:w-64 fluid-base"
+        className="content-center px-2 rounded text-textPrimary bg-background w-36 lg:w-auto 2xl:w-64 fluid-base"
         type="text"
         placeholder={"placeholder"}
         value={query}
@@ -36,9 +34,9 @@ export default function SearchBar({ locale }: { locale: Locale }) {
       <Link
         href={href}
         title={"Search"}
-        className="flex content-center p-2 transition-colors duration-100 bg-primary hover:bg-hoverPrimary fluid-base rounded-r-md text-textSecondary"
+        className="flex content-center p-2 transition-colors duration-100 bg-blue-700 hover:bg-hoverPrimary fluid-base rounded-r-md text-textSecondary"
       >
-        {/* <BsSearch /> */} Search
+        Search
       </Link>
     </div>
   )
