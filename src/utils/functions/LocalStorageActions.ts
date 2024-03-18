@@ -46,6 +46,11 @@ export function addItem(
   }
 }
 
+type GuestOrder = {
+  vendor_code: string
+  amount: number
+}
+
 export function removeItem(
   storageKey: "cart" | "favorites",
   vendor_code: string
@@ -70,5 +75,17 @@ export function removeItem(
     !filtered.length
       ? localStorage.removeItem(storageKey)
       : localStorage.setItem(storageKey, JSON.stringify(filtered))
+  }
+}
+
+export function removeCartItems(vendorCodes: string[]) {
+  const storageValues = JSON.parse(localStorage.getItem("cart")!) as CartItem[]
+  const filtered = storageValues.filter(
+    (item) => !vendorCodes.includes(item.vendor_code)
+  )
+  if (!filtered.length) {
+    localStorage.removeItem("cart")
+  } else {
+    localStorage.setItem("cart", JSON.stringify(filtered))
   }
 }

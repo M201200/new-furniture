@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useEffect } from "react"
+import { SetStateAction, useCallback, useEffect } from "react"
 
 import Link from "next/link"
 import { BsHeart } from "react-icons/bs"
@@ -10,10 +10,12 @@ import { useFavorites } from "@/utils/hooks/zustand/useFavorites"
 type FavoritesLinkProps = {
   locale: Locale
   favoritesArr: string[] | null | undefined
+  isOpen: (value: SetStateAction<boolean>) => void
 }
 export default function FavoritesLink({
   locale,
   favoritesArr,
+  isOpen,
 }: FavoritesLinkProps) {
   const setFavorites = useFavorites((state) => state.set)
   const loadFavorites = useCallback(() => {
@@ -29,10 +31,12 @@ export default function FavoritesLink({
   return (
     <li>
       <Link
-        className="flex gap-2 bg-green-700 text-white fluid-base text-center p-2 rounded"
+        className="grid items-center gap-2 text-center p-1 rounded"
         href={`/${locale}/favorites`}
+        onClick={() => isOpen(false)}
       >
-        <BsHeart className="fluid-lg" /> Favorites
+        <BsHeart className="fluid-lg justify-self-center" />
+        <span className="fluid-sm font-semibold">Favorites</span>
       </Link>
     </li>
   )

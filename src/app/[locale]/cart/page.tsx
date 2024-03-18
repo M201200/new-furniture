@@ -1,7 +1,7 @@
 import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
 import { auth } from "@/app/lib/auth"
 
-import Cart from "../components/Cart"
+import Cart from "../components/pageClientSide/Cart"
 
 type ProfilePageParams = {
   params: {

@@ -28,12 +28,12 @@ export default function Pagination({ totalPages }: Props) {
     return currentPath + "?" + newQuery.toString()
   }
   if (totalPages <= 1) return null
-  const lastPage = totalPages > 500 ? 500 : totalPages
+  const lastPage = totalPages
   const prevPages = []
   const nextPages = []
   const activePage = (
     <span
-      className="min-w-[2rem] bg-accent flex border border-primary align-middle justify-center rounded px-2 py-1 fluid-base text-secondary"
+      className="min-w-[2rem] flex border border-textCrossed align-middle bg-brand1 justify-center rounded px-2 py-1 fluid-base text-gray-200"
       title={currentPage.toString()}
     >
       {currentPage}
@@ -50,7 +50,7 @@ export default function Pagination({ totalPages }: Props) {
         title={page.toString()}
         key={page}
         href={setPage(page)}
-        className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary min-w-[2rem] transition-color fluid-base rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
+        className=" border border-brand2 min-w-[2rem] fluid-base rounded px-2 py-1 text-textSecondary flex align-middle justify-center"
       >
         {page}
       </Link>
@@ -67,7 +67,7 @@ export default function Pagination({ totalPages }: Props) {
         title={page.toString()}
         key={page}
         href={setPage(page)}
-        className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary min-w-[2rem] transition-color fluid-base rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
+        className=" border border-brand2 min-w-[2rem] fluid-base rounded px-2 py-1 text-textSecondary flex align-middle justify-center"
       >
         {page}
       </Link>
@@ -80,7 +80,7 @@ export default function Pagination({ totalPages }: Props) {
         <Link
           title={(currentPage - 1).toString()}
           href={setPage(currentPage - 1)}
-          className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary min-w-[2rem] items-center fluid-base transition-color rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
+          className=" border border-brand2 min-w-[2rem] items-center fluid-base rounded px-2 py-1 text-textSecondary flex align-middle justify-center"
         >
           <BsChevronLeft />
         </Link>
@@ -89,20 +89,20 @@ export default function Pagination({ totalPages }: Props) {
         <Link
           title="1"
           href={setPage(1)}
-          className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary min-w-[2rem] items-center fluid-base transition-color rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
+          className=" border border-brand2 min-w-[2rem] items-center fluid-base rounded px-2 py-1 text-textSecondary flex align-middle justify-center"
         >
           <BsChevronDoubleLeft />
         </Link>
       )}
 
       {prevPages.length > 1 ? (
-        <span className="text-textPrimary fluid-base ">...</span>
+        <span className="text-textSecondary fluid-base ">...</span>
       ) : null}
       {[...prevPages]}
       {activePage}
       {[...nextPages]}
       {nextPages.length > 1 ? (
-        <span className="text-textPrimary fluid-base ">...</span>
+        <span className="text-textSecondary fluid-base ">...</span>
       ) : null}
 
       {currentPage === lastPage ? null : (
@@ -110,7 +110,7 @@ export default function Pagination({ totalPages }: Props) {
           title={lastPage.toString()}
           href={setPage(lastPage)}
           aria-disabled={currentPage === lastPage}
-          className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary items-center min-w-[2rem] fluid-base transition-color rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
+          className=" border border-brand2 items-center min-w-[2rem] fluid-base rounded px-2 py-1 text-textSecondary flex align-middle justify-center"
         >
           <BsChevronDoubleRight />
         </Link>
@@ -120,7 +120,7 @@ export default function Pagination({ totalPages }: Props) {
           title={(currentPage + 1).toString()}
           href={setPage(currentPage + 1)}
           aria-disabled={currentPage === lastPage}
-          className=" bg-secondary border border-accent hover:bg-accent hover:text-secondary items-center min-w-[2rem] fluid-base transition-color rounded px-2 py-1 text-textPrimary flex align-middle justify-center"
+          className=" border border-brand2 items-center min-w-[2rem] fluid-base rounded px-2 py-1 text-textSecondary flex align-middle justify-center"
         >
           <BsChevronRight />
         </Link>

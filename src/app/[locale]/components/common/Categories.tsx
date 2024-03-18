@@ -38,23 +38,26 @@ export function Categories(params: {
       ref={ref}
       className={`relative ${
         isOpen ? "max-w-[30rem]" : ""
-      } bg-blue-600 text-white rounded`}
+      } rounded lg:col-start-2 lg:col-end-3 col-start-1 col-end-2 row-start-1 row-end-2`}
     >
       <button
-        className="text-center p-2 fluid-base rounded flex gap-2 items-center hover:text-blue-200 transition-colors"
+        className="text-center p-2 fluid-base bg-brand1 rounded flex gap-2 lg:w-fit justify-center text-gray-100 items-center hover:text-gray-200 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {<BsTextLeft className="fluid-xl" />} Categories
+        <span>
+          <BsTextLeft className="fluid-xl" />
+        </span>
+        <span className="lg:visible invisible w-0 lg:w-fit">Categories</span>
       </button>
       <section
-        className={`flex flex-wrap gap-3 gap-x-6 absolute w-80 lg:w-[30rem] transition-[visibility,opacity] rounded bg-blue-600 z-10 p-4 ${
+        className={`flex flex-wrap gap-3 gap-x-6 absolute w-80 lg:w-[30rem] transition-[visibility,opacity] rounded bg-bgPrimary text-textPrimary border border-borderThin z-50 p-4 ${
           isOpen ? "opacity-100 visible" : "invisible overflow-hidden opacity-0"
         }`}
       >
         {params.sortedCategories.map((category) => (
           <section key={category.code} className="flex flex-col gap-3 max-w-32">
             <Link
-              className="fluid-lg text-wrap font-semibold hover:text-blue-200 transition-colors"
+              className="fluid-lg text-wrap font-semibold hover:text-textCrossed transition-colors"
               onClick={() => setIsOpen(false)}
               href={`/${params.locale}/category/${category.code}`}
             >
@@ -63,7 +66,7 @@ export function Categories(params: {
             <section className="flex flex-col gap-1 transition-colors">
               {category.subcategory?.map((subcategory) => (
                 <Link
-                  className="fluid-base text-wrap hover:text-blue-200"
+                  className="fluid-base text-wrap hover:text-textCrossed"
                   onClick={() => setIsOpen(false)}
                   key={subcategory.code}
                   href={`/${params.locale}/category/${subcategory.code}`}

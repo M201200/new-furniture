@@ -1,9 +1,9 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import CartButton from "./CartButton"
-import FavoritesButton from "./FavoritesButton"
-import PriceTag from "./PriceTag"
+import CartButton from "../buttons/CartButton"
+import FavoritesButton from "../buttons/FavoritesButton"
+import PriceTag from "../common/PriceTag"
 
 type ItemProps = {
   locale: Locale
@@ -32,11 +32,14 @@ export default function ItemComponent({
 }: ItemProps) {
   return (
     <li className="grid gap-1 w-[17rem]">
-      <Link
-        className="rounded drop-shadow-md"
-        href={`/${locale}/furniture/${vendorCode}`}
-      >
-        <Image src={imageURL} alt={name} width={272} height={272} />
+      <Link href={`/${locale}/furniture/${vendorCode}`} title={name}>
+        <Image
+          className="rounded-lg drop-shadow-md"
+          src={imageURL}
+          alt={name}
+          width={272}
+          height={272}
+        />
       </Link>
       <div className="p-2 grid self-end gap-2">
         <PriceTag
@@ -48,7 +51,9 @@ export default function ItemComponent({
           user_email={user_email}
         />
         <Link className="truncate" href={`/${locale}/furniture/${vendorCode}`}>
-          <h2 className="fluid-base text-gray-600 truncate">{name}</h2>
+          <h2 className="fluid-base text-textSecondary truncate" title={name}>
+            {name}
+          </h2>
         </Link>
         <div className="grid grid-cols-[1fr,3rem] gap-1">
           <CartButton currentVendorCode={vendorCode} user_email={user_email} />

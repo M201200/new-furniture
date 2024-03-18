@@ -19,16 +19,18 @@ export default function PriceTag({
   user_email,
 }: PriceProps) {
   const [currency, setCurrency] = useState<Currency | null>(currentCurrency)
-  const [newPrice, setNewPrice] = useState(price)
-  const [newFinalPrice, setNewFinalPrice] = useState(finalPrice)
-  const [sign, setSign] = useState("$")
+  const [newPrice, setNewPrice] = useState<number | string>(price)
+  const [newFinalPrice, setNewFinalPrice] = useState<number | string>(
+    finalPrice
+  )
+  const [locale, setLocale] = useState("us")
   const [rate, setRate] = useState(1)
   useEffect(() => {
     if (!user_email) {
       const storage = localStorage.getItem("currency") as Currency | null
       setCurrency(storage ? storage : "USD")
     } else setCurrency(currentCurrency)
-    setSign(currency === "USD" ? "$" : currency === "EUR" ? "€" : "MDL")
+    setLocale(currency === "USD" ? "en" : currency === "EUR" ? "de" : "ru")
     setRate(
       currency === "USD"
         ? 1
@@ -36,8 +38,18 @@ export default function PriceTag({
         ? exchangeRates.EUR
         : exchangeRates.MDL
     )
-    setNewPrice(+(price * rate).toFixed(2))
-    setNewFinalPrice(+(finalPrice * rate).toFixed(2))
+    setNewPrice(
+      new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: currency || "USD",
+      }).format(price * rate)
+    )
+    setNewFinalPrice(
+      new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: currency || "USD",
+      }).format(finalPrice * rate)
+    )
   }, [
     currency,
     currentCurrency,
@@ -46,22 +58,27 @@ export default function PriceTag({
     finalPrice,
     price,
     user_email,
+    locale,
   ])
   return (
     <div className="flex gap-2 items-baseline flex-wrap">
       <div>
-        <span className="text-gray-600 fluid-lg font-bold">
+        <span
+          className="text-textSecondary fluid-lg font-bold"
+          title={`${newFinalPrice}`}
+        >
           {newFinalPrice}
-          {sign}{" "}
         </span>
       </div>
       {discount > 0 ? (
         <div className="flex gap-2 items-baseline">
-          <span className="line-through text-gray-500 fluid-base">
+          <span
+            className="line-through text-textCrossed fluid-base"
+            title={`${newPrice}`}
+          >
             {newPrice}
-            {sign}{" "}
           </span>
-          <span className="text-red-500 fluid-lg font-semibold">
+          <span className="text-red-600 fluid-lg font-semibold">
             {" "}
             -{discount}%
           </span>

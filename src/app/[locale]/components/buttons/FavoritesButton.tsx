@@ -30,7 +30,9 @@ export default function FavoritesButton({
 
   return (
     <button
-      className="px-2 py-3 bg-green-700 text-white rounded-lg text-center fluid-base flex justify-center transition-colors"
+      className={`px-2 py-3 text-textPrimary border border-borderThin rounded-lg text-center fluid-base flex justify-center transition-colors ${
+        isAdded ? "bg-bgFav" : ""
+      }`}
       onClick={() => {
         setIsAdded(!isAdded)
         if (user_email) {

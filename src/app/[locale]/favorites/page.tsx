@@ -2,7 +2,7 @@ import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversi
 import { auth } from "@/app/lib/auth"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
-import Favorites from "../components/Favorites"
+import Favorites from "../components/pageClientSide/Favorites"
 
 type FavoritesPageParams = {
   params: {

@@ -6,8 +6,8 @@ import getItems from "@/utils/actions/getItems"
 import { useFavorites } from "@/utils/hooks/zustand/useFavorites"
 import { usePreferences } from "@/utils/hooks/zustand/usePreferences"
 
-import ItemComponent from "./ItemComponent"
-import Pagination from "./Pagination"
+import Pagination from "../common/Pagination"
+import ItemComponent from "../items/ItemComponent"
 
 type GuestFavoritesProps = {
   locale: Locale
@@ -63,9 +63,9 @@ export default function Favorites({
   }, [loadItems])
 
   return (
-    <section className="min-h-screen">
-      <h2 className="fluid-3xl font-bold p-4">Favorites</h2>
-      <ul className="flex flex-wrap gap-6">
+    <section className="min-h-screen text-textPrimary">
+      <h2 className="fluid-3xl font-bold py-4 px-2">Favorites</h2>
+      <ul className="flex flex-wrap items-center justify-center gap-6 p-2">
         {loading ? (
           <li className="fluid-xl font-bold p-2">Loading...</li>
         ) : error ? (

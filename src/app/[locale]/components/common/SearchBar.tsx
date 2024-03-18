@@ -3,14 +3,12 @@ import { useState } from "react"
 
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { BsSearch } from "react-icons/bs"
 
 import sanitizeString from "@/utils/functions/sanitizeString"
 
-// import { dictionarySearchBar } from "../../../../../messages/dictionary/clientSide"
-
 export default function SearchBar({ locale }: { locale: Locale }) {
   const [query, setQuery] = useState("")
-  // const t = dictionarySearchBar(locale)
   const router = useRouter()
   const currentPath = usePathname()
   const searchParams = useSearchParams()
@@ -18,11 +16,11 @@ export default function SearchBar({ locale }: { locale: Locale }) {
     ? `/${locale}/search?query=${sanitizeString(query)}`
     : `${currentPath}?${searchParams}`
   return (
-    <div className="flex fluid-base drop-shadow">
+    <div className="flex fluid-base drop-shadow lg:col-start-3 lg:col-end-4 col-start-1 col-end-4 row-start-2 row-end-3 lg:row-start-1 lg:row-end-2">
       <input
-        className="content-center px-2 rounded text-textPrimary bg-background w-36 lg:w-auto 2xl:w-64 fluid-base"
+        className="content-center p-2 rounded w-full text-textPrimary bg-bgPrimary border border-borderThin fluid-base"
         type="text"
-        placeholder={"placeholder"}
+        placeholder={"Search..."}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={(e) => {
@@ -34,9 +32,9 @@ export default function SearchBar({ locale }: { locale: Locale }) {
       <Link
         href={href}
         title={"Search"}
-        className="flex content-center p-2 transition-colors duration-100 bg-blue-700 hover:bg-hoverPrimary fluid-base rounded-r-md text-textSecondary"
+        className="flex content-center p-2 transition-colors duration-100 bg-brand1 fluid-base rounded-r-md text-gray-200"
       >
-        Search
+        <BsSearch className="fluid-lg" />
       </Link>
     </div>
   )

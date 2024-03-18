@@ -33,7 +33,7 @@ export default function CartButton({
     <div className="text-white rounded-lg text-center grid grid-cols-3">
       {!amount ? (
         <button
-          className="px-2 py-3 bg-blue-800 rounded-lg text-center col-span-3 fluid-lg"
+          className="px-2 py-3 bg-brand1 rounded-lg text-center col-span-3 fluid-lg"
           onClick={() => {
             cart.add({ vendor_code: currentVendorCode, amount: 1 })
             setAmount(1)
@@ -53,7 +53,7 @@ export default function CartButton({
       ) : (
         <>
           <button
-            className="px-2 py-3 bg-blue-700 rounded-lg fluid-base"
+            className="px-1 py-2 bg-brand1 rounded-lg fluid-lg"
             onClick={() => {
               if (amount - 1 < 1) {
                 cart.remove(currentVendorCode)
@@ -84,11 +84,11 @@ export default function CartButton({
           >
             -
           </button>
-          <span className="px-2 py-3 bg-white text-black fluid-base">
+          <span className="px-1 py-2 bg-bgPrimary text-textPrimary fluid-lg">
             {amount}
           </span>
           <button
-            className="px-2 py-3 bg-blue-700 rounded-lg fluid-base"
+            className="px-1 py-2 bg-brand1 rounded-lg fluid-lg"
             onClick={() => {
               setAmount(amount + 1)
               cart.setAmount(currentVendorCode, amount + 1)

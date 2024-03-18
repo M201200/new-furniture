@@ -515,6 +515,47 @@ export const cartItemsRelations = relations(cart, ({ one }) => ({
 }))
 
 //////////
+// Orders
+
+export const orders = mysqlTable(
+  "orders",
+  {
+    id: serial("id").primaryKey(),
+    user_email: varchar("user_email", { length: 255 }).notNull(),
+    item_vendor_code: varchar("item_vendor_code", { length: 64 }).notNull(),
+    amount: smallint("amount", { unsigned: true }).notNull(),
+    purchase_time: timestamp("purchase_time", { mode: "date" })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    user_email: index("user_email").on(table.user_email),
+  })
+)
+
+export const ordersUsersRelations = relations(orders, ({ one }) => ({
+  items: one(users, {
+    fields: [orders.user_email],
+    references: [users.id],
+  }),
+}))
+
+export const ordersToUsersRelations = relations(users, ({ many }) => ({
+  orders: many(orders),
+}))
+
+export const ordersItemsRelations = relations(orders, ({ one }) => ({
+  items: one(items, {
+    fields: [orders.item_vendor_code],
+    references: [items.vendor_code],
+  }),
+}))
+
+export const ordersToItemsRelations = relations(items, ({ many }) => ({
+  orders: many(orders),
+}))
+
+//////////
 // Currency Exchange Rates
 
 export const exchange_rates_USD = mysqlTable("exchange_rates_USD", {

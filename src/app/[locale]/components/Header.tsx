@@ -5,14 +5,12 @@ import { db } from "@/app/db"
 import { cart, categories, favorites, user_profile } from "@/app/db/schema"
 import { auth } from "@/app/lib/auth"
 
-import CartLink from "./CartLink"
-import { Categories } from "./Categories"
-import CurrencySwitcher from "./CurrencySwitcher"
-import FavoritesLink from "./FavoritesLink"
-import LanguageSwitcher from "./LanguageSwitcher"
-import SearchBar from "./SearchBar"
-import SignIn from "./SignIn"
-import ThemeToggle from "./ThemeToggle"
+import { ActionButtons } from "./common/ActionButtons"
+import { Categories } from "./common/Categories"
+import SearchBar from "./common/SearchBar"
+import CurrencySwitcher from "./switchers/CurrencySwitcher"
+import LanguageSwitcher from "./switchers/LanguageSwitcher"
+import ThemeToggle from "./switchers/ThemeToggle"
 
 type HeaderParams = {
   locale: Locale
@@ -24,17 +22,11 @@ export async function Header({ locale }: HeaderParams) {
   const categories = await loadCategories(locale)
   const userPreferences = await loadProfile(locale, userEmail)
   return (
-    <header className="grid gap-1 px-2 py-1">
-      <ul className="flex gap-2">
+    <header className="grid gap-1 p-2">
+      <ul className="flex gap-2 px-4 py-2">
         <li>
           <LanguageSwitcher
             locale={userPreferences.preferredLocale}
-            user_email={userEmail}
-          />
-        </li>
-        <li>
-          <ThemeToggle
-            currentTheme={userPreferences.theme}
             user_email={userEmail}
           />
         </li>
@@ -44,34 +36,29 @@ export async function Header({ locale }: HeaderParams) {
             currentCurrency={userPreferences?.currency as Currency | null}
           />
         </li>
-      </ul>
-      <ul className="flex justify-between gap-2 items-center">
-        <Link className="fluid-lg" href={`/${locale}/`}>
-          <b>New</b> <em>Furniture</em>
-        </Link>
-        <ul className="flex gap-4">
-          <Categories locale={locale} sortedCategories={categories} />
-          <SearchBar locale={locale} />
-        </ul>
-
-        <ul className="flex gap-2">
-          <CartLink locale={locale} cartArr={userPreferences?.cartArr} />
-          <FavoritesLink
-            locale={locale}
-            favoritesArr={userPreferences?.favVendorCodes}
+        <li>
+          <ThemeToggle
+            currentTheme={userPreferences.theme}
+            user_email={userEmail}
           />
-          <li>
-            <Link
-              className="flex bg-gray-600 text-white fluid-base text-center p-2 rounded"
-              href={`/${locale}/profile`}
-            >
-              {session ? session.user?.name : "Guest"}
-            </Link>
-          </li>
-          <li>
-            <SignIn />
-          </li>
-        </ul>
+        </li>
+      </ul>
+      <ul className="grid lg:grid-cols-[0.5fr,0.5fr,3fr,1fr] grid-cols-[0.5fr,1fr,0.5fr] gap-6 items-center">
+        <Link
+          className="fluid-lg lg:justify-self-start flex gap-1 justify-center lg:col-start-1 lg:col-end-2 col-start-2 col-end-3"
+          href={`/${locale}/`}
+        >
+          <b className="text-amber-700">New</b>{" "}
+          <em className="text-brand2">Furniture</em>
+        </Link>
+
+        <Categories locale={locale} sortedCategories={categories} />
+        <SearchBar locale={locale} />
+        <ActionButtons
+          locale={locale}
+          session={session}
+          userPreferences={userPreferences}
+        />
       </ul>
     </header>
   )

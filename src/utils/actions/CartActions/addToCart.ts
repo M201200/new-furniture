@@ -9,7 +9,6 @@ export default async function addToCart(
   user_email: string,
   vendor_code: string
 ) {
-  "use server"
   return await db
     .insert(cart)
     .values({

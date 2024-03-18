@@ -15,9 +15,9 @@ import { getUserPreferences } from "@/utils/functions/getUserPreferences"
 import sanitizeArray from "@/utils/functions/sanitizeArray"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
-import FilterFurniture from "../../components/FilterFurniture"
-import ItemComponent from "../../components/ItemComponent"
-import Pagination from "../../components/Pagination"
+import FilterFurniture from "../../components/common/FilterFurniture"
+import Pagination from "../../components/common/Pagination"
+import ItemComponent from "../../components/items/ItemComponent"
 
 type Params = {
   searchParams?: {
@@ -255,7 +255,7 @@ export default async function Items({ searchParams, params }: Params) {
       : 1
 
   return (
-    <main className="grid md:grid-cols-[10rem,1fr] gap-8 justify-center p-4">
+    <main className="grid lg:grid-cols-[10rem,1fr] gap-8 justify-center p-4">
       <FilterFurniture
         prices={{
           lowest: 0,
@@ -287,31 +287,37 @@ export default async function Items({ searchParams, params }: Params) {
         selectedMaterials={searchParamsSanitized?.mat || []}
         includeVariants={searchParamsSanitized?.var}
       />
-      <div className="flex flex-col gap-4">
-        <ul className="flex flex-wrap justify-center gap-6">
-          {allItems.map((item) => (
-            <ItemComponent
-              key={item.vendorCode}
-              vendorCode={item.vendorCode!}
-              locale={params.locale}
-              imageURL={
-                item.thumbnailURL
-                  ? item.thumbnailURL
-                  : "/images/" +
-                    item.vendorCode
-                      ?.replace(/\-/gi, "/")
-                      .replace(/m\d+w\d+h\d+d\d+/gi, "m0w0h0d0") +
-                    "/1.webp"
-              }
-              name={item.name!}
-              price={item.price}
-              discount={item.discount}
-              finalPrice={item.final_price!}
-              currentCurrency={currentCurrency}
-              user_email={user_email}
-              rates={rates}
-            />
-          ))}
+      <div className="flex flex-col gap-4 p-4">
+        <ul className="flex flex-wrap justify-center gap-8">
+          {allItems.length ? (
+            allItems.map((item) => (
+              <ItemComponent
+                key={item.vendorCode}
+                vendorCode={item.vendorCode!}
+                locale={params.locale}
+                imageURL={
+                  item.thumbnailURL
+                    ? item.thumbnailURL
+                    : "/images/" +
+                      item.vendorCode
+                        ?.replace(/\-/gi, "/")
+                        .replace(/m\d+w\d+h\d+d\d+/gi, "m0w0h0d0") +
+                      "/1.webp"
+                }
+                name={item.name!}
+                price={item.price}
+                discount={item.discount}
+                finalPrice={item.final_price!}
+                currentCurrency={currentCurrency}
+                user_email={user_email}
+                rates={rates}
+              />
+            ))
+          ) : (
+            <li className="text-center text-textSecondary fluid-lg p-4">
+              Nothing found
+            </li>
+          )}
         </ul>
         <Pagination totalPages={totalPages} />
       </div>

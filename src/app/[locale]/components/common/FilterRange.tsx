@@ -79,17 +79,17 @@ export default function FilterRange({
 
   return (
     <li className="grid gap-2">
-      <h2 className="fluid-lg font-semibold text-gray-800">{paramName}:</h2>
+      <h2 className="fluid-lg font-semibold text-textPrimary">{paramName}:</h2>
       <div className="flex gap-1">
         <div className=" px-1">
           <label
-            className="text-gray-600 fluid-base"
+            className="text-textSecondary fluid-base"
             htmlFor={`${paramName}-min`}
           >
             from:{" "}
           </label>
           <input
-            className="w-16 border-2 border-gray-200 rounded"
+            className="w-16 border-2 border-borderThin rounded text-textPrimary"
             id={`${paramName}-min`}
             value={param.min}
             onChange={(e) =>
@@ -105,11 +105,14 @@ export default function FilterRange({
           />
         </div>
         <div className="px-1">
-          <label className="text-gray-600 fluid-base" htmlFor={`${param}-min`}>
+          <label
+            className="text-textSecondary fluid-base"
+            htmlFor={`${param}-min`}
+          >
             to:{" "}
           </label>
           <input
-            className="w-16 border-2 border-gray-200 rounded"
+            className="w-16 border-2 border-borderThin rounded text-textPrimary"
             id={`${paramName}-max`}
             value={param.max}
             onChange={(e) =>

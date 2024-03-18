@@ -3,30 +3,25 @@
 @tailwind utilities;
 
 :root {
-    --text-primary: #092324;
-    --text-hover-primary: #3f797c;
-    --text-secondary: #f0e6d9;
-    --text-hover-secondary: #efdabdb0;
-    --background: #fbfefe;
-    --primary: #591b17;
-    --hover-primary: #6e231d;
-    --secondary: #efdabd;
-    --hover-secondary: #dfbf96;
-    --accent: #b22d67;
-    --hover-accent: #cc3476;
-  }
-  
-  :root .dark {
-    --text-primary: #fbfefe;
-    --text-hover-primary: #bcbebe;
-    --text-secondary: #efdabd;
-    --text-hover-secondary: #efdabdb0;
-    --background: #092324;
-    --primary: #591b17;
-    --hover-primary: #6e231d;
-    --secondary: #221e1d;
-    --hover-secondary: #332e2d;
-    --accent: #e494b7;
-    --hover-accent: #ce7c9f;
-  }
-  
+  color-scheme: light;
+  --brand-1: rgb(146 64 14);
+  --brand-2: rgb(55 65 81);
+  --text-primary: rgb(55 65 81);
+  --text-secondary: rgb(75 85 99);
+  --text-crossed: rgb(107 114 128);
+  --bg-primary: rgb(249 250 251);
+  --bg-fav: rgb(254 226 226);
+  --border-thin: rgb(209 213 219);
+}
+
+:root .dark {
+  color-scheme: dark;
+  --brand-1: rgb(180 83 9);
+  --brand-2: rgb(229 231 235);
+  --text-primary: rgb(229 231 235);
+  --text-secondary: rgb(209 213 219);
+  --text-crossed: rgb(156 163 175);
+  --bg-primary: rgb(17 24 39);
+  --bg-fav: rgb(68, 14, 14);
+  --border-thin: rgb(75 85 99);
+}

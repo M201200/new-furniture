@@ -7,8 +7,8 @@ import { auth } from "@/app/lib/auth"
 import { getUserPreferences } from "@/utils/functions/getUserPreferences"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
-import ItemComponent from "../components/ItemComponent"
-import Pagination from "../components/Pagination"
+import Pagination from "../components/common/Pagination"
+import ItemComponent from "../components/items/ItemComponent"
 
 type Search = {
   params: {
@@ -93,7 +93,7 @@ export default async function Search({ params, searchParams }: Search) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       {totalItems > 0 && searchResults?.length ? (
-        <ul>
+        <ul className="flex flex-wrap justify-center gap-8">
           {searchResults?.map((item) => (
             <ItemComponent
               key={item.vendorCode}
@@ -120,7 +120,9 @@ export default async function Search({ params, searchParams }: Search) {
         </ul>
       ) : (
         <ul>
-          <li>Nothing found</li>
+          <li className="text-center text-textSecondary fluid-lg p-4">
+            Nothing found
+          </li>
         </ul>
       )}
       <Pagination totalPages={Math.ceil(totalItems / maxItemsOnPage)} />

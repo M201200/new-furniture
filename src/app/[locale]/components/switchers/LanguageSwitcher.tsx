@@ -25,16 +25,16 @@ export default function LanguageSwitcher({
   const setLocale = usePreferences((state) => state.setLocale)
 
   useEffect(() => {
-    locale !== userLocale ? setLocale(locale) : null
+    setLocale(locale)
   }, [locale, setLocale, userLocale])
 
   return isPending ? (
-    <span className="bg-gray-600 text-white fluid-base p-[1px] rounded">
+    <span className="bg-gray-500 text-gray-50 fluid-base p-[1px] rounded">
       Pending...
     </span>
   ) : (
     <select
-      className="cursor-pointer bg-gray-600 text-white fluid-base p-[1px] rounded"
+      className="cursor-pointer bg-gray-500 text-gray-50 fluid-base p-[1px] rounded"
       defaultValue={locale}
       onChange={(e) => {
         if (user_email) {

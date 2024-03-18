@@ -1,14 +1,11 @@
 import "./globals.css"
 
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 
 import { Header } from "./components/Header"
 
-const inter = Inter({ subsets: ["latin"] })
-
 export const metadata: Metadata = {
-  title: "E-commerce",
+  title: "New Furniture",
   description: "Shopping app",
 }
 const locales = ["en", "ro", "ru"]
@@ -28,9 +25,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang={locale}>
-      <body>
+      <body className="dark">
         <div
-          className={`${inter.className} grid grid-cols-[minmax(0.5rem,1fr),minmax(24rem,90rem),minmax(0.5rem,1fr)]`}
+          className={`font-sans grid grid-cols-[minmax(0.5rem,1fr),minmax(20rem,90rem),minmax(0.5rem,1fr)] bg-bgPrimary overflow-x-hidden min-h-screen`}
         >
           <div className="col-start-2 col-end-3">
             <Header locale={locale} />

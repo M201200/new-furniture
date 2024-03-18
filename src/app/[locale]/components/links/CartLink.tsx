@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useEffect } from "react"
+import { SetStateAction, useCallback, useEffect } from "react"
 
 import Link from "next/link"
 import { BsCart4 } from "react-icons/bs"
@@ -10,8 +10,13 @@ import { useCart } from "@/utils/hooks/zustand/useCart"
 type FavoritesLinkProps = {
   locale: Locale
   cartArr: CartItem[] | null | undefined
+  isOpen: (value: SetStateAction<boolean>) => void
 }
-export default function CartLink({ locale, cartArr }: FavoritesLinkProps) {
+export default function CartLink({
+  locale,
+  cartArr,
+  isOpen,
+}: FavoritesLinkProps) {
   const setCart = useCart((state) => state.set)
   const loadCart = useCallback(() => {
     cartArr ? setCart(cartArr) : setCart(getValues("cart") as CartItem[] | null)
@@ -24,12 +29,12 @@ export default function CartLink({ locale, cartArr }: FavoritesLinkProps) {
   return (
     <li>
       <Link
-        className="flex gap-2 bg-blue-700 text-white fluid-base text-center p-2 rounded"
+        className="grid items-center gap-2 text-center p-1 rounded"
         href={`/${locale}/cart`}
+        onClick={() => isOpen(false)}
       >
-        {" "}
-        <BsCart4 className="fluid-lg" />
-        Cart
+        <BsCart4 className="fluid-lg justify-self-center" />
+        <span className="fluid-sm font-semibold">Cart</span>
       </Link>
     </li>
   )

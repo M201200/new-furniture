@@ -10,7 +10,6 @@ export default async function updateAmount(
   vendor_code: string,
   amount: number
 ) {
-  "use server"
   if (amount < 1) {
     return await db
       .delete(cart)
