@@ -16,7 +16,7 @@ import ReceiptItem from "../components/items/ReceiptItem"
 import ProfilePreferences from "../components/pageClientSide/ProfilePreferences"
 import Pagination from "../components/common/Pagination"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
 
 type ProfilePageParams = {
   params: {
@@ -31,6 +31,7 @@ export default async function ProfilePage({
   params,
   searchParams,
 }: ProfilePageParams) {
+  unstable_setRequestLocale(params.locale)
   const maxItemsOnPage = 15
   const session = await auth()
   const rates: Rates = await getCurrencyConversion()

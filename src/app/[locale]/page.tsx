@@ -5,7 +5,7 @@ import { items, itemsImageURL, itemsName, user_profile } from "../db/schema"
 import ItemComponent from "./components/items/ItemComponent"
 import { auth } from "../lib/auth"
 import getCurrencyConversion from "../api/currencyConversion/currencyConversion"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
 
 type HomeProps = {
   params: {
@@ -14,6 +14,7 @@ type HomeProps = {
 }
 
 export default async function Home({ params }: HomeProps) {
+  unstable_setRequestLocale(params.locale)
   const session = await auth()
   const rates: Rates = await getCurrencyConversion()
 

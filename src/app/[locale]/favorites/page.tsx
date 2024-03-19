@@ -3,7 +3,7 @@ import { auth } from "@/app/lib/auth"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
 import Favorites from "../components/pageClientSide/Favorites"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
 
 type FavoritesPageParams = {
   params: {
@@ -18,6 +18,7 @@ export default async function FavoritesPage({
   params,
   searchParams,
 }: FavoritesPageParams) {
+  unstable_setRequestLocale(params.locale)
   const session = await auth()
   const maxItemsOnPage = 12
   const searchParamsSanitized = searchParams

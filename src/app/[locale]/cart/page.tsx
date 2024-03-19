@@ -2,7 +2,7 @@ import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversi
 import { auth } from "@/app/lib/auth"
 
 import Cart from "../components/pageClientSide/Cart"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
 
 type ProfilePageParams = {
   params: {
@@ -11,6 +11,7 @@ type ProfilePageParams = {
 }
 
 export default async function CartPage({ params }: ProfilePageParams) {
+  unstable_setRequestLocale(params.locale)
   const rates: Rates = await getCurrencyConversion()
   const session = await auth()
   const tlAsync = await getTranslations("Cart")

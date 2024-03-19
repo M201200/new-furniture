@@ -9,7 +9,7 @@ import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
 import Pagination from "../components/common/Pagination"
 import ItemComponent from "../components/items/ItemComponent"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
 
 type Search = {
   params: {
@@ -21,6 +21,7 @@ type Search = {
   }
 }
 export default async function Search({ params, searchParams }: Search) {
+  unstable_setRequestLocale(params.locale)
   const maxItemsOnPage = 12
   const sanitizedPage = sanitizeStringToNumber(searchParams?.page) || 1
   const sanitizedQuery = searchParams?.query

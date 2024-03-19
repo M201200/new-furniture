@@ -19,7 +19,7 @@ import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 import FilterFurniture from "../../components/common/FilterFurniture"
 import Pagination from "../../components/common/Pagination"
 import ItemComponent from "../../components/items/ItemComponent"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
 
 type Params = {
   searchParams?: {
@@ -42,18 +42,19 @@ type Params = {
   }
 }
 
-// export async function generateStaticParams() {
-//   const categoriesArr = await db
-//     .select({
-//       category: categories.code,
-//     })
-//     .from(categories)
-//     .orderBy(categories.id)
-//     .execute()
-//   return categoriesArr.map((code) => ({ code: code.category.toString() }))
-// }
+export async function generateStaticParams() {
+  const categoriesArr = await db
+    .select({
+      category: categories.code,
+    })
+    .from(categories)
+    .orderBy(categories.id)
+    .execute()
+  return categoriesArr.map((code) => ({ code: code.category.toString() }))
+}
 
 export default async function Catalog({ searchParams, params }: Params) {
+  unstable_setRequestLocale(params.locale)
   const highestValue = 450
   const highestPrice = 3500
   const maxItemsOnPage = 12
