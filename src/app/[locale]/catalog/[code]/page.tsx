@@ -42,16 +42,16 @@ type Params = {
   }
 }
 
-export async function generateStaticParams() {
-  const categoriesArr = await db
-    .select({
-      category: categories.code,
-    })
-    .from(categories)
-    .orderBy(categories.id)
-    .execute()
-  return categoriesArr.map((code) => ({ code: code.category.toString() }))
-}
+// export async function generateStaticParams() {
+//   const categoriesArr = await db
+//     .select({
+//       category: categories.code,
+//     })
+//     .from(categories)
+//     .orderBy(categories.id)
+//     .execute()
+//   return categoriesArr.map((code) => ({ code: code.category.toString() }))
+// }
 
 export default async function Catalog({ searchParams, params }: Params) {
   const highestValue = 450
