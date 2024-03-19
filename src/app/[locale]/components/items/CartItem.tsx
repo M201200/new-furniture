@@ -17,6 +17,7 @@ import { useCart } from "@/utils/hooks/zustand/useCart"
 import { useFavorites } from "@/utils/hooks/zustand/useFavorites"
 
 type CartItemProps = {
+  tl: string
   locale: Locale
   vendorCode: string
   name: string
@@ -32,6 +33,7 @@ type CartItemProps = {
 }
 
 export default function CartItem({
+  tl,
   locale,
   vendorCode,
   name,
@@ -232,7 +234,7 @@ export default function CartItem({
                 style: "currency",
                 currency: currency || "USD",
               }).format(newFinalPrice)}{" "}
-              per item
+              {tl}
             </span>
           </div>
         ) : null}

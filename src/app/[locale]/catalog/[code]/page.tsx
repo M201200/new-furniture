@@ -3,6 +3,7 @@ import { and, between, count, desc, eq, isNull, like, or } from "drizzle-orm"
 import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
 import { db } from "@/app/db"
 import {
+  categories,
   characteristicsFurniture,
   colors,
   items,
@@ -18,6 +19,7 @@ import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 import FilterFurniture from "../../components/common/FilterFurniture"
 import Pagination from "../../components/common/Pagination"
 import ItemComponent from "../../components/items/ItemComponent"
+import { getTranslations } from "next-intl/server"
 
 type Params = {
   searchParams?: {
@@ -40,7 +42,18 @@ type Params = {
   }
 }
 
-export default async function Items({ searchParams, params }: Params) {
+export async function generateStaticParams() {
+  const categoriesArr = await db
+    .select({
+      category: categories.code,
+    })
+    .from(categories)
+    .orderBy(categories.id)
+    .execute()
+  return categoriesArr.map((code) => ({ code: code.category.toString() }))
+}
+
+export default async function Catalog({ searchParams, params }: Params) {
   const highestValue = 450
   const highestPrice = 3500
   const maxItemsOnPage = 12
@@ -60,6 +73,27 @@ export default async function Items({ searchParams, params }: Params) {
         mat: sanitizeArray(searchParams.mat),
       }
     : null
+
+  const stateTlQuery = getTranslations("States")
+  const filterTlQuery = getTranslations("Filter")
+
+  const [stateTlAsync, filterTlAsync] = await Promise.all([
+    stateTlQuery,
+    filterTlQuery,
+  ])
+
+  const filterTl = {
+    excludeVariants: filterTlAsync("ExcludeVariants"),
+    materials: filterTlAsync("Materials"),
+    colors: filterTlAsync("Colors"),
+    characteristics: filterTlAsync("Characteristics"),
+    height: filterTlAsync("Height"),
+    width: filterTlAsync("Width"),
+    depth: filterTlAsync("Depth"),
+    price: filterTlAsync("Price"),
+    from: filterTlAsync("From"),
+    to: filterTlAsync("To"),
+  }
 
   function setConditions() {
     const conditions = [
@@ -255,8 +289,9 @@ export default async function Items({ searchParams, params }: Params) {
       : 1
 
   return (
-    <main className="grid lg:grid-cols-[10rem,1fr] gap-8 justify-center p-4">
+    <main className="grid lg:grid-cols-[10rem,1fr] min-h-[60vh] gap-8 justify-center p-4">
       <FilterFurniture
+        tl={filterTl}
         prices={{
           lowest: 0,
           highest: highestPrice,
@@ -315,7 +350,7 @@ export default async function Items({ searchParams, params }: Params) {
             ))
           ) : (
             <li className="text-center text-textSecondary fluid-lg p-4">
-              Nothing found
+              {stateTlAsync("NothingFound")}
             </li>
           )}
         </ul>

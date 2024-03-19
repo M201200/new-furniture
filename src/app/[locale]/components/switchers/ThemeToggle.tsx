@@ -10,11 +10,17 @@ import { usePreferences } from "@/utils/hooks/zustand/usePreferences"
 type ThemeToggleParams = {
   currentTheme: Theme | null
   user_email?: string | null
+  tl: {
+    changeTheme: string
+    light: string
+    dark: string
+  }
 }
 
 export default function ThemeToggle({
   currentTheme,
   user_email,
+  tl,
 }: ThemeToggleParams) {
   const isDarkMode = useMediaQuery("(prefers-color-scheme:dark)")
   const [isPending, startTransition] = useTransition()
@@ -36,16 +42,13 @@ export default function ThemeToggle({
     }
   }, [theme, setTheme, isDarkMode, currentTheme])
 
-  return isPending ? (
-    <span className="bg-gray-500 text-gray-50 fluid-base p-[1px] rounded">
-      Pending...
-    </span>
-  ) : (
+  return (
     <select
-      title={"Theme"}
+      title={tl.changeTheme}
       className="cursor-pointer bg-gray-500 text-gray-50 fluid-base p-[1px] rounded"
       name="theme select"
       value={theme || "dark"}
+      disabled={isPending}
       onChange={(e) => {
         if (user_email) {
           startTransition(() => {
@@ -61,8 +64,8 @@ export default function ThemeToggle({
         }
       }}
     >
-      <option value="light">{"Light"}</option>
-      <option value="dark">{"Dark"}</option>
+      <option value="light">{tl.light}</option>
+      <option value="dark">{tl.dark}</option>
     </select>
   )
 }

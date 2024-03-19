@@ -24,12 +24,22 @@ type userPreferences = {
 }
 
 type ActionButtonsProps = {
+  tl: {
+    catalog: string
+    searchBar: string
+    cart: string
+    profile: string
+    favorites: string
+    signin: string
+    signout: string
+  }
   locale: Locale
   session: Session | null
   userPreferences: userPreferences
 }
 
 export function ActionButtons({
+  tl,
   locale,
   session,
   userPreferences,
@@ -75,31 +85,38 @@ export function ActionButtons({
       >
         <ul className="flex flex-col-reverse lg:flex-row items-center gap-2 text-textPrimary">
           <CartLink
+            tl={tl.cart}
             locale={locale}
             cartArr={userPreferences?.cartArr}
             isOpen={setIsOpen}
           />
           <FavoritesLink
+            tl={tl.favorites}
             locale={locale}
             favoritesArr={userPreferences?.favVendorCodes}
             isOpen={setIsOpen}
           />
           <li>
             <Link
-              className="grid items-center gap-2 text-center p-1 rounded"
+              className="grid items-center gap-2 text-center p-1 min-w-12 rounded"
               href={`/${locale}/profile`}
               onClick={() => setIsOpen(false)}
+              title={session ? session.user?.name! : tl.profile}
             >
               <span className="fluid-lg justify-self-center">
                 {session ? <IoPersonSharp /> : <IoPersonOutline />}
               </span>
-              <span className="fluid-sm font-semibold">
-                {session ? session.user?.name : "Guest"}
+              <span className="fluid-sm font-semibold truncate">
+                {session ? session.user?.name : tl.profile}
               </span>
             </Link>
           </li>
           <li>
-            <SignIn session={session} isOpen={setIsOpen} />
+            <SignIn
+              tl={{ signin: tl.signin, signout: tl.signout }}
+              session={session}
+              isOpen={setIsOpen}
+            />
           </li>
         </ul>
       </section>

@@ -9,6 +9,7 @@ import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
 import Pagination from "../components/common/Pagination"
 import ItemComponent from "../components/items/ItemComponent"
+import { getTranslations } from "next-intl/server"
 
 type Search = {
   params: {
@@ -90,6 +91,8 @@ export default async function Search({ params, searchParams }: Search) {
 
   const rates: Rates = await getCurrencyConversion()
 
+  const tl = await getTranslations("States")
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       {totalItems > 0 && searchResults?.length ? (
@@ -121,7 +124,7 @@ export default async function Search({ params, searchParams }: Search) {
       ) : (
         <ul>
           <li className="text-center text-textSecondary fluid-lg p-4">
-            Nothing found
+            {tl("NothingFound")}
           </li>
         </ul>
       )}

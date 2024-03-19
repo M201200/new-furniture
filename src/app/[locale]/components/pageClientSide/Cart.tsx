@@ -16,12 +16,38 @@ import CartItem from "../items/CartItem"
 import ReceiptItem from "../items/ReceiptItem"
 
 type CartProps = {
+  tl: {
+    Cart: string
+    Select: string
+    DeleteSelected: string
+    Accept: string
+    Delete: string
+    Cancel: string
+    Order: string
+    Congratulation: string
+    Proceed: string
+    Total: string
+    Orders: string
+    Selected: string
+    Discount: string
+    FinalPrice: string
+    DeleteDisclaimer: string
+    LogInDisclaimer: string
+    EnterNumber: string
+    NothingFound: string
+    Loading: string
+    Error: string
+    PerItem: string
+    TotalItems: string
+    OrderDate: string
+  }
+
   locale: Locale
   rates: Rates
   userEmail: string | null | undefined
 }
 
-export default function Cart({ locale, rates, userEmail }: CartProps) {
+export default function Cart({ tl, locale, rates, userEmail }: CartProps) {
   const cart = useCart((state) => state.entries)
   const removeFromCart = useCart((state) => state.remove)
   const massRemoveFromCart = useCart((state) => state.massRemove)
@@ -112,8 +138,8 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
   }, [vendorCodes])
 
   return (
-    <section>
-      <h1 className="fluid-3xl font-bold p-4 text-textPrimary">Cart</h1>
+    <section className="min-h-[40vh]">
+      <h1 className="fluid-3xl font-bold p-4 text-textPrimary">{tl.Cart}</h1>
       <div
         aria-disabled={openOrders || openDelete || openAffirmation}
         className="grid lg:grid-cols-[1fr,0.5fr] items-start gap-4 "
@@ -121,11 +147,11 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
         <ul className="grid content-center gap-4">
           {loading ? (
             <li className="fluid-xl font-bold p-2 text-textPrimary">
-              Loading...
+              {tl.Loading}
             </li>
           ) : error ? (
             <li className="fluid-xl font-bold p-2 text-textPrimary">
-              Error occurred
+              {tl.Error}
             </li>
           ) : items?.length ? (
             <>
@@ -145,7 +171,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                     }}
                   />
                   <label htmlFor="select all">
-                    Select all positions ({items?.length})
+                    {tl.Select} ({items?.length})
                   </label>
                 </span>
                 {selectedArr.length ? (
@@ -153,7 +179,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                     className="items-center text-center text-red-600 font-bold p-1"
                     onClick={() => setOpenDelete(true)}
                   >
-                    Delete selected
+                    {tl.DeleteSelected}
                   </button>
                 ) : null}
               </li>
@@ -177,6 +203,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                     }}
                   />
                   <CartItem
+                    tl={tl.PerItem}
                     vendorCode={item.vendor_code!}
                     name={item.name}
                     imageURL={item.thumbnailURL!}
@@ -195,7 +222,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
             </>
           ) : (
             <li className="fluid-xl font-bold p-2 text-textPrimary">
-              Nothing found
+              {tl.NothingFound}
             </li>
           )}
         </ul>
@@ -211,13 +238,11 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                 disabled={!selectedArr.length}
                 onClick={() => setOpenOrders(true)}
               >
-                Order
+                {tl.Order}
               </button>
             </li>
             <li className="grid grid-cols-2 gap-2">
-              <h2 className="fluid-lg text-textSecondary">
-                Selected positions:
-              </h2>
+              <h2 className="fluid-lg text-textSecondary">{tl.Selected}:</h2>
               <span className="fluid-lg font-bold justify-self-end">
                 {new Intl.NumberFormat(locale, {
                   style: "currency",
@@ -227,7 +252,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
               </span>
             </li>
             <li className="grid grid-cols-2 gap-2">
-              <h2 className="fluid-lg text-textSecondary">Discount:</h2>
+              <h2 className="fluid-lg text-textSecondary">{tl.Discount}:</h2>
               <span className="fluid-lg font-bold text-red-600 justify-self-end">
                 {new Intl.NumberFormat(locale, {
                   style: "currency",
@@ -236,7 +261,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
               </span>
             </li>
             <li className="grid grid-cols-2 gap-2">
-              <h2 className="fluid-lg text-textSecondary">Final price:</h2>
+              <h2 className="fluid-lg text-textSecondary">{tl.FinalPrice}:</h2>
               <span className="fluid-lg font-bold justify-self-end">
                 {new Intl.NumberFormat(locale, {
                   style: "currency",
@@ -251,9 +276,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
         <dialog className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex justify-center items-center">
           <div className="bg-bgPrimary m-auto p-8 rounded-lg drop-shadow-md max-w-[95%] text-textPrimary">
             <div className="flex flex-col gap-4 items-center">
-              <h3 className="fluid-lg">
-                This action is irreversible. Are you sure?
-              </h3>
+              <h3 className="fluid-lg">{tl.DeleteDisclaimer}</h3>
               <div className="flex gap-4 items-stretch">
                 <button
                   className="bg-red-600 text-gray-100 rounded-lg p-2"
@@ -287,13 +310,13 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                     setOpenDelete(false)
                   }}
                 >
-                  Delete
+                  {tl.Delete}
                 </button>
                 <button
                   className="bg-gray-600 rounded-lg text-gray-100 p-2"
                   onClick={() => setOpenDelete(false)}
                 >
-                  Cancel
+                  {tl.Cancel}
                 </button>
               </div>
             </div>
@@ -304,10 +327,10 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
         <dialog className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex justify-center items-center">
           <div className="bg-bgPrimary m-auto p-8 rounded-lg text-textPrimary drop-shadow-md max-w-[95%]">
             <div className="grid gap-4">
-              <h2 className="fluid-xl font-bold">Your orders:</h2>
+              <h2 className="fluid-xl font-bold">{tl.Orders}:</h2>
               {!userEmail ? (
                 <p className="fluid-base text-textCrossed">
-                  Log in to save your purchase history
+                  {tl.LogInDisclaimer}
                 </p>
               ) : null}
               <ul className="grid gap-2 max-h-[60vh] lg:max-h-[40vh] border border-borderThin rounded-lg p-1 overflow-auto">
@@ -315,6 +338,11 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                   ?.filter((item) => selectedArr.includes(item.vendor_code!))!
                   .map((item) => (
                     <ReceiptItem
+                      tl={{
+                        PerItem: tl.PerItem,
+                        TotalItems: tl.TotalItems,
+                        OrderDate: tl.OrderDate,
+                      }}
                       key={item.vendor_code}
                       vendorCode={item.vendor_code!}
                       name={item.name}
@@ -338,7 +366,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
 
               <div className="grid gap-2 justify-center">
                 <label className="fluid-lg text-textSecondary" htmlFor="phone">
-                  Enter your phone number for feedback (random 8 digits)
+                  {tl.EnterNumber}
                 </label>
                 <div className="flex justify-center fluid-base">
                   <div
@@ -366,9 +394,7 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
               </div>
               <ul className="rounded-lg grid p-4 gap-2">
                 <li className="grid grid-cols-2 gap-2 border-b border-borderThin">
-                  <h2 className="fluid-lg text-textSecondary">
-                    Total positions:
-                  </h2>
+                  <h2 className="fluid-lg text-textSecondary">{tl.Total}:</h2>
                   <span className="fluid-lg font-bold justify-self-end">
                     {new Intl.NumberFormat(locale, {
                       style: "currency",
@@ -378,7 +404,9 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                   </span>
                 </li>
                 <li className="grid grid-cols-2 gap-2 border-b border-borderThin">
-                  <h2 className="fluid-lg text-textSecondary">Discount:</h2>
+                  <h2 className="fluid-lg text-textSecondary">
+                    {tl.Discount}:
+                  </h2>
                   <span className="fluid-lg font-bold text-red-600 justify-self-end">
                     {new Intl.NumberFormat(locale, {
                       style: "currency",
@@ -387,7 +415,9 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                   </span>
                 </li>
                 <li className="grid grid-cols-2 gap-2 border-b border-borderThin">
-                  <h2 className="fluid-lg text-textSecondary">Final price:</h2>
+                  <h2 className="fluid-lg text-textSecondary">
+                    {tl.FinalPrice}:
+                  </h2>
                   <span className="fluid-lg font-bold justify-self-end">
                     {new Intl.NumberFormat(locale, {
                       style: "currency",
@@ -424,13 +454,13 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
                     setOpenAffirmation(true)
                   }}
                 >
-                  Accept
+                  {tl.Accept}
                 </button>
                 <button
                   className="bg-gray-500 rounded-lg text-gray-100 p-2"
                   onClick={() => setOpenOrders(false)}
                 >
-                  Cancel
+                  {tl.Cancel}
                 </button>
               </div>
             </div>
@@ -441,14 +471,12 @@ export default function Cart({ locale, rates, userEmail }: CartProps) {
         <dialog className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex justify-center items-center">
           <div className="bg-bgPrimary text-textPrimary m-auto p-8 rounded-lg drop-shadow-md max-w-[95%]">
             <div className="flex flex-col gap-4 items-center">
-              <h3 className="fluid-xl text-center">
-                Congratulations with your purchases!
-              </h3>
+              <h3 className="fluid-xl text-center">{tl.Congratulation}</h3>
               <button
                 className="bg-brand1 rounded-lg text-gray-200 p-2"
                 onClick={() => setOpenAffirmation(false)}
               >
-                Proceed
+                {tl.Proceed}
               </button>
             </div>
           </div>

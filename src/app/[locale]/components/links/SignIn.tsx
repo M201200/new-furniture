@@ -6,9 +6,14 @@ import Link from "next/link"
 import { PiSignIn, PiSignOut } from "react-icons/pi"
 
 export default function SignIn({
+  tl,
   session,
   isOpen,
 }: {
+  tl: {
+    signin: string
+    signout: string
+  }
   session: Session | null
   isOpen: (value: SetStateAction<boolean>) => void
 }) {
@@ -19,10 +24,14 @@ export default function SignIn({
       onClick={() => isOpen(false)}
     >
       <span className="fluid-lg justify-self-center">
-        {!session ? <PiSignIn /> : <PiSignOut />}
+        {!session ? (
+          <PiSignIn className="text-red-600" />
+        ) : (
+          <PiSignOut className="text-red-600" />
+        )}
       </span>
       <span className="fluid-sm font-semibold">
-        {!session ? "Sign in" : "Sign out"}
+        {!session ? tl.signin : tl.signout}
       </span>
     </Link>
   )

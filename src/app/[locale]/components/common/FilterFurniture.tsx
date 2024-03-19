@@ -32,9 +32,23 @@ type FilterParams = {
   widths: RangeValues
   depths: RangeValues
   includeVariants?: boolean
+
+  tl: {
+    excludeVariants: string
+    materials: string
+    colors: string
+    characteristics: string
+    height: string
+    width: string
+    depth: string
+    price: string
+    from: string
+    to: string
+  }
 }
 
 export default function FilterFurniture({
+  tl,
   prices,
   materialsArr,
   colorsArr,
@@ -132,9 +146,7 @@ export default function FilterFurniture({
   }) {
     return color.hex.length > 7
       ? {
-          backgroundImage: `linear-gradient(to right, ${color.hex
-            .split("")
-            .join(", ")})`,
+          backgroundImage: `linear-gradient(to right, ${color.hex})`,
         }
       : { backgroundColor: color.hex }
   }
@@ -159,9 +171,9 @@ export default function FilterFurniture({
         }`}
       >
         <ul className="flex flex-col gap-5">
-          <li className="flex gap-1 items-center">
+          <li className="grid gap-2 items-center">
             <h2 className="fluid-lg text-wrap font-semibold">
-              Exclude Variants:
+              {tl.excludeVariants}:
             </h2>
             <input
               className="w-8 h-8"
@@ -183,98 +195,106 @@ export default function FilterFurniture({
             />
           </li>
           <FilterRange
+            tl={{ to: tl.to, from: tl.from }}
             setter={setPrice}
             param={price}
-            paramName={"Price"}
+            paramName={tl.price as Sizes}
             sign={"P"}
             range={{ lowest: prices.lowest, highest: prices.highest }}
             searchParams={newSearchParams}
             pathname={pathname}
           />
           <FilterRange
+            tl={{ to: tl.to, from: tl.from }}
             setter={setHeight}
             param={height}
-            paramName={"Height"}
+            paramName={tl.height as Sizes}
             sign={"H"}
             range={{ lowest: heights.lowest, highest: heights.highest }}
             searchParams={newSearchParams}
             pathname={pathname}
           />
           <FilterRange
+            tl={{ to: tl.to, from: tl.from }}
             setter={setWidth}
             param={width}
-            paramName={"Width"}
+            paramName={tl.width as Sizes}
             sign={"W"}
             range={{ lowest: widths.lowest, highest: widths.highest }}
             searchParams={newSearchParams}
             pathname={pathname}
           />
           <FilterRange
+            tl={{ to: tl.to, from: tl.from }}
             setter={setDepth}
             param={depth}
-            paramName={"Depth"}
+            paramName={tl.depth as Sizes}
             sign={"D"}
             range={{ lowest: depths.lowest, highest: depths.highest }}
             searchParams={newSearchParams}
             pathname={pathname}
           />
-          <li className="grid gap-2">
-            <h2 className="fluid-lg font-semibold">Materials:</h2>
-            <ul className="flex flex-col gap-2 max-h-72 overflow-auto p-2 border rounded-lg border-borderThin">
-              {materialsArr.map((material) => (
-                <li
-                  className="flex gap-2 items-center"
-                  key={material.name}
-                  title={material.locale}
-                >
-                  <input
-                    className="text-textPrimary size-4 shrink-0 cursor-pointer"
-                    type="checkbox"
-                    id="materials"
-                    checked={materials.includes(material.name)}
-                    onChange={() => handleMaterialChange(material.name)}
-                  />
-                  <label
-                    className="text-textSecondary fluid-base truncate"
-                    htmlFor="materials"
+          {materialsArr.length ? (
+            <li className="grid gap-2">
+              <h2 className="fluid-lg font-semibold">{tl.materials}:</h2>
+              <ul className="flex flex-col gap-2 max-h-72 overflow-auto p-2 border rounded-lg border-borderThin">
+                {materialsArr.map((material) => (
+                  <li
+                    className="flex gap-2 items-center"
+                    key={material.name}
+                    title={material.locale}
                   >
-                    {material.locale}
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </li>
-          <li className="grid gap-2">
-            <h2 className="fluid-lg font-semibold">Colors:</h2>
-            <ul className="flex flex-col gap-2 max-h-72 overflow-auto p-2 border rounded-lg border-borderThin">
-              {colorsArr.map((color) => (
-                <li
-                  className="flex gap-2 items-center"
-                  key={color.name}
-                  title={color.locale}
-                >
-                  <input
-                    className="shrink-0 text-textPrimary cursor-pointer size-4"
-                    type="checkbox"
-                    id="colors"
-                    checked={colors.includes(color.name)}
-                    onChange={() => handleColorChange(color.name)}
-                  />
-                  <span
-                    style={backgroundStyle(color)}
-                    className="w-4 h-4 border shrink-0 border-borderThin rounded-full"
-                  ></span>
-                  <label
-                    className="text-textSecondary fluid-base truncate"
+                    <input
+                      className="text-textPrimary size-4 shrink-0 cursor-pointer"
+                      type="checkbox"
+                      id="materials"
+                      checked={materials.includes(material.name)}
+                      onChange={() => handleMaterialChange(material.name)}
+                    />
+                    <label
+                      className="text-textSecondary fluid-base truncate"
+                      htmlFor="materials"
+                    >
+                      {material.locale}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ) : null}
+          {colorsArr.length ? (
+            <li className="grid gap-2">
+              <h2 className="fluid-lg font-semibold">{tl.colors}:</h2>
+              <ul className="flex flex-col gap-2 max-h-72 overflow-auto p-2 border rounded-lg border-borderThin">
+                {colorsArr.map((color) => (
+                  <li
+                    className="flex gap-2 items-center"
+                    key={color.name}
                     title={color.locale}
-                    htmlFor="colors"
                   >
-                    {color.locale}
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </li>
+                    <input
+                      className="shrink-0 text-textPrimary cursor-pointer size-4"
+                      type="checkbox"
+                      id="colors"
+                      checked={colors.includes(color.name)}
+                      onChange={() => handleColorChange(color.name)}
+                    />
+                    <span
+                      style={backgroundStyle(color)}
+                      className="w-4 h-4 border shrink-0 border-borderThin rounded-full"
+                    ></span>
+                    <label
+                      className="text-textSecondary fluid-base truncate"
+                      title={color.locale}
+                      htmlFor="colors"
+                    >
+                      {color.locale}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ) : null}
         </ul>
       </section>
     </div>

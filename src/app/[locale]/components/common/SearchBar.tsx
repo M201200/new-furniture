@@ -7,7 +7,13 @@ import { BsSearch } from "react-icons/bs"
 
 import sanitizeString from "@/utils/functions/sanitizeString"
 
-export default function SearchBar({ locale }: { locale: Locale }) {
+export default function SearchBar({
+  locale,
+  tl,
+}: {
+  tl: string
+  locale: Locale
+}) {
   const [query, setQuery] = useState("")
   const router = useRouter()
   const currentPath = usePathname()
@@ -20,7 +26,7 @@ export default function SearchBar({ locale }: { locale: Locale }) {
       <input
         className="content-center p-2 rounded w-full text-textPrimary bg-bgPrimary border border-borderThin fluid-base"
         type="text"
-        placeholder={"Search..."}
+        placeholder={tl}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={(e) => {
@@ -31,7 +37,7 @@ export default function SearchBar({ locale }: { locale: Locale }) {
       />
       <Link
         href={href}
-        title={"Search"}
+        title={tl}
         className="flex content-center p-2 transition-colors duration-100 bg-brand1 fluid-base rounded-r-md text-gray-200"
       >
         <BsSearch className="fluid-lg" />

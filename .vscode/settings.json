@@ -183,5 +183,6 @@
     "Ингольт",
     "квиз"
   ],
-  "codeium.enableSearch": true
+  "codeium.enableSearch": true,
+  "cSpell.enableFiletypes": ["json"]
 }

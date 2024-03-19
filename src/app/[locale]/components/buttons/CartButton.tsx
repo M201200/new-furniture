@@ -16,11 +16,13 @@ import { useCart } from "@/utils/hooks/zustand/useCart"
 type AddToCartProps = {
   user_email: string | null | undefined
   currentVendorCode: string
+  locale: Locale
 }
 
 export default function CartButton({
   user_email,
   currentVendorCode,
+  locale,
 }: AddToCartProps) {
   const cart = useCart()
   const [amount, setAmount] = useState<number>(
@@ -47,7 +49,12 @@ export default function CartButton({
           }}
         >
           <span className="flex gap-2 items-center fluid-base justify-center">
-            <BsCartPlus /> Add to cart
+            <BsCartPlus />{" "}
+            {locale === "en"
+              ? "Add to cart"
+              : locale === "ru"
+              ? "Добавить в корзину"
+              : "Adaugă în coș"}
           </span>
         </button>
       ) : (

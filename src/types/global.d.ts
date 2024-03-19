@@ -9,3 +9,13 @@ type CartItem = {
   vendor_code: string
   amount: number
 }
+
+type sortedCategory = {
+  code: number
+  name: string
+  layer: number
+  subcategory: sortedCategory[]
+}
+
+type Sizes = "Price" | "Height" | "Width" | "Depth"
+type SizeSigns = "P" | "H" | "W" | "D"

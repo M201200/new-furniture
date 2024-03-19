@@ -19,6 +19,7 @@ import CartButton from "../../components/buttons/CartButton"
 import FavoritesButton from "../../components/buttons/FavoritesButton"
 import ImageCarousel from "../../components/common/ImageCarousel"
 import PriceTag from "../../components/common/PriceTag"
+import { getTranslations } from "next-intl/server"
 
 export default async function ItemPage({
   params,
@@ -207,8 +208,8 @@ export default async function ItemPage({
     ) : null
   }
 
-  const rates: Rates = await getCurrencyConversion()
   const session = await auth()
+  const rates: Rates = await getCurrencyConversion()
 
   let currentCurrency
 
@@ -226,12 +227,12 @@ export default async function ItemPage({
   function backgroundStyle(hex: string) {
     return hex.length > 7
       ? {
-          backgroundImage: `linear-gradient(to right, ${hex
-            .split("")
-            .join(", ")})`,
+          backgroundImage: `linear-gradient(to right, ${hex})`,
         }
       : { backgroundColor: hex }
   }
+
+  const tl = await getTranslations("Furniture")
 
   return (
     <main>
@@ -240,12 +241,12 @@ export default async function ItemPage({
         <section className="flex flex-col gap-6 p-2">
           {itemVariants.length > 1 ? (
             <div>
-              <h2 className="fluid-lg font-bold mb-2">Variants:</h2>
+              <h2 className="fluid-lg font-bold mb-2">{tl("Variants")}:</h2>
               <ul>
                 {colorsSet.size > 1 ? (
                   <li className="flex flex-nowrap shrink-0 gap-2">
                     <span className="font-semibold fluid-base text-textSecondary">
-                      Color:{" "}
+                      {tl("Colors")}:{" "}
                     </span>
                     {[...colorsSet].map((variant, idx) => (
                       <Link
@@ -266,7 +267,7 @@ export default async function ItemPage({
                 {materialsSet.size > 1 ? (
                   <li className="flex flex-nowrap shrink-0 gap-2">
                     <span className="font-semibold fluid-base text-textSecondary">
-                      Material:{" "}
+                      {tl("Materials")}:{" "}
                     </span>
                     {[...materialsSet].map((variant, idx) => (
                       <Link
@@ -285,40 +286,42 @@ export default async function ItemPage({
                     ))}
                   </li>
                 ) : null}
-                {addCharacteristics(width, "w", "Width")}
-                {addCharacteristics(height, "h", "Height")}
-                {addCharacteristics(depth, "d", "Depth")}
+                {addCharacteristics(width, "w", tl("Width"))}
+                {addCharacteristics(height, "h", tl("Height"))}
+                {addCharacteristics(depth, "d", tl("Depth"))}
               </ul>
             </div>
           ) : null}
           <ul>
-            <h2 className="fluid-lg font-bold mb-2">Characteristics:</h2>
+            <h2 className="fluid-lg font-bold mb-2">
+              {tl("Characteristics")}:
+            </h2>
             <li>
               <span className="font-semibold fluid-base text-textSecondary">
-                Color:{" "}
+                {tl("Color")}:{" "}
               </span>
               <span className="fluid-base">{item.color_name}</span>
             </li>
             <li>
               <h3 className="font-semibold fluid-base text-textSecondary">
-                Sizes (sm):
+                {tl("Sizes")} ({tl("Centimeter")}):
               </h3>
               <ul className="grid px-2">
                 <li>
                   <span className="font-semibold fluid-sm text-textSecondary">
-                    Height:{" "}
+                    {tl("Height")}:{" "}
                   </span>
                   <span className="fluid-base">{item.height}</span>
                 </li>
                 <li>
                   <span className="font-semibold fluid-sm text-textSecondary">
-                    Width:{" "}
+                    {tl("Width")}:{" "}
                   </span>
                   <span className="fluid-base">{item.width}</span>
                 </li>
                 <li>
                   <span className="font-semibold fluid-sm text-textSecondary">
-                    Depth:{" "}
+                    {tl("Depth")}:{" "}
                   </span>
                   <span className="fluid-base">{item.depth}</span>
                 </li>
@@ -326,29 +329,31 @@ export default async function ItemPage({
             </li>
             <li>
               <span className="font-semibold fluid-base text-textSecondary">
-                Weight:{" "}
+                {tl("Weight")}:{" "}
               </span>
               <span className="fluid-base">{item.weight} kg</span>
             </li>
             <li>
               <span className="font-semibold fluid-base text-textSecondary">
-                Material:{" "}
+                {tl("Material")}:{" "}
               </span>
               <span className="fluid-base">{item.material_name}</span>
             </li>
             <li>
               <span className="font-semibold fluid-base text-textSecondary">
-                Folding:{" "}
+                {tl("Folding")}:{" "}
               </span>
               <span className="fluid-base">
-                {item.folding === true ? "yes" : "no"}
+                {item.folding === true ? tl("Yes") : tl("No")}
               </span>
             </li>
             <li>
               <span className="font-semibold fluid-base text-textSecondary">
-                Warranty:{" "}
+                {tl("Warranty")}:{" "}
               </span>
-              <span className="fluid-base">{item.warranty} months</span>
+              <span className="fluid-base">
+                {item.warranty} {tl("Months")}
+              </span>
             </li>
           </ul>
         </section>
@@ -365,6 +370,7 @@ export default async function ItemPage({
           />
           <div className="grid grid-cols-[1fr,3rem] gap-1">
             <CartButton
+              locale={params.locale as Locale}
               currentVendorCode={params.code}
               user_email={session?.user?.email}
             />
@@ -377,7 +383,9 @@ export default async function ItemPage({
       </section>
 
       <section className="p-2">
-        <h2 className="fluid-lg font-bold text-textPrimary">Description:</h2>
+        <h2 className="fluid-lg font-bold text-textPrimary">
+          {tl("Description")}:
+        </h2>
         <p className="fluid-base p-2 text-textSecondary">
           {itemNameDescription.desc}
         </p>

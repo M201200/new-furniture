@@ -1,9 +1,8 @@
-import { eq } from "drizzle-orm"
 import Link from "next/link"
 
-import { db } from "@/app/db"
-import { cart, categories, favorites, user_profile } from "@/app/db/schema"
 import { auth } from "@/app/lib/auth"
+import loadCategories from "@/utils/actions/loadCategories"
+import loadProfile from "@/utils/actions/LoadProfile"
 
 import { ActionButtons } from "./common/ActionButtons"
 import { Categories } from "./common/Categories"
@@ -11,12 +10,63 @@ import SearchBar from "./common/SearchBar"
 import CurrencySwitcher from "./switchers/CurrencySwitcher"
 import LanguageSwitcher from "./switchers/LanguageSwitcher"
 import ThemeToggle from "./switchers/ThemeToggle"
+import { getTranslations } from "next-intl/server"
 
 type HeaderParams = {
   locale: Locale
 }
 
 export async function Header({ locale }: HeaderParams) {
+  const linksTlQuery = getTranslations("Header")
+  const currencyTlQuery = getTranslations("CurrencySwitcher")
+  const languageTlQuery = getTranslations("LanguageSwitcher")
+  const themeTlQuery = getTranslations("ThemeSwitcher")
+  const logInTlQuery = getTranslations("LogIn")
+
+  const [
+    linksTlAsync,
+    currencyTlAsync,
+    languageTlAsync,
+    themeTlAsync,
+    logInTlAsync,
+  ] = await Promise.all([
+    linksTlQuery,
+    currencyTlQuery,
+    languageTlQuery,
+    themeTlQuery,
+    logInTlQuery,
+  ])
+
+  const linksTl = {
+    catalog: linksTlAsync("Catalog"),
+    searchBar: linksTlAsync("SearchBar"),
+    cart: linksTlAsync("Cart"),
+    profile: linksTlAsync("Profile"),
+    favorites: linksTlAsync("Favorites"),
+    signin: logInTlAsync("Signin"),
+    signout: logInTlAsync("Signout"),
+  }
+
+  const currencyTl = {
+    changeCurrency: currencyTlAsync("ChangeCurrency"),
+    USD: currencyTlAsync("USD"),
+    EUR: currencyTlAsync("EUR"),
+    MDL: currencyTlAsync("MDL"),
+  }
+
+  const languageTl = {
+    changeLanguage: languageTlAsync("ChangeLanguage"),
+    en: languageTlAsync("en"),
+    ro: languageTlAsync("ro"),
+    ru: languageTlAsync("ru"),
+  }
+
+  const themeTl = {
+    changeTheme: themeTlAsync("ChangeTheme"),
+    light: themeTlAsync("Light"),
+    dark: themeTlAsync("Dark"),
+  }
+
   const session = await auth()
   const userEmail = session?.user?.email
   const categories = await loadCategories(locale)
@@ -28,16 +78,19 @@ export async function Header({ locale }: HeaderParams) {
           <LanguageSwitcher
             locale={userPreferences.preferredLocale}
             user_email={userEmail}
+            tl={languageTl}
           />
         </li>
         <li>
           <CurrencySwitcher
+            tl={currencyTl}
             user_email={userEmail}
             currentCurrency={userPreferences?.currency as Currency | null}
           />
         </li>
         <li>
           <ThemeToggle
+            tl={themeTl}
             currentTheme={userPreferences.theme}
             user_email={userEmail}
           />
@@ -52,9 +105,14 @@ export async function Header({ locale }: HeaderParams) {
           <em className="text-brand2">Furniture</em>
         </Link>
 
-        <Categories locale={locale} sortedCategories={categories} />
-        <SearchBar locale={locale} />
+        <Categories
+          locale={locale}
+          tl={linksTl.catalog}
+          sortedCategories={categories}
+        />
+        <SearchBar locale={locale} tl={linksTl.searchBar} />
         <ActionButtons
+          tl={linksTl}
           locale={locale}
           session={session}
           userPreferences={userPreferences}
@@ -62,120 +120,4 @@ export async function Header({ locale }: HeaderParams) {
       </ul>
     </header>
   )
-}
-
-type sortedCategory = {
-  code: number
-  name: string
-  layer: number
-  subcategory: sortedCategory[]
-}
-
-async function loadProfile(
-  locale: Locale,
-  userEmail: string | null | undefined
-) {
-  const userPreferencesResult = userEmail
-    ? await db
-        .select({
-          email: user_profile.user_email,
-          theme: user_profile.theme,
-          language: user_profile.language,
-          currency: user_profile.currency,
-        })
-        .from(user_profile)
-        .where(eq(user_profile.user_email, userEmail || ""))
-        .execute()
-    : null
-
-  const userPreferences = userPreferencesResult
-    ? userPreferencesResult[0]
-    : null
-
-  if (userEmail && !userPreferences) {
-    await db
-      .insert(user_profile)
-      .values({
-        user_email: userEmail!,
-      })
-      .execute()
-  }
-
-  const favoritesArr = userEmail
-    ? await db
-        .select({ vendor_code: favorites.item_vendor_code })
-        .from(favorites)
-        .where(eq(favorites.user_email, userEmail))
-        .execute()
-    : null
-
-  const favVendorCodes = favoritesArr
-    ? favoritesArr.map((favorite) => favorite.vendor_code)
-    : null
-
-  const cartArr = userEmail
-    ? await db
-        .select({ vendor_code: cart.item_vendor_code, amount: cart.amount })
-        .from(cart)
-        .where(eq(cart.user_email, userEmail))
-        .execute()
-    : null
-
-  const theme = (
-    userPreferences?.theme ? userPreferences.theme : null
-  ) as Theme | null
-
-  const preferredLocale = (userPreferences?.language || locale) as Locale
-
-  const currency = userPreferences?.currency as Currency | null
-
-  return { theme, preferredLocale, currency, favVendorCodes, cartArr }
-}
-
-async function loadCategories(locale: Locale) {
-  const categoriesArr = await db
-    .select({
-      code: categories.code,
-      name:
-        locale === "en"
-          ? categories.en
-          : locale === "ro"
-          ? categories.ro
-          : locale === "ru"
-          ? categories.ru
-          : categories.en,
-      layer: categories.layer,
-    })
-    .from(categories)
-
-  let sortedCategories: sortedCategory[] = []
-  for (let i = 0; i < categoriesArr.length; i++) {
-    if (categoriesArr[i].layer > 1) {
-      if (
-        categoriesArr[i].layer === 3 &&
-        sortedCategories.some((element) =>
-          categoriesArr[i].code.toString().startsWith(element?.code.toString())
-        )
-      ) {
-        sortedCategories[
-          sortedCategories.findIndex((element) =>
-            categoriesArr[i].code.toString().startsWith(element.code.toString())
-          )
-        ].subcategory.push({
-          code: categoriesArr[i].code,
-          name: categoriesArr[i].name,
-          layer: categoriesArr[i].layer,
-          subcategory: [],
-        })
-      } else
-        sortedCategories.push({
-          code: categoriesArr[i].code,
-          name: categoriesArr[i].name,
-          layer: categoriesArr[i].layer,
-          subcategory: [],
-        })
-    }
-  }
-
-  return sortedCategories
 }

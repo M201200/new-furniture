@@ -15,9 +15,16 @@ type GuestFavoritesProps = {
   maxItemsOnPage: number
   rates: Rates
   userEmail: string | null | undefined
+  tl: {
+    Favorites: string
+    NothingFound: string
+    Loading: string
+    Error: string
+  }
 }
 
 export default function Favorites({
+  tl,
   locale,
   currentPage,
   maxItemsOnPage,
@@ -37,6 +44,7 @@ export default function Favorites({
     | null
     | undefined
   >(null)
+  const [totalItems, setTotalItems] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -49,7 +57,8 @@ export default function Favorites({
     () =>
       getItems(favorites, language, currentPage, maxItemsOnPage)
         .then((data) => {
-          setItems(data)
+          setItems(data.items)
+          setTotalItems(data.totalItems)
           setLoading(false)
         })
         .catch((err) => {
@@ -63,13 +72,13 @@ export default function Favorites({
   }, [loadItems])
 
   return (
-    <section className="min-h-screen text-textPrimary">
-      <h2 className="fluid-3xl font-bold py-4 px-2">Favorites</h2>
-      <ul className="flex flex-wrap items-center justify-center gap-6 p-2">
+    <section className="text-textPrimary min-h-[40vh]">
+      <h2 className="fluid-3xl font-bold py-4 px-2">{tl.Favorites}</h2>
+      <ul className="flex flex-wrap justify-center gap-6 p-2">
         {loading ? (
-          <li className="fluid-xl font-bold p-2">Loading...</li>
+          <li className="fluid-xl font-bold p-2">{tl.Loading}</li>
         ) : error ? (
-          <li className="fluid-xl font-bold p-2">Error occurred</li>
+          <li className="fluid-xl font-bold p-2">{tl.Error}</li>
         ) : items?.length ? (
           items.map((item) => (
             <ItemComponent
@@ -87,12 +96,10 @@ export default function Favorites({
             />
           ))
         ) : (
-          <li className="fluid-xl font-bold p-2">Nothing found</li>
+          <li className="fluid-xl font-bold p-2">{tl.NothingFound}</li>
         )}
       </ul>
-      <Pagination
-        totalPages={Math.ceil((items?.length || 0) / maxItemsOnPage)}
-      />
+      <Pagination totalPages={Math.ceil(totalItems / maxItemsOnPage)} />
     </section>
   )
 }

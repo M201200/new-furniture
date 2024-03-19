@@ -1,5 +1,5 @@
 "use server"
-import { and, eq, inArray, isNull, or } from "drizzle-orm"
+import { and, count, eq, inArray, isNull, or } from "drizzle-orm"
 
 import { db } from "@/app/db"
 import { items, itemsImageURL, itemsName } from "@/app/db/schema"
@@ -10,8 +10,8 @@ export default async function getItems(
   page: number,
   maxItemsOnPage: number
 ) {
-  if (!vendor_codes?.length) return
-  return await db
+  if (!vendor_codes?.length) return { items: null, totalItems: 0 }
+  const itemsArr = await db
     .select({
       vendor_code: items.vendor_code,
       name:
@@ -41,4 +41,12 @@ export default async function getItems(
     .offset(page ? (page - 1) * maxItemsOnPage : 0)
     .limit(maxItemsOnPage)
     .execute()
+
+  const itemsCount = await db
+    .select({ totalItems: count(items.id) })
+    .from(items)
+    .where(inArray(items.vendor_code, vendor_codes))
+    .execute()
+
+  return { items: itemsArr, totalItems: itemsCount[0].totalItems }
 }

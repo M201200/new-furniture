@@ -1,0 +1,132 @@
+{
+    "Header": {
+        "Catalog": "Каталог",
+        "SearchBar": "Поиск...",
+        "Cart": "Корзина",
+        "Profile": "Гость",
+        "Favorites": "Избранное"
+    },
+    "CurrencySwitcher": {
+        "ChangeCurrency": "Изменить валюту",
+        "USD": "USD",
+        "EUR": "EUR",
+        "MDL": "MDL"
+    },
+    "LanguageSwitcher": {
+        "ChangeLanguage": "Изменить язык",
+        "en": "Английский",
+        "ro": "Румынский",
+        "ru": "Русский"
+    },
+    "ThemeSwitcher": {
+        "ChangeTheme": "Изменить тему",
+        "Light": "Светлая",
+        "Dark": "Темная"
+    },
+    "LogIn": {
+        "Signin": "Войти",
+        "Signout": "Выйти"  
+      },
+    "Favorites": {
+        "Favorites": "Избранное"
+    },
+    "Filter": {
+        "ExcludeVariants": "Исключить варианты",
+        "Materials": "Материалы",
+        "Colors": "Цвета",
+        "Characteristics": "Характеристики",
+        "Height": "Высота",
+        "Width": "Ширина",
+        "Depth": "Глубина",
+        "Price": "Цена",
+        "From": "от",
+        "To": "до"
+    },
+    "States": {
+        "NothingFound": "Ничего не найдено",
+        "Loading": "Загрузка...",
+        "Error": "Произошла ошибка"
+        },
+    "CartButton": {
+        "Add" : "Добавить в корзину"
+        },
+    "FavoritesButton": {
+        "Add" : "Добавить в избранное"
+        },
+    "Profile": {
+        "Profile": "Профиль пользователя",
+        "Email": "Email пользователя",
+        "Name": "Имя пользователя",
+        "DefaultName": "Гость",
+        "History": "История заказов",
+        "NoOrders": "Пока нет заказов",
+        "LogInDisclaimer":"Войдите, чтобы сохранить историю покупок",
+        "Language": "Язык",
+        "Theme": "Тема",
+        "Currency": "Валюта",
+        "USD": "USD",
+        "EUR": "EUR",
+        "MDL": "MDL",
+        "En": "Английский",
+        "Ro": "Румынский",
+        "Ru": "Русский",
+        "Light": "Светлая",
+        "Dark": "Темная",
+        "DeleteProfile": "Удалить профиль",
+        "Cancel": "Отмена",
+        "DeleteDisclaimer": "Ваши настройки, корзина и избранное будут удалены навсегда. Продолжить?",
+        "PerItem": "за единицу",
+        "Delete": "Удалить",
+        "TotalItems": "Всего",
+        "OrderDate": "Дата заказа"
+    },
+    "Cart": {
+        "Cart": "Корзина",
+        "Select": "Выбрать все позиции",
+        "DeleteSelected": "Удалить выбранные",
+        "Accept": "Принять",
+        "Delete": "Удалить",
+        "Cancel": "Отмена",
+        "Order": "Заказ",
+        "Congratulation": "Поздравляем с покупками!",
+        "Proceed": "Продолжить",
+        "Total": "Всего позиций",
+        "Orders": "Ваши заказы",
+        "Selected": "Выбранные позиции",
+        "Discount": "Скидка",
+        "FinalPrice": "Итоговая цена",
+        "DeleteDisclaimer": "Эти изменения будет невозможно отменить. Вы уверены?",
+        "LogInDisclaimer": "Войдите, чтобы сохранить историю покупок",
+        "EnterNumber": "Введите ваш номер телефона для обратной связи (случайные 8 цифр)",
+        "PerItem": "за единицу",
+        "TotalItems": "Всего",
+        "OrderDate": "Дата заказа"
+    },
+    "Furniture": {
+        "Variants": "Варианты",
+        "Materials": "Материалы",
+        "Colors": "Цвета",
+        "Material": "Материал",
+        "Color": "Цвет",
+        "Characteristics": "Характеристики",
+        "Sizes": "Размеры",
+        "Centimeter": "см",
+        "Height": "Высота",
+        "Width": "Ширина",
+        "Depth": "Глубина",
+        "Price": "Цена",
+        "Weight": "Вес",
+        "Kg": "кг",
+        "Folding": "Складной",
+        "Warranty": "Гарантия",
+        "Yes": "Да",
+        "No": "Нет",
+        "Description": "Описание",
+        "Months": "месяцев"
+    },
+    "MainPage": {
+        "Sale": "Весенняя распродажа!",
+        "UpTo": "До",
+        "Off": "скидка"
+    }
+}

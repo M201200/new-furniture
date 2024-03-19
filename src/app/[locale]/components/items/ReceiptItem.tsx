@@ -5,6 +5,11 @@ import Image from "next/image"
 import Link from "next/link"
 
 type CartItemProps = {
+  tl: {
+    PerItem: string
+    TotalItems: string
+    OrderDate: string
+  }
   locale: Locale
   vendorCode: string
   name: string
@@ -20,6 +25,7 @@ type CartItemProps = {
 }
 
 export default function ReceiptItem({
+  tl,
   locale,
   vendorCode,
   name,
@@ -83,7 +89,9 @@ export default function ReceiptItem({
 
       <div className="grid gap-1 min-w-28 min-h-12 lg:items-center lg:px-3 lg:border-x lg:border-x-borderThin">
         <div className=" fluid-base rounded-lg text-center lg:justify-self-center flex">
-          <span className=" text-textPrimary fluid-base">Amount: {amount}</span>
+          <span className=" text-textPrimary fluid-base">
+            {tl.TotalItems}: {amount}
+          </span>
         </div>
         {amount > 1 ? (
           <div className="flex justify-center">
@@ -92,7 +100,7 @@ export default function ReceiptItem({
                 style: "currency",
                 currency: currency || "USD",
               }).format(newFinalPrice)}{" "}
-              per item
+              {tl.PerItem}
             </span>
           </div>
         ) : null}
@@ -124,7 +132,7 @@ export default function ReceiptItem({
       </div>
       {orderDate ? (
         <div className="fluid-base grid gap-1 px-2">
-          <span className="text-textSecondary">Order date: </span>
+          <span className="text-textSecondary">{tl.OrderDate}: </span>
           <span className="text-textPrimary text-sm">
             {orderDate.toLocaleString(locale, {
               hour12: false,

@@ -11,11 +11,15 @@ type RangeProps = {
     }>
   ) => void
   param: { min: number; max: number }
-  paramName: "Price" | "Height" | "Width" | "Depth"
-  sign: "P" | "H" | "W" | "D"
+  paramName: Sizes
+  sign: SizeSigns
   searchParams: URLSearchParams
   pathname: string
   range: { lowest: number; highest: number }
+  tl: {
+    from: string
+    to: string
+  }
 }
 
 export default function FilterRange({
@@ -26,6 +30,7 @@ export default function FilterRange({
   searchParams,
   pathname,
   range,
+  tl,
 }: RangeProps) {
   const router = useRouter()
   function setParams(
@@ -86,7 +91,7 @@ export default function FilterRange({
             className="text-textSecondary fluid-base"
             htmlFor={`${paramName}-min`}
           >
-            from:{" "}
+            {tl.from}:{" "}
           </label>
           <input
             className="w-16 border-2 border-borderThin rounded text-textPrimary"
@@ -109,7 +114,7 @@ export default function FilterRange({
             className="text-textSecondary fluid-base"
             htmlFor={`${param}-min`}
           >
-            to:{" "}
+            {tl.to}:{" "}
           </label>
           <input
             className="w-16 border-2 border-borderThin rounded text-textPrimary"

@@ -3,6 +3,7 @@ import "./globals.css"
 import type { Metadata } from "next"
 
 import { Header } from "./components/Header"
+import Footer from "./components/Footer"
 
 export const metadata: Metadata = {
   title: "New Furniture",
@@ -32,9 +33,7 @@ export default function RootLayout({
           <div className="col-start-2 col-end-3">
             <Header locale={locale} />
             {children}
-            <footer>
-              <span>Footer</span>
-            </footer>
+            <Footer locale={locale} />
           </div>
         </div>
       </body>

@@ -32,7 +32,11 @@ export default function ItemComponent({
 }: ItemProps) {
   return (
     <li className="grid gap-1 w-[17rem]">
-      <Link href={`/${locale}/furniture/${vendorCode}`} title={name}>
+      <Link
+        className="grid items-center"
+        href={`/${locale}/furniture/${vendorCode}`}
+        title={name}
+      >
         <Image
           className="rounded-lg drop-shadow-md"
           src={imageURL}
@@ -56,7 +60,11 @@ export default function ItemComponent({
           </h2>
         </Link>
         <div className="grid grid-cols-[1fr,3rem] gap-1">
-          <CartButton currentVendorCode={vendorCode} user_email={user_email} />
+          <CartButton
+            currentVendorCode={vendorCode}
+            locale={locale}
+            user_email={user_email}
+          />
           <FavoritesButton
             currentVendorCode={vendorCode}
             user_email={user_email}

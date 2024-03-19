@@ -3,6 +3,7 @@ import { auth } from "@/app/lib/auth"
 import sanitizeStringToNumber from "@/utils/functions/sanitizeStringToNumber"
 
 import Favorites from "../components/pageClientSide/Favorites"
+import { getTranslations } from "next-intl/server"
 
 type FavoritesPageParams = {
   params: {
@@ -27,9 +28,19 @@ export default async function FavoritesPage({
 
   const rates = await getCurrencyConversion()
 
+  const favoritesTlAsync = await getTranslations("Favorites")
+  const statesTLAsync = await getTranslations("States")
+  const tl = {
+    Favorites: favoritesTlAsync("Favorites"),
+    NothingFound: statesTLAsync("NothingFound"),
+    Loading: statesTLAsync("Loading"),
+    Error: statesTLAsync("Error"),
+  }
+
   return (
     <main>
       <Favorites
+        tl={tl}
         locale={params.locale}
         rates={rates}
         currentPage={searchParamsSanitized?.page || 1}

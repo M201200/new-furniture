@@ -10,11 +10,18 @@ import { usePreferences } from "@/utils/hooks/zustand/usePreferences"
 type CurrencySwitcherParams = {
   user_email?: string | null
   currentCurrency: Currency | null
+  tl: {
+    changeCurrency: string
+    USD: string
+    EUR: string
+    MDL: string
+  }
 }
 
 export default function CurrencySwitcher({
   user_email,
   currentCurrency,
+  tl,
 }: CurrencySwitcherParams) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -28,16 +35,13 @@ export default function CurrencySwitcher({
     } else setCurrency(currentCurrency || "USD")
   }, [user_email, currentCurrency, setCurrency])
 
-  return isPending ? (
-    <span className="bg-gray-500 text-gray-50 fluid-base p-[1px] rounded">
-      Pending...
-    </span>
-  ) : (
+  return (
     <select
-      title={"Currency"}
       className="cursor-pointer bg-gray-500 text-gray-50 fluid-base p-[1px] rounded"
       name="currency select"
       value={currency || "USD"}
+      disabled={isPending}
+      title={tl.changeCurrency}
       onChange={(e) => {
         if (user_email) {
           startTransition(() => {
@@ -51,9 +55,9 @@ export default function CurrencySwitcher({
         router.refresh()
       }}
     >
-      <option value="USD">{"USD"}</option>
-      <option value="MDL">{"MDL"}</option>
-      <option value="EUR">{"EUR"}</option>
+      <option value="USD">{tl.USD}</option>
+      <option value="MDL">{tl.MDL}</option>
+      <option value="EUR">{tl.EUR}</option>
     </select>
   )
 }

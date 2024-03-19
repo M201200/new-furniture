@@ -1,0 +1,132 @@
+{
+    "Header": {
+        "Catalog": "Catalog",
+        "SearchBar": "Search...",
+        "Cart": "Cart",
+        "Profile": "Guest",
+        "Favorites": "Favorites"
+    },
+    "CurrencySwitcher": {
+        "ChangeCurrency": "Change currency",
+        "USD": "USD",
+        "EUR": "EUR",
+        "MDL": "MDL"
+    },
+    "LanguageSwitcher": {
+        "ChangeLanguage": "Change language",
+        "en": "English",
+        "ro": "Romanian",
+        "ru": "Russian"
+    },
+    "ThemeSwitcher": {
+        "ChangeTheme": "Change theme",
+        "Light": "Light",
+        "Dark": "Dark"
+    },
+    "LogIn": {
+        "Signin": "Sign in",
+        "Signout": "Sign out"  
+      },
+    "Favorites": {
+        "Favorites": "Favorites"
+    },
+    "Filter": {
+        "ExcludeVariants": "Exclude Variants",
+        "Materials": "Materials",
+        "Colors": "Colors",
+        "Characteristics": "Characteristics",
+        "Height": "Height",
+        "Width": "Width",
+        "Depth": "Depth",
+        "Price": "Price",
+        "From": "from",
+        "To": "to"
+        },
+    "States": {
+        "NothingFound": "Nothing found",
+        "Loading": "Loading...",
+        "Error": "Error occurred"
+        },
+    "CartButton": {
+        "Add" : "Add to cart"
+        },
+    "FavoritesButton": {
+        "Add" : "Add to favorites"
+        },
+    "Profile": {
+        "Profile": "User Profile",
+        "Email": "User email",
+        "Name": "User name",
+        "DefaultName": "Guest",
+        "History": "Order history",
+        "NoOrders": "No orders for now",
+        "LogInDisclaimer":"Log in to save your purchase history",
+        "Language": "Language",
+        "Theme": "Theme",
+        "Currency": "Currency",
+        "USD": "USD",
+        "EUR": "EUR",
+        "MDL": "MDL",
+        "En": "English",
+        "Ro": "Romanian",
+        "Ru": "Russian",
+        "Light": "Light",
+        "Dark": "Dark",
+        "DeleteProfile": "Delete profile",
+        "Cancel": "Cancel",
+        "DeleteDisclaimer": "Your preferences, cart and favorites will be permanently deleted. Proceed?",
+        "PerItem": "per item",
+        "Delete": "Delete",
+        "TotalItems": "Total",
+        "OrderDate": "Order date"
+    }, 
+    "Cart": {
+        "Cart": "Cart",
+        "Select": "Select all positions",
+        "DeleteSelected": "Delete selected",
+        "Accept": "Accept",
+        "Delete": "Delete",
+        "Cancel": "Cancel",
+        "Order": "Order",
+        "Congratulation": "Congratulations with your purchases!",
+        "Proceed": "Proceed",
+        "Total": "Total positions",
+        "Orders": "Your orders",
+        "Selected": "Selected positions",
+        "Discount": "Discount",
+        "FinalPrice": "Final price",
+        "DeleteDisclaimer": "This changes will be irreversible. Are you sure?",
+        "LogInDisclaimer": "Log in to save your purchase history",
+        "EnterNumber": "Enter your phone number for feedback (random 8 digits)",
+        "PerItem": "per item",
+        "TotalItems": "Total",
+        "OrderDate": "Order date"
+    },
+    "Furniture": {
+        "Variants": "Variants",
+        "Materials": "Materials",
+        "Material": "Material",
+        "Colors": "Colors",
+        "Color": "Color",
+        "Characteristics": "Characteristics",
+        "Sizes": "Sizes",
+        "Centimeter": "sm",
+        "Height": "Height",
+        "Width": "Width",
+        "Depth": "Depth",
+        "Price": "Price",
+        "Weight": "Weight",
+        "Kg": "kg",
+        "Folding": "Folding",
+        "Warranty": "Warranty",
+        "Yes": "Yes",
+        "No": "No",
+        "Description": "Description",
+        "Months": "months"
+    },
+    "MainPage": {
+        "Sale": "Spring sale!",
+        "UpTo": "Up to",
+        "Off": "off"
+    }
+}

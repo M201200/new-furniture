@@ -12,6 +12,7 @@ type sortedCategory = {
 }
 
 export function Categories(params: {
+  tl: string
   locale: string
   sortedCategories: sortedCategory[]
 }) {
@@ -43,11 +44,14 @@ export function Categories(params: {
       <button
         className="text-center p-2 fluid-base bg-brand1 rounded flex gap-2 lg:w-fit justify-center text-gray-100 items-center hover:text-gray-200 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
+        title={params.tl}
       >
         <span>
           <BsTextLeft className="fluid-xl" />
         </span>
-        <span className="lg:visible invisible w-0 lg:w-fit">Categories</span>
+        <span className="lg:block hidden text-center px-2 w-0 lg:w-fit">
+          {params.tl}
+        </span>
       </button>
       <section
         className={`flex flex-wrap gap-3 gap-x-6 absolute w-80 lg:w-[30rem] transition-[visibility,opacity] rounded bg-bgPrimary text-textPrimary border border-borderThin z-50 p-4 ${
@@ -59,7 +63,7 @@ export function Categories(params: {
             <Link
               className="fluid-lg text-wrap font-semibold hover:text-textCrossed transition-colors"
               onClick={() => setIsOpen(false)}
-              href={`/${params.locale}/category/${category.code}`}
+              href={`/${params.locale}/catalog/${category.code}`}
             >
               <h2 className="fluid-lg text-wrap">{category.name}</h2>
             </Link>{" "}
@@ -69,7 +73,7 @@ export function Categories(params: {
                   className="fluid-base text-wrap hover:text-textCrossed"
                   onClick={() => setIsOpen(false)}
                   key={subcategory.code}
-                  href={`/${params.locale}/category/${subcategory.code}`}
+                  href={`/${params.locale}/catalog/${subcategory.code}`}
                 >
                   {subcategory.name}
                 </Link>

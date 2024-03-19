@@ -1,0 +1,132 @@
+{
+    "Header": {
+        "Catalog": "Catalog",
+        "SearchBar": "Caută...",
+        "Cart": "Coș",
+        "Profile": "Vizitator",
+        "Favorites": "Favorite"
+    },
+    "CurrencySwitcher": {
+        "ChangeCurrency": "Schimbă moneda",
+        "USD": "USD",
+        "EUR": "EUR",
+        "MDL": "MDL"
+    },
+    "LanguageSwitcher": {
+        "ChangeLanguage": "Schimbă limba",
+        "en": "Engleză",
+        "ro": "Română",
+        "ru": "Rusă"
+    },
+    "ThemeSwitcher": {
+        "ChangeTheme": "Schimbă tema",
+        "Light": "Deschis",
+        "Dark": "Întunecat"
+    },
+    "LogIn": {
+        "Signin": "Conectare",
+        "Signout": "Deconectare"  
+      },
+    "Favorites": {
+        "Favorites": "Favorite"
+    },
+    "Filter": {
+        "ExcludeVariants": "Exclude Variante",
+        "Materials": "Materiale",
+        "Colors": "Culori",
+        "Characteristics": "Caracteristici",
+        "Height": "Înălțime",
+        "Width": "Lățime",
+        "Depth": "Adâncime",
+        "Price": "Preț",
+        "From": "de la",
+        "To": "la"
+    },
+    "States": {
+        "NothingFound": "Nimic găsit",
+        "Loading": "Se încarcă...",
+        "Error": "A apărut o eroare"
+        },
+    "CartButton": {
+        "Add" : "Adaugă în coș"
+        },
+    "FavoritesButton": {
+        "Add" : "Adaugă la favorite"
+        },
+    "Profile": {
+        "Profile": "Profil utilizator",
+        "Email": "Email utilizator",
+        "Name": "Nume utilizator",
+        "DefaultName": "Vizitator",
+        "History": "Istoric comenzi",
+        "NoOrders": "Nicio comandă momentan",
+        "LogInDisclaimer":"Conectează-te pentru a-ți salva istoricul de cumpărături",
+        "Language": "Limba",
+        "Theme": "Tema",
+        "Currency": "Moneda",
+        "USD": "USD",
+        "EUR": "EUR",
+        "MDL": "MDL",
+        "En": "Engleză",
+        "Ro": "Română",
+        "Ru": "Rusă",
+        "Light": "Deschis",
+        "Dark": "Întunecat",
+        "DeleteProfile": "Șterge profil",
+        "Cancel": "Anulează",
+        "DeleteDisclaimer": "Preferințele tale, coșul și favoritele vor fi șterse permanent. Continuă?",
+        "PerItem": "pe bucată",
+        "Delete": "Șterge",
+        "TotalItems": "Total",
+        "OrderDate": "Data comenzii"
+    },
+    "Cart": {
+        "Cart": "Coș",
+        "Select": "Selectează toate pozițiile",
+        "DeleteSelected": "Șterge selectatele",
+        "Accept": "Acceptă",
+        "Delete": "Șterge",
+        "Cancel": "Anulează",
+        "Order": "Comandă",
+        "Congratulation": "Felicitări cu achizițiile tale!",
+        "Proceed": "Procedează",
+        "Total": "Total poziții",
+        "Orders": "Comenzile tale",
+        "Selected": "Poziții selectate",
+        "Discount": "Discount",
+        "FinalPrice": "Preț final",
+        "DeleteDisclaimer": "Aceste modificări vor fi ireversibile. Sigur?",
+        "LogInDisclaimer": "Conectează-te pentru a-ți salva istoricul de cumpărături",
+        "EnterNumber": "Introduceți numărul dvs. de telefon pentru feedback (8 cifre aleatoare)",
+        "PerItem": "pe bucată",
+        "TotalItems": "Total",
+        "OrderDate": "Data comenzii"
+    },
+    "Furniture": {
+        "Variants": "Variante",
+        "Materials": "Materiale",
+        "Colors": "Culori",
+        "Material": "Material",
+        "Color": "Culoare",
+        "Characteristics": "Caracteristici",
+        "Sizes": "Dimensiuni",
+        "Centimeter": "cm",
+        "Height": "Înălțime",
+        "Width": "Lățime",
+        "Depth": "Adâncime",
+        "Price": "Preț",
+        "Weight": "Greutate",
+        "Kg": "kg",
+        "Folding": "Pliere",
+        "Warranty": "Garantie",
+        "Yes": "Da",
+        "No": "Nu",
+        "Description": "Descriere",
+        "Months": "luni"
+    },
+    "MainPage": {
+        "Sale": "Vânzare de primăvară!",
+        "UpTo": "Până la",
+        "Off": "reducere"
+    }
+}
