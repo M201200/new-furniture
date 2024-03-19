@@ -136,11 +136,11 @@ export default async function ProfilePage({
       <ul className="grid gap-2 fluid-lg p-4">
         {session ? (
           <>
-            <li className="flex gap-1">
+            <li className="flex flex-wrap gap-1">
               <span className="text-textSecondary">{tlAsync("Name")}:</span>
               <span className="font-semibold">{session.user?.name}</span>
             </li>
-            <li className="flex gap-1">
+            <li className="flex flex-wrap gap-1">
               <span>{tlAsync("Email")}:</span>{" "}
               <span className="font-semibold">{session.user?.email}</span>
             </li>
