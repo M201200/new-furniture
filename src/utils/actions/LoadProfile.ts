@@ -30,6 +30,9 @@ export default async function loadProfile(
       .insert(user_profile)
       .values({
         user_email: userEmail!,
+        language: locale,
+        currency: "USD",
+        theme: "dark",
       })
       .execute()
   }

@@ -16,8 +16,6 @@ export default async function addToCart(
       item_vendor_code: vendor_code,
       amount: 1,
     })
-    .onDuplicateKeyUpdate({
-      set: { id: sql`id` },
-    })
+    .onConflictDoNothing()
     .execute()
 }

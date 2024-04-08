@@ -11,8 +11,6 @@ export default async function orderItems(userOrders: Order[]) {
   return await db
     .insert(orders)
     .values(userOrders)
-    .onDuplicateKeyUpdate({
-      set: { id: sql`id` },
-    })
+    .onConflictDoNothing()
     .execute()
 }

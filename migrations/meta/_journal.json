@@ -1,19 +1,12 @@
 {
   "version": "5",
-  "dialect": "mysql",
+  "dialect": "pg",
   "entries": [
     {
       "idx": 0,
       "version": "5",
-      "when": 1709576214253,
-      "tag": "0000_smart_killraven",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1710759159018,
-      "tag": "0001_narrow_sentry",
+      "when": 1712503753690,
+      "tag": "0000_charming_tony_stark",
       "breakpoints": true
     }
   ]

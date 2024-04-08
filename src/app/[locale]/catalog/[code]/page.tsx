@@ -1,4 +1,14 @@
-import { and, between, count, desc, eq, isNull, like, or } from "drizzle-orm"
+import {
+  and,
+  between,
+  count,
+  desc,
+  eq,
+  isNull,
+  like,
+  or,
+  sql,
+} from "drizzle-orm"
 
 import getCurrencyConversion from "@/app/api/currencyConversion/currencyConversion"
 import { db } from "@/app/db"
@@ -100,7 +110,7 @@ export default async function Catalog({ searchParams, params }: Params) {
     const conditions = [
       or(
         eq(items.category_code, +params.code),
-        like(items.category_code, `${params.code}%`)
+        sql`LIKE(cast(${items.category_code} as varchar), ${params.code + "%"})`
       ),
     ]
     if (!searchParamsSanitized) return conditions
@@ -161,7 +171,7 @@ export default async function Catalog({ searchParams, params }: Params) {
   }
   const itemsCountQuery = db
     .select({
-      totalItems: count(items.id),
+      totalItems: count(),
     })
     .from(items)
     .innerJoin(
@@ -169,7 +179,6 @@ export default async function Catalog({ searchParams, params }: Params) {
       eq(characteristicsFurniture.vendor_code, items.vendor_code)
     )
     .where(and(...setConditions()))
-    .orderBy(items.id)
 
   const allColorsQuery = db
     .selectDistinct({

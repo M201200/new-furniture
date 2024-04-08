@@ -9,7 +9,7 @@ import removeFromFavorites from "@/utils/actions/FavoritesActions/removeFromFavo
 import { addItem, removeItem } from "@/utils/functions/LocalStorageActions"
 import { useFavorites } from "@/utils/hooks/zustand/useFavorites"
 
-type AddToCartProps = {
+type FavoritesButtonProps = {
   user_email: string | null | undefined
   currentVendorCode: string
 }
@@ -17,7 +17,7 @@ type AddToCartProps = {
 export default function FavoritesButton({
   user_email,
   currentVendorCode,
-}: AddToCartProps) {
+}: FavoritesButtonProps) {
   const favorites = useFavorites((state) => state.entries)
   const addFavorites = useFavorites((state) => state.add)
   const removeFavorites = useFavorites((state) => state.remove)

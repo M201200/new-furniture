@@ -15,5 +15,5 @@ export const {
   ],
   secret: process.env.NEXTAUTH_SECRET!,
   adapter: DrizzleAdapter(db),
-  session: { strategy: "jwt" },
+  // session: { strategy: "jwt" },
 })

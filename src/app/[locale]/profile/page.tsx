@@ -73,7 +73,7 @@ export default async function ProfilePage({
   let currentCurrency: Currency | null
   if (session) {
     const preferredCurrencyArr = await db
-      .select()
+      .select({ currency: user_profile.currency })
       .from(user_profile)
       .where(eq(user_profile.user_email, session.user?.email || ""))
       .execute()
@@ -132,8 +132,8 @@ export default async function ProfilePage({
   const totalItems = itemsCountArr[0].totalItems || 0
   return (
     <main className="text-textPrimary">
-      <h1 className="fluid-2xl font-bold p-4">{tlAsync("Profile")}</h1>
-      <ul className="grid gap-2 fluid-lg p-4">
+      <h1 className="p-4 font-bold fluid-2xl">{tlAsync("Profile")}</h1>
+      <ul className="grid gap-2 p-4 fluid-lg">
         {session ? (
           <>
             <li className="flex flex-wrap gap-1">
@@ -164,9 +164,9 @@ export default async function ProfilePage({
 
       {session ? (
         <section>
-          <h1 className="fluid-xl font-bold py-2 px-4">{tlAsync("History")}</h1>
+          <h1 className="px-4 py-2 font-bold fluid-xl">{tlAsync("History")}</h1>
           {orderItems?.length ? (
-            <ul className="grid gap-2 border border-borderThin rounded-lg p-1 overflow-auto">
+            <ul className="grid gap-2 p-1 overflow-auto border rounded-lg border-borderThin">
               {orderItems.map((item) => (
                 <ReceiptItem
                   tl={receiptItemTl}
@@ -187,14 +187,14 @@ export default async function ProfilePage({
               ))}
             </ul>
           ) : (
-            <section className="text-textSecondary fluid-lg px-6 py-4">
+            <section className="px-6 py-4 text-textSecondary fluid-lg">
               {tlAsync("NoOrders")}
             </section>
           )}
           <Pagination totalPages={Math.ceil(totalItems / maxItemsOnPage)} />
         </section>
       ) : (
-        <section className="text-textCrossed fluid-lg italic px-6 py-4">
+        <section className="px-6 py-4 italic text-textCrossed fluid-lg">
           {tlAsync("LogInDisclaimer")}.
         </section>
       )}

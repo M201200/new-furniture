@@ -54,9 +54,9 @@
         "Add" : "Adaugă la favorite"
         },
     "Profile": {
-        "Profile": "Profil utilizator",
-        "Email": "Email utilizator",
-        "Name": "Nume utilizator",
+        "Profile": "Profil",
+        "Email": "Email",
+        "Name": "Nume",
         "DefaultName": "Vizitator",
         "History": "Istoric comenzi",
         "NoOrders": "Nicio comandă momentan",

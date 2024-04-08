@@ -1,5 +1,6 @@
 import { db } from "@/app/db"
 import { exchange_rates_USD } from "@/app/db/schema"
+import { like } from "drizzle-orm"
 
 type ExchangeRates = {
   meta: {
@@ -21,10 +22,9 @@ export default async function getCurrencyConversion() {
   // const currentDate = new Date(Date.now()).toISOString().slice(0, 9)
 
   const exchangeRatesUSDArr = await db.select().from(exchange_rates_USD)
-  // .where(like(exchange_rates_USD.date, `${currentDate}%`))
+  //   .where(like(exchange_rates_USD.date, `${currentDate}%`))
 
   const exchangeRatesUSD = exchangeRatesUSDArr[0]
-
   // if (!exchangeRatesUSD) {
   //   const response = await fetch(
   //     `https://api.currencyapi.com/v3/latest?apikey=${process.env.CURRENCY_API_KEY}&base_currency=USD&currencies=EUR%2CMDL`,
@@ -42,9 +42,7 @@ export default async function getCurrencyConversion() {
   //       MDL: result.data.MDL.value,
   //       date: result.meta.last_updated_at.slice(0, 10),
   //     })
-  //     .onDuplicateKeyUpdate({
-  //       set: { id: sql`id` },
-  //     })
+  //     .onConflictDoNothing()
   //     .execute()
 
   //   return {

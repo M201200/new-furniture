@@ -7,16 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migration:gen": "drizzle-kit generate:mysql --config ./drizzle.config.ts",
-    "migration:push": "drizzle-kit push:mysql --config ./drizzle.config.ts"
+    "db:gen": "drizzle-kit generate:pg --config ./drizzle.config.ts",
+    "db:push": "drizzle-kit push:pg --config ./drizzle.config.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.4.0",
-    "@planetscale/database": "^1.14.0",
-    "drizzle-orm": "^0.29.3",
+    "drizzle-orm": "^0.30.7",
     "next": "14.0.4",
     "next-auth": "^5.0.0-beta.5",
     "next-intl": "^3.4.2",
+    "postgres": "^3.4.4",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.0.1",

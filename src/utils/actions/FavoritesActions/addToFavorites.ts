@@ -16,8 +16,6 @@ export default async function addToFavorites(
       user_email: user_email,
       item_vendor_code: vendor_code,
     })
-    .onDuplicateKeyUpdate({
-      set: { id: sql`id` },
-    })
+    .onConflictDoNothing()
     .execute()
 }

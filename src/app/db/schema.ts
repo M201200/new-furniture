@@ -1,39 +1,42 @@
-import { relations } from "drizzle-orm"
+import { relations, sql } from "drizzle-orm"
 import {
   bigint,
   boolean,
   char,
   customType,
-  double,
-  float,
+  doublePrecision,
+  real,
   index,
-  int,
-  mysqlTable,
+  integer,
+  pgTable,
   primaryKey,
   serial,
   smallint,
   text,
   timestamp,
-  tinyint,
   uniqueIndex,
   varchar,
-} from "drizzle-orm/mysql-core"
+} from "drizzle-orm/pg-core"
 
 import type { AdapterAccount } from "@auth/core/adapters"
 
+const currentDate = new Date()
+
 // Categories
 
-export const categories = mysqlTable("categories", {
+export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   // Starts from 1. Each subcategory also starts from 1. 0 is delimiter (example 10302)
-  code: bigint("code", { mode: "number", unsigned: true }).notNull().unique(),
+  code: bigint("code", { mode: "number" }).notNull().unique(),
   //
   en: varchar("en", { length: 64 }).notNull(),
   ro: varchar("ro", { length: 64 }).notNull(),
   ru: varchar("ru", { length: 64 }).notNull(),
-  layer: tinyint("layer", { unsigned: true }).notNull(),
+  layer: smallint("layer").notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").onUpdateNow(),
+  updated_at: varchar("updated_at", { length: 30 }).$onUpdate(() =>
+    currentDate.toISOString().replace("T", " ").replace("Z", "")
+  ),
 })
 
 export type Category = typeof categories.$inferInsert
@@ -41,19 +44,33 @@ export type Category = typeof categories.$inferInsert
 //////////
 // Items
 
-export const generatedConcatColumns = customType<{
+// export const generatedConcatColumns = customType<{
+//   data: string
+//   driverData: string
+//   config: {
+//     columns: string[]
+//     charLength: number
+//     delimiter: string
+//   }
+// }>({
+//   dataType(config) {
+//     return `varchar(${config?.charLength}) GENERATED ALWAYS AS (concat_ws("${
+//       config?.delimiter
+//     }", ${config?.columns.join(", ")}))`
+//   },
+// })
+
+export const generatedVendorCode = customType<{
   data: string
   driverData: string
   config: {
-    columns: string[]
-    charLength: number
-    delimiter: string
+    category_code: string
+    serial_number: string
+    variation: string
   }
 }>({
   dataType(config) {
-    return `varchar(${config?.charLength}) AS (concat_ws("${
-      config?.delimiter
-    }", ${config?.columns.join(", ")})) STORED`
+    return `varchar(64) GENERATED ALWAYS AS ((cast(${config?.category_code} as varchar) || '-' || cast(${config?.serial_number} as varchar) || '-' || ${config?.variation})) STORED`
   },
 })
 
@@ -66,22 +83,20 @@ export const generatedFinalPrice = customType<{
   }
 }>({
   dataType(config) {
-    return `DOUBLE(10,2) AS (\`${config?.price}\`*((100 - \`${config?.discount}\`) / 100)) STORED`
+    return `double precision GENERATED ALWAYS AS ((\"${config?.price}\"*((100 - \"${config?.discount}\") / 100))) STORED`
   },
 })
 
-export const items = mysqlTable(
+export const items = pgTable(
   "items",
   {
     id: serial("id").primaryKey(),
     category_code: bigint("category_code", {
       mode: "number",
-      unsigned: true,
     }).notNull(),
     // Starts from 1 in each category.
     serial_number: bigint("serial_number", {
       mode: "number",
-      unsigned: true,
     }).notNull(),
     //
     // This is variation of base item. Reference to item characteristics table.
@@ -89,20 +104,22 @@ export const items = mysqlTable(
     // Example: "c1m0w2h0d1" - this exact order must be preserved!
     variation: varchar("variation", { length: 32 }).notNull(),
     //
-    vendor_code: generatedConcatColumns("vendor_code", {
-      charLength: 64,
-      columns: ["category_code", "serial_number", "variation"],
-      delimiter: "-",
+    vendor_code: generatedVendorCode("vendor_code", {
+      category_code: "category_code",
+      serial_number: "serial_number",
+      variation: "variation",
     }),
-    amount: int("amount", { unsigned: true }).notNull(),
-    price: double("price($)", { precision: 10, scale: 2 }).notNull(),
-    discount: tinyint("discount(%)", { unsigned: true }).notNull().default(0),
+    amount: integer("amount").notNull(),
+    price: doublePrecision("price($)").notNull(),
+    discount: doublePrecision("discount(%)").notNull().default(0),
     final_price: generatedFinalPrice("final_price($)", {
       price: "price($)",
       discount: "discount(%)",
     }),
     created_at: timestamp("created_at").defaultNow().notNull(),
-    updated_at: timestamp("updated_at").onUpdateNow(),
+    updated_at: varchar("updated_at", { length: 30 }).$onUpdate(() =>
+      currentDate.toISOString().replace("T", " ").replace("Z", "")
+    ),
   },
   (table) => {
     return {
@@ -132,14 +149,16 @@ export const itemsCategoriesRelations = relations(items, ({ one }) => ({
 
 //////////
 
-export const itemsName = mysqlTable("items_name", {
+export const itemsName = pgTable("items_name", {
   id: serial("id").primaryKey(),
   vendor_code: varchar("vendor_code", { length: 64 }).notNull().unique(),
   en: varchar("en", { length: 128 }).notNull(),
   ro: varchar("ro", { length: 128 }).notNull(),
   ru: varchar("ru", { length: 128 }).notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").onUpdateNow(),
+  updated_at: varchar("updated_at", { length: 30 }).$onUpdate(() =>
+    currentDate.toISOString().replace("T", " ").replace("Z", "")
+  ),
 })
 
 export type ItemsName = typeof itemsName.$inferInsert
@@ -153,14 +172,16 @@ export const itemsNameRelations = relations(itemsName, ({ one }) => ({
 
 //////////
 
-export const itemsDescription = mysqlTable("items_description", {
+export const itemsDescription = pgTable("items_description", {
   id: serial("id").primaryKey(),
   vendor_code: varchar("vendor_code", { length: 64 }).notNull().unique(),
   en: text("en").notNull(),
   ro: text("ro").notNull(),
   ru: text("ru").notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").onUpdateNow(),
+  updated_at: varchar("updated_at", { length: 30 }).$onUpdate(() =>
+    currentDate.toISOString().replace("T", " ").replace("Z", "")
+  ),
 })
 
 export type ItemsDescription = typeof itemsDescription.$inferInsert
@@ -191,11 +212,11 @@ export const generatedImageURL = customType<{
   }
 }>({
   dataType(config) {
-    return `varchar(${config?.charLength}) AS (concat("/", ${config?.root_catalog}, "/", ${config?.category}, "/", ${config?.serialNumber}, "/", ${config?.variation}, "/", ${config?.imageNumber}, ".", ${config?.imageType}))`
+    return `varchar(${config?.charLength}) GENERATED ALWAYS AS (('/' || ${config?.root_catalog} || "/" || cast(${config?.category} as varchar) || "/" || cast(${config?.serialNumber} as varchar) || "/" || ${config?.variation} || "/" || cast(${config?.imageNumber} as varchar) || "." || ${config?.imageType})) STORED`
   },
 })
 
-export const itemsImageURL = mysqlTable(
+export const itemsImageURL = pgTable(
   "item_image_URLs",
   {
     id: serial("id").primaryKey(),
@@ -204,21 +225,19 @@ export const itemsImageURL = mysqlTable(
       .notNull(),
     category_code: bigint("category_code", {
       mode: "number",
-      unsigned: true,
     }).notNull(),
     item_serial_number: bigint("item_serial_number", {
       mode: "number",
-      unsigned: true,
     }).notNull(),
     item_variation: varchar("item_variation", { length: 32 })
       .notNull()
       .default("base"),
-    vendor_code: generatedConcatColumns("vendor_code", {
-      charLength: 64,
-      columns: ["category_code", "item_serial_number", "item_variation"],
-      delimiter: "-",
+    vendor_code: generatedVendorCode("vendor_code", {
+      category_code: "category_code",
+      serial_number: "serial_number",
+      variation: "variation",
     }),
-    image_number: tinyint("image_number").notNull(),
+    image_number: smallint("image_number").notNull(),
     image_type: varchar("image_type", { length: 8 }).default("webp").notNull(),
     url: generatedImageURL("url", {
       charLength: 256,
@@ -231,7 +250,9 @@ export const itemsImageURL = mysqlTable(
     }),
     notes: varchar("notes", { length: 128 }),
     created_at: timestamp("created_at").defaultNow().notNull(),
-    updated_at: timestamp("updated_at").onUpdateNow(),
+    updated_at: varchar("updated_at", { length: 30 }).$onUpdate(() =>
+      currentDate.toISOString().replace("T", " ").replace("Z", "")
+    ),
   },
   (table) => {
     return {
@@ -260,7 +281,7 @@ export const itemsImageURLsRelations = relations(itemsImageURL, ({ one }) => ({
 
 //////////
 
-export const colors = mysqlTable("colors", {
+export const colors = pgTable("colors", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 32 }).notNull().unique(),
   en: varchar("en", { length: 64 }).notNull(),
@@ -270,42 +291,48 @@ export const colors = mysqlTable("colors", {
   hex: varchar("hex", { length: 47 }).notNull(),
   //
   created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").onUpdateNow(),
+  updated_at: varchar("updated_at", { length: 30 }).$onUpdate(() =>
+    currentDate.toISOString().replace("T", " ").replace("Z", "")
+  ),
 })
 
 export type Colors = typeof colors.$inferInsert
 
 //////////
 
-export const materials = mysqlTable("materials", {
+export const materials = pgTable("materials", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 32 }).notNull().unique(),
   en: varchar("en", { length: 64 }).notNull(),
   ro: varchar("ro", { length: 64 }).notNull(),
   ru: varchar("ru", { length: 64 }).notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").onUpdateNow(),
+  updated_at: varchar("updated_at", { length: 30 }).$onUpdate(() =>
+    currentDate.toISOString().replace("T", " ").replace("Z", "")
+  ),
 })
 
 export type Materials = typeof materials.$inferInsert
 
 //////////
 
-export const characteristicsFurniture = mysqlTable(
+export const characteristicsFurniture = pgTable(
   "characteristics_furniture",
   {
     id: serial("id").primaryKey(),
     vendor_code: varchar("vendor_code", { length: 64 }).notNull().unique(),
     color: varchar("color_1", { length: 32 }).notNull(),
     material: varchar("material_2", { length: 32 }).notNull(),
-    width: float("width_3(sm)").notNull(),
-    height: float("height_4(sm)").notNull(),
-    depth: float("depth_5(sm)").notNull(),
-    weight: float("weight(kg)").notNull(),
+    width: real("width_3(sm)").notNull(),
+    height: real("height_4(sm)").notNull(),
+    depth: real("depth_5(sm)").notNull(),
+    weight: real("weight(kg)").notNull(),
     folding: boolean("folding").notNull(),
-    warranty: tinyint("warranty(month)", { unsigned: true }).notNull(),
+    warranty: smallint("warranty(month)").notNull(),
     created_at: timestamp("created_at").defaultNow().notNull(),
-    updated_at: timestamp("updated_at").onUpdateNow(),
+    updated_at: varchar("updated_at", { length: 30 }).$onUpdate(() =>
+      currentDate.toISOString().replace("T", " ").replace("Z", "")
+    ),
   },
   (table) => {
     return {
@@ -363,39 +390,32 @@ export const materialsCharacteristicsFurnitureRelations = relations(
   })
 )
 //////////
-// NextAuth
+/// NextAuth
 
-export const users = mysqlTable("user", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    fsp: 3,
-  }).defaultNow(),
-  image: varchar("image", { length: 255 }),
+export const users = pgTable("user", {
+  id: text("id").notNull().primaryKey(),
+  name: text("name"),
+  email: text("email").notNull(),
+  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  image: text("image"),
 })
 
-//////////
-
-export const accounts = mysqlTable(
+export const accounts = pgTable(
   "account",
   {
-    userId: varchar("userId", { length: 255 })
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: varchar("type", { length: 255 })
-      .$type<AdapterAccount["type"]>()
-      .notNull(),
-    provider: varchar("provider", { length: 255 }).notNull(),
-    providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
-    refresh_token: varchar("refresh_token", { length: 255 }),
-    access_token: varchar("access_token", { length: 255 }),
-    expires_at: int("expires_at"),
-    token_type: varchar("token_type", { length: 255 }),
-    scope: varchar("scope", { length: 255 }),
-    id_token: varchar("id_token", { length: 2048 }),
-    session_state: varchar("session_state", { length: 255 }),
+    type: text("type").$type<AdapterAccount["type"]>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
   },
   (account) => ({
     compoundKey: primaryKey({
@@ -404,23 +424,19 @@ export const accounts = mysqlTable(
   })
 )
 
-//////////
-
-export const sessions = mysqlTable("session", {
-  sessionToken: varchar("sessionToken", { length: 255 }).notNull().primaryKey(),
-  userId: varchar("userId", { length: 255 })
+export const sessions = pgTable("session", {
+  sessionToken: text("sessionToken").notNull().primaryKey(),
+  userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 })
 
-//////////
-
-export const verificationTokens = mysqlTable(
+export const verificationTokens = pgTable(
   "verificationToken",
   {
-    identifier: varchar("identifier", { length: 255 }).notNull(),
-    token: varchar("token", { length: 255 }).notNull(),
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (vt) => ({
@@ -431,7 +447,7 @@ export const verificationTokens = mysqlTable(
 //////////
 // Profile
 
-export const user_profile = mysqlTable("user_profile", {
+export const user_profile = pgTable("user_profile", {
   id: serial("id").primaryKey(),
   user_email: varchar("user_email", { length: 255 }).notNull().unique(),
   language: varchar("language", { length: 10 }),
@@ -449,7 +465,7 @@ export const profileUsersRelations = relations(user_profile, ({ one }) => ({
 //////////
 // Favorites
 
-export const favorites = mysqlTable("favorites", {
+export const favorites = pgTable("favorites", {
   id: serial("id").primaryKey(),
   user_email: varchar("user_email", { length: 255 }).notNull(),
   item_vendor_code: varchar("item_vendor_code", { length: 64 })
@@ -487,13 +503,13 @@ export const profileFavoritesToItemsRelations = relations(
 //////////
 // Cart
 
-export const cart = mysqlTable("cart", {
+export const cart = pgTable("cart", {
   id: serial("id").primaryKey(),
   user_email: varchar("user_email", { length: 255 }).notNull(),
   item_vendor_code: varchar("item_vendor_code", { length: 64 })
     .notNull()
     .unique(),
-  amount: smallint("amount", { unsigned: true }).notNull(),
+  amount: smallint("amount").notNull(),
 })
 
 export const cartUsersRelations = relations(cart, ({ one }) => ({
@@ -517,13 +533,13 @@ export const cartItemsRelations = relations(cart, ({ one }) => ({
 //////////
 // Orders
 
-export const orders = mysqlTable(
+export const orders = pgTable(
   "orders",
   {
     id: serial("id").primaryKey(),
     user_email: varchar("user_email", { length: 255 }).notNull(),
     item_vendor_code: varchar("item_vendor_code", { length: 64 }).notNull(),
-    amount: smallint("amount", { unsigned: true }).notNull(),
+    amount: smallint("amount").notNull(),
     purchase_time: timestamp("purchase_time", { mode: "date" })
       .defaultNow()
       .notNull(),
@@ -558,9 +574,9 @@ export const ordersToItemsRelations = relations(items, ({ many }) => ({
 //////////
 // Currency Exchange Rates
 
-export const exchange_rates_USD = mysqlTable("exchange_rates_USD", {
+export const exchange_rates_USD = pgTable("exchange_rates_USD", {
   id: serial("id").primaryKey(),
-  EUR: float("EUR").notNull(),
-  MDL: float("MDL").notNull(),
+  EUR: real("EUR").notNull(),
+  MDL: real("MDL").notNull(),
   date: char("date", { length: 10 }).notNull(),
 })
