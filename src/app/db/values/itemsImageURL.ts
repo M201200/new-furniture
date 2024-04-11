@@ -276,5 +276,275 @@ function getItemsImageURLArr() {
     variations: [6],
   })
 
+  pushURLs({
+    category: 10203,
+    serial: 1,
+    variations: [2, 2],
+  })
+
+  pushURLs({
+    category: 10203,
+    serial: 2,
+    variations: [4],
+  })
+
+  pushURLs({
+    category: 10203,
+    serial: 3,
+    variations: [4, 4, 4],
+  })
+
+  pushURLs({
+    category: 10203,
+    serial: 4,
+    variations: [4, 3, 4],
+  })
+
+  pushURLs({
+    category: 10203,
+    serial: 5,
+    variations: [5, 4, 4],
+  })
+
+  pushURLs({
+    category: 10301,
+    serial: 1,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10301,
+    serial: 2,
+    variations: [5, 5, 5],
+  })
+
+  pushURLs({
+    category: 10301,
+    serial: 3,
+    variations: [3],
+  })
+
+  pushURLs({
+    category: 10301,
+    serial: 4,
+    variations: [5, 4, 5],
+  })
+
+  pushURLs({
+    category: 10301,
+    serial: 5,
+    variations: [4],
+  })
+
+  pushURLs({
+    category: 10301,
+    serial: 6,
+    variations: [4],
+  })
+
+  pushURLs({
+    category: 10302,
+    serial: 1,
+    variations: [3, 3],
+  })
+
+  pushURLs({
+    category: 10302,
+    serial: 2,
+    variations: [5, 5, 5],
+  })
+
+  pushURLs({
+    category: 10302,
+    serial: 3,
+    variations: [3, 3],
+  })
+
+  pushURLs({
+    category: 10302,
+    serial: 4,
+    variations: [5, 5, 5],
+  })
+
+  pushURLs({
+    category: 10302,
+    serial: 5,
+    variations: [2, 2],
+  })
+
+  pushURLs({
+    category: 10302,
+    serial: 6,
+    variations: [1, 1, 1],
+  })
+
+  pushURLs({
+    category: 10303,
+    serial: 1,
+    variations: [3, 4],
+  })
+
+  pushURLs({
+    category: 10303,
+    serial: 2,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10303,
+    serial: 3,
+    variations: [4, 4],
+  })
+
+  pushURLs({
+    category: 10303,
+    serial: 4,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10303,
+    serial: 5,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10303,
+    serial: 6,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10401,
+    serial: 1,
+    variations: [5, 5, 5],
+  })
+
+  pushURLs({
+    category: 10401,
+    serial: 2,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10401,
+    serial: 3,
+    variations: [4, 4],
+  })
+
+  pushURLs({
+    category: 10401,
+    serial: 4,
+    variations: [5, 3],
+  })
+
+  pushURLs({
+    category: 10401,
+    serial: 5,
+    variations: [3],
+  })
+
+  pushURLs({
+    category: 10402,
+    serial: 1,
+    variations: [5, 5, 4],
+  })
+
+  pushURLs({
+    category: 10402,
+    serial: 2,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10402,
+    serial: 3,
+    variations: [4],
+  })
+
+  pushURLs({
+    category: 10402,
+    serial: 4,
+    variations: [5],
+  })
+
+  pushURLs({
+    category: 10402,
+    serial: 5,
+    variations: [3],
+  })
+
+  pushURLs({
+    category: 10403,
+    serial: 1,
+    variations: [4, 5, 5],
+  })
+
+  pushURLs({
+    category: 10403,
+    serial: 2,
+    variations: [4],
+  })
+
+  pushURLs({
+    category: 10403,
+    serial: 3,
+    variations: [4, 5, 5],
+  })
+
+  pushURLs({
+    category: 10403,
+    serial: 4,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10403,
+    serial: 5,
+    variations: [4],
+  })
+
+  pushURLs({
+    category: 10501,
+    serial: 1,
+    variations: [3, 3],
+  })
+
+  pushURLs({
+    category: 10501,
+    serial: 2,
+    variations: [2, 3],
+  })
+
+  pushURLs({
+    category: 10501,
+    serial: 3,
+    variations: [3],
+  })
+
+  pushURLs({
+    category: 10502,
+    serial: 1,
+    variations: [3],
+  })
+
+  pushURLs({
+    category: 10502,
+    serial: 2,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10502,
+    serial: 3,
+    variations: [2],
+  })
+
+  pushURLs({
+    category: 10502,
+    serial: 4,
+    variations: [1],
+  })
+
   return itemsImageURLArr
 }

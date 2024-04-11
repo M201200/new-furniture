@@ -1,5 +1,5 @@
 {
-  "id": "04898d05-0063-402e-a370-5016695921f2",
+  "id": "e95e1fae-696f-443a-a892-e8ce01cf2385",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -114,13 +114,13 @@
         },
         "user_email": {
           "name": "user_email",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "item_vendor_code": {
           "name": "item_vendor_code",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -162,19 +162,19 @@
         },
         "en": {
           "name": "en",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "ro": {
           "name": "ro",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "ru": {
           "name": "ru",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -193,7 +193,7 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -223,19 +223,19 @@
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "color_1": {
           "name": "color_1",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "material_2": {
           "name": "material_2",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -284,7 +284,7 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -336,31 +336,31 @@
         },
         "name": {
           "name": "name",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "en": {
           "name": "en",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "ro": {
           "name": "ro",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "ru": {
           "name": "ru",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "hex": {
           "name": "hex",
-          "type": "varchar(47)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -373,7 +373,7 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -415,7 +415,7 @@
         },
         "date": {
           "name": "date",
-          "type": "char(10)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }
@@ -437,13 +437,13 @@
         },
         "user_email": {
           "name": "user_email",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "item_vendor_code": {
           "name": "item_vendor_code",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }
@@ -485,13 +485,13 @@
         },
         "variation": {
           "name": "variation",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64) GENERATED ALWAYS AS ((cast(category_code as varchar) || '-' || cast(serial_number as varchar) || '-' || variation)) STORED",
+          "type": "text GENERATED ALWAYS AS ((cast(category_code as text) || '-' || cast(serial_number as text) || '-' || variation)) STORED",
           "primaryKey": false,
           "notNull": false
         },
@@ -509,7 +509,7 @@
         },
         "discount(%)": {
           "name": "discount(%)",
-          "type": "smallint",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true,
           "default": 0
@@ -529,7 +529,7 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -575,7 +575,7 @@
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -606,7 +606,7 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -636,7 +636,7 @@
         },
         "root_catalog": {
           "name": "root_catalog",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "default": "'images'"
@@ -655,14 +655,14 @@
         },
         "item_variation": {
           "name": "item_variation",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": "'base'"
+          "default": "'c0m0w0h0d0'"
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64) GENERATED ALWAYS AS ((cast(category_code as varchar) || '-' || cast(serial_number as varchar) || '-' || variation)) STORED",
+          "type": "text GENERATED ALWAYS AS ((cast(category_code as text) || '-' || cast(item_serial_number as text) || '-' || item_variation)) STORED",
           "primaryKey": false,
           "notNull": false
         },
@@ -674,20 +674,20 @@
         },
         "image_type": {
           "name": "image_type",
-          "type": "varchar(8)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "default": "'webp'"
         },
         "url": {
           "name": "url",
-          "type": "varchar(256) GENERATED ALWAYS AS (('/' || root_catalog || \"/\" || cast(category_code as varchar) || \"/\" || cast(item_serial_number as varchar) || \"/\" || item_variation || \"/\" || cast(image_number as varchar) || \".\" || image_type)) STORED",
+          "type": "text GENERATED ALWAYS AS (('/' || root_catalog || \"/\" || cast(category_code as text) || \"/\" || cast(item_serial_number as text) || \"/\" || item_variation || \"/\" || cast(image_number as text) || \".\" || image_type)) STORED",
           "primaryKey": false,
           "notNull": false
         },
         "notes": {
           "name": "notes",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -700,7 +700,7 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -733,25 +733,25 @@
         },
         "vendor_code": {
           "name": "vendor_code",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "en": {
           "name": "en",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "ro": {
           "name": "ro",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "ru": {
           "name": "ru",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -764,7 +764,7 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -794,25 +794,25 @@
         },
         "name": {
           "name": "name",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "en": {
           "name": "en",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "ro": {
           "name": "ro",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "ru": {
           "name": "ru",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -825,7 +825,7 @@
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -855,13 +855,13 @@
         },
         "user_email": {
           "name": "user_email",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "item_vendor_code": {
           "name": "item_vendor_code",
-          "type": "varchar(64)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -946,25 +946,25 @@
         },
         "user_email": {
           "name": "user_email",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "language": {
           "name": "language",
-          "type": "varchar(10)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "theme": {
           "name": "theme",
-          "type": "varchar(10)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "currency": {
           "name": "currency",
-          "type": "varchar(10)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }

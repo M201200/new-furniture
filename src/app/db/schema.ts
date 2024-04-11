@@ -1,8 +1,7 @@
-import { relations, sql } from "drizzle-orm"
+import { relations } from "drizzle-orm"
 import {
   bigint,
   boolean,
-  char,
   customType,
   doublePrecision,
   real,
@@ -53,7 +52,7 @@ export const generatedVendorCode = customType<{
   }
 }>({
   dataType(config) {
-    return `text(64) GENERATED ALWAYS AS ((cast(${config?.category_code} as text) || '-' || cast(${config?.serial_number} as text) || '-' || ${config?.variation})) STORED`
+    return `text GENERATED ALWAYS AS ((cast(${config?.category_code} as text) || '-' || cast(${config?.serial_number} as text) || '-' || ${config?.variation})) STORED`
   },
 })
 
@@ -191,11 +190,10 @@ export const generatedImageURL = customType<{
     variation: string
     imageNumber: string
     imageType: string
-    charLength: number
   }
 }>({
   dataType(config) {
-    return `text(${config?.charLength}) GENERATED ALWAYS AS (('/' || ${config?.root_catalog} || "/" || cast(${config?.category} as text) || "/" || cast(${config?.serialNumber} as text) || "/" || ${config?.variation} || "/" || cast(${config?.imageNumber} as text) || "." || ${config?.imageType})) STORED`
+    return `text GENERATED ALWAYS AS (('/' || ${config?.root_catalog} || "/" || cast(${config?.category} as text) || "/" || cast(${config?.serialNumber} as text) || "/" || ${config?.variation} || "/" || cast(${config?.imageNumber} as text) || "." || ${config?.imageType})) STORED`
   },
 })
 
@@ -210,16 +208,15 @@ export const itemsImageURL = pgTable(
     item_serial_number: bigint("item_serial_number", {
       mode: "number",
     }).notNull(),
-    item_variation: text("item_variation").notNull().default("base"),
+    item_variation: text("item_variation").notNull().default("c0m0w0h0d0"),
     vendor_code: generatedVendorCode("vendor_code", {
       category_code: "category_code",
-      serial_number: "serial_number",
-      variation: "variation",
+      serial_number: "item_serial_number",
+      variation: "item_variation",
     }),
     image_number: smallint("image_number").notNull(),
     image_type: text("image_type").default("webp").notNull(),
     url: generatedImageURL("url", {
-      charLength: 256,
       root_catalog: "root_catalog",
       category: "category_code",
       serialNumber: "item_serial_number",

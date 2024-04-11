@@ -46,6 +46,12 @@ export const materialsArr = [
     ro: "LDP",
     ru: "LDP",
   },
+  {
+    name: "metal",
+    en: "metal",
+    ro: "metal",
+    ru: "металл",
+  },
 ] as const
 
 export type MaterialName = (typeof materialsArr)[number]["name"]
