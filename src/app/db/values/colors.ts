@@ -1,6 +1,6 @@
-import { Colors } from "../schema"
+// import { Colors } from "../schema"
 
-export const colorsArr: Colors[] = [
+export const colorsArr = [
   { name: "beige", en: "beige", ro: "bej", ru: "бежевый", hex: "#F5F5DC" },
   {
     name: "burgundy",
@@ -75,4 +75,13 @@ export const colorsArr: Colors[] = [
     hex: "#00008B",
   },
   { name: "purple", en: "purple", ro: "mov", ru: "пурпурный", hex: "#800080" },
-]
+  {
+    name: "orange",
+    en: "orange",
+    ro: "portocaliu",
+    ru: "оранжевый",
+    hex: "#FFA500",
+  },
+] as const
+
+export type ColorName = (typeof colorsArr)[number]["name"]

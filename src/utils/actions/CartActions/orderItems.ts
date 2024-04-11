@@ -1,7 +1,5 @@
 "use server"
 
-import { sql } from "drizzle-orm"
-
 import { db } from "@/app/db"
 import { orders } from "@/app/db/schema"
 

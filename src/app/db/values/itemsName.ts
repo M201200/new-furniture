@@ -232,9 +232,9 @@ const itemsNameBasis: ItemsName[] = [
   },
   {
     vendor_code: "10202-8",
-    en: "Стеклянный стол Атрей",
+    en: "Glass table Atray 1",
     ro: " Masă de sticlă Atray 1",
-    ru: "Glass table Atray 1",
+    ru: "Стеклянный стол Атрей 1",
   },
   {
     vendor_code: "10202-9",

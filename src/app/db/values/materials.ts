@@ -1,6 +1,6 @@
-import { Materials } from "../schema"
+// import { Materials } from "../schema"
 
-export const materialsArr: Materials[] = [
+export const materialsArr = [
   {
     name: "micro_velvet",
     en: "micro velvet",
@@ -46,4 +46,6 @@ export const materialsArr: Materials[] = [
     ro: "LDP",
     ru: "LDP",
   },
-]
+] as const
+
+export type MaterialName = (typeof materialsArr)[number]["name"]
