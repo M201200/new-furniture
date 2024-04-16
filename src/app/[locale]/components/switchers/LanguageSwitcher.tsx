@@ -36,7 +36,7 @@ export default function LanguageSwitcher({
   }, [locale, setLocale, router, url])
   return (
     <select
-      className="cursor-pointer bg-gray-500 text-gray-50 fluid-base p-[1px] rounded"
+      className="cursor-pointer bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300 font-semibold fluid-base p-[1px] rounded"
       value={userLocale}
       disabled={isPending}
       title={tl.changeLanguage}

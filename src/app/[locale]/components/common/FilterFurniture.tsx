@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState } from "react"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { BsSliders } from "react-icons/bs"
+import {
+  BsCaretDown,
+  BsCaretDownFill,
+  BsCaretUp,
+  BsCaretUpFill,
+  BsSliders,
+} from "react-icons/bs"
 
 import FilterRange from "./FilterRange"
 
@@ -31,7 +37,8 @@ type FilterParams = {
   heights: RangeValues
   widths: RangeValues
   depths: RangeValues
-  includeVariants?: boolean
+  order: string | undefined
+  range: string | undefined
 
   tl: {
     excludeVariants: string
@@ -44,6 +51,12 @@ type FilterParams = {
     price: string
     from: string
     to: string
+    title: string
+    discount: string
+    order: string
+    asc: string
+    desc: string
+    range: string
   }
 }
 
@@ -55,7 +68,8 @@ export default function FilterFurniture({
   heights,
   widths,
   depths,
-  includeVariants: excludeVariants = false,
+  order,
+  range,
   selectedMaterials = [],
   selectedColors = [],
 }: FilterParams) {
@@ -86,7 +100,10 @@ export default function FilterFurniture({
 
   const [materials, setMaterials] = useState(selectedMaterials)
   const [colors, setColors] = useState(selectedColors)
-  const [variants, setVariants] = useState(excludeVariants)
+  const [orderOption, setOrderOption] = useState({
+    order: order || "price",
+    range: range || "asc",
+  })
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -158,7 +175,7 @@ export default function FilterFurniture({
       } rounded justify-self-end lg:w-full`}
     >
       <button
-        className="text-center p-2 fluid-base rounded-full flex gap-2 w-full lg:hidden border-2 border-borderThin text-textPrimary items-center"
+        className="flex items-center w-full gap-2 p-2 text-center border-2 rounded-full fluid-base lg:hidden border-borderThin text-textPrimary"
         onClick={() => setIsOpen(!isOpen)}
       >
         <BsSliders className="fluid-xl" />
@@ -171,28 +188,60 @@ export default function FilterFurniture({
         }`}
       >
         <ul className="flex flex-col gap-5">
-          <li className="grid gap-2 items-center">
-            <h2 className="fluid-lg text-wrap font-semibold">
-              {tl.excludeVariants}:
-            </h2>
-            <input
-              className="w-8 h-8"
-              type="checkbox"
-              checked={variants}
-              onChange={() => {
-                setVariants(!variants)
-                if (variants) {
+          <li className="grid items-center gap-2">
+            <h2 className="font-semibold fluid-lg text-wrap">{tl.order}:</h2>
+            <div className="flex gap-2">
+              <select
+                title={tl.order}
+                name="order"
+                id="order"
+                value={orderOption.order}
+                className="p-[1px] border rounded cursor-pointer border-borderThin"
+                onChange={(e) => {
                   newSearchParams.delete("page")
-                  newSearchParams.delete("var")
-                } else {
-                  newSearchParams.delete("page")
-                  newSearchParams.set("var", "true")
+                  setOrderOption({ ...orderOption, order: e.target.value })
+                  newSearchParams.set("order", e.target.value)
+                  newSearchParams.set("range", orderOption.range)
+                  router.push(`${pathname}?${newSearchParams.toString()}`, {
+                    scroll: false,
+                  })
+                }}
+              >
+                <option value="name">{tl.title}</option>
+                <option value="price">{tl.price}</option>
+                <option value="discount">{tl.discount}</option>
+              </select>
+              <button
+                title={
+                  orderOption.range === "asc"
+                    ? `${tl.range}: ${tl.asc}`
+                    : `${tl.range}: ${tl.desc}`
                 }
-                router.push(`${pathname}?${newSearchParams.toString()}`, {
-                  scroll: false,
-                })
-              }}
-            />
+                className="grid items-center justify-center w-8 h-8 p-1 border rounded cursor-pointer text-textPrimary fluid-lg border-borderThin"
+                onClick={() => {
+                  newSearchParams.delete("page")
+                  setOrderOption({
+                    ...orderOption,
+                    range: orderOption.range === "asc" ? "desc" : "asc",
+                  })
+                  newSearchParams.set("order", orderOption.order)
+
+                  newSearchParams.set(
+                    "range",
+                    orderOption.range === "asc" ? "desc" : "asc"
+                  )
+                  router.push(`${pathname}?${newSearchParams.toString()}`, {
+                    scroll: false,
+                  })
+                }}
+              >
+                {orderOption.range === "asc" ? (
+                  <BsCaretUpFill />
+                ) : (
+                  <BsCaretDownFill />
+                )}
+              </button>
+            </div>
           </li>
           <FilterRange
             tl={{ to: tl.to, from: tl.from }}
@@ -236,23 +285,23 @@ export default function FilterFurniture({
           />
           {materialsArr.length ? (
             <li className="grid gap-2">
-              <h2 className="fluid-lg font-semibold">{tl.materials}:</h2>
-              <ul className="flex flex-col gap-2 max-h-72 overflow-auto p-2 border rounded-lg border-borderThin">
+              <h2 className="font-semibold fluid-lg">{tl.materials}:</h2>
+              <ul className="flex flex-col gap-2 p-2 overflow-auto border rounded-lg max-h-72 border-borderThin">
                 {materialsArr.map((material) => (
                   <li
-                    className="flex gap-2 items-center"
+                    className="flex items-center gap-2"
                     key={material.name}
                     title={material.locale}
                   >
                     <input
-                      className="text-textPrimary size-4 shrink-0 cursor-pointer"
+                      className="cursor-pointer text-textPrimary size-4 shrink-0"
                       type="checkbox"
                       id="materials"
                       checked={materials.includes(material.name)}
                       onChange={() => handleMaterialChange(material.name)}
                     />
                     <label
-                      className="text-textSecondary fluid-base truncate"
+                      className="truncate text-textSecondary fluid-base"
                       htmlFor="materials"
                     >
                       {material.locale}
@@ -264,16 +313,16 @@ export default function FilterFurniture({
           ) : null}
           {colorsArr.length ? (
             <li className="grid gap-2">
-              <h2 className="fluid-lg font-semibold">{tl.colors}:</h2>
-              <ul className="flex flex-col gap-2 max-h-72 overflow-auto p-2 border rounded-lg border-borderThin">
+              <h2 className="font-semibold fluid-lg">{tl.colors}:</h2>
+              <ul className="flex flex-col gap-2 p-2 overflow-auto border rounded-lg max-h-72 border-borderThin">
                 {colorsArr.map((color) => (
                   <li
-                    className="flex gap-2 items-center"
+                    className="flex items-center gap-2"
                     key={color.name}
                     title={color.locale}
                   >
                     <input
-                      className="shrink-0 text-textPrimary cursor-pointer size-4"
+                      className="cursor-pointer shrink-0 text-textPrimary size-4"
                       type="checkbox"
                       id="colors"
                       checked={colors.includes(color.name)}
@@ -281,10 +330,10 @@ export default function FilterFurniture({
                     />
                     <span
                       style={backgroundStyle(color)}
-                      className="w-4 h-4 border shrink-0 border-borderThin rounded-full"
+                      className="w-4 h-4 border rounded-full shrink-0 border-borderThin"
                     ></span>
                     <label
-                      className="text-textSecondary fluid-base truncate"
+                      className="truncate text-textSecondary fluid-base"
                       title={color.locale}
                       htmlFor="colors"
                     >

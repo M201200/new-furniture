@@ -1,5 +1,6 @@
 import {
   and,
+  asc,
   between,
   count,
   desc,
@@ -30,6 +31,7 @@ import FilterFurniture from "../../components/common/FilterFurniture"
 import Pagination from "../../components/common/Pagination"
 import ItemComponent from "../../components/items/ItemComponent"
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
+import sanitizeString from "@/utils/functions/sanitizeString"
 
 type Params = {
   searchParams?: {
@@ -43,7 +45,8 @@ type Params = {
     maxD?: string
     mat?: string[]
     clr?: string[]
-    var?: string
+    order?: string
+    range?: string
     page?: string
   }
   params: {
@@ -66,7 +69,7 @@ export async function generateStaticParams() {
 export default async function Catalog({ searchParams, params }: Params) {
   unstable_setRequestLocale(params.locale)
   const highestValue = 450
-  const highestPrice = 3500
+  const highestPrice = 10000
   const maxItemsOnPage = 12
   const searchParamsSanitized = searchParams
     ? {
@@ -79,11 +82,18 @@ export default async function Catalog({ searchParams, params }: Params) {
         maxD: sanitizeStringToNumber(searchParams?.maxD),
         minP: sanitizeStringToNumber(searchParams?.minP),
         maxP: sanitizeStringToNumber(searchParams?.maxP),
-        var: searchParams?.var === "true" ? true : false,
+        order: sanitizeString(searchParams?.order),
+        range: sanitizeString(searchParams?.range),
         clr: sanitizeArray(searchParams.clr),
         mat: sanitizeArray(searchParams.mat),
       }
     : null
+  const conditions = setConditions({
+    searchParamsSanitized,
+    params,
+    highestValue,
+    highestPrice,
+  })
 
   const stateTlQuery = getTranslations("States")
   const filterTlQuery = getTranslations("Filter")
@@ -104,71 +114,14 @@ export default async function Catalog({ searchParams, params }: Params) {
     price: filterTlAsync("Price"),
     from: filterTlAsync("From"),
     to: filterTlAsync("To"),
+    title: filterTlAsync("Title"),
+    discount: filterTlAsync("Discount"),
+    order: filterTlAsync("Order"),
+    asc: filterTlAsync("Asc"),
+    desc: filterTlAsync("Desc"),
+    range: filterTlAsync("Range"),
   }
 
-  function setConditions() {
-    const conditions = [
-      or(
-        eq(items.category_code, +params.code),
-        sql`LIKE(cast(${items.category_code} as varchar), ${params.code + "%"})`
-      ),
-    ]
-    if (!searchParamsSanitized) return conditions
-
-    const {
-      minW,
-      maxW,
-      minH,
-      maxH,
-      minD,
-      maxD,
-      minP,
-      maxP,
-      clr,
-      mat,
-      var: varFlag,
-    } = searchParamsSanitized
-
-    if (minW || maxW) {
-      conditions.push(
-        between(characteristicsFurniture.width, minW || 0, maxW || highestValue)
-      )
-    }
-    if (minH || maxH) {
-      conditions.push(
-        between(
-          characteristicsFurniture.height,
-          minH || 0,
-          maxH || highestValue
-        )
-      )
-    }
-    if (minD || maxD) {
-      conditions.push(
-        between(characteristicsFurniture.depth, minD || 0, maxD || highestValue)
-      )
-    }
-    if (minP || maxP) {
-      conditions.push(
-        between(items.final_price, minP || 0, maxP || highestPrice)
-      )
-    }
-    if (clr.length) {
-      const mappedColors = clr.map((color) =>
-        eq(characteristicsFurniture.color, color)
-      )
-      conditions.push(or(...mappedColors))
-    }
-    if (mat.length) {
-      const mappedMaterials = mat.map((material) =>
-        eq(characteristicsFurniture.material, material)
-      )
-      conditions.push(or(...mappedMaterials))
-    }
-    varFlag === true ? conditions.push(eq(items.variation, "c0m0w0h0d0")) : null
-
-    return conditions
-  }
   const itemsCountQuery = db
     .select({
       totalItems: count(),
@@ -178,7 +131,7 @@ export default async function Catalog({ searchParams, params }: Params) {
       characteristicsFurniture,
       eq(characteristicsFurniture.vendor_code, items.vendor_code)
     )
-    .where(and(...setConditions()))
+    .where(and(...conditions))
 
   const allColorsQuery = db
     .selectDistinct({
@@ -240,6 +193,8 @@ export default async function Catalog({ searchParams, params }: Params) {
   const minPrice = searchParamsSanitized?.minP || 0
   const maxPrice = searchParamsSanitized?.maxP || highestPrice
 
+  const itemsOrder = orderOption(searchParamsSanitized, params.locale)
+
   const allItems = await db
     .select({
       vendorCode: items.vendor_code,
@@ -272,11 +227,11 @@ export default async function Catalog({ searchParams, params }: Params) {
     )
     .where(
       or(
-        and(eq(itemsImageURL.image_number, 1), ...setConditions()),
-        and(isNull(itemsImageURL.vendor_code), ...setConditions())
+        and(eq(itemsImageURL.image_number, 1), ...conditions),
+        and(isNull(itemsImageURL.vendor_code), ...conditions)
       )
     )
-    .orderBy(items.id)
+    .orderBy(itemsOrder, items.id)
     .offset(
       searchParamsSanitized?.page
         ? (searchParamsSanitized?.page - 1) * maxItemsOnPage
@@ -330,7 +285,8 @@ export default async function Catalog({ searchParams, params }: Params) {
         colorsArr={colorsArr}
         selectedColors={searchParamsSanitized?.clr || []}
         selectedMaterials={searchParamsSanitized?.mat || []}
-        includeVariants={searchParamsSanitized?.var}
+        order={searchParamsSanitized?.order}
+        range={searchParamsSanitized?.range}
       />
       <div className="flex flex-col gap-4 p-4">
         <ul className="flex flex-wrap justify-center gap-8">
@@ -359,7 +315,7 @@ export default async function Catalog({ searchParams, params }: Params) {
               />
             ))
           ) : (
-            <li className="text-center text-textSecondary fluid-lg p-4">
+            <li className="p-4 text-center text-textSecondary fluid-lg">
               {stateTlAsync("NothingFound")}
             </li>
           )}
@@ -368,4 +324,122 @@ export default async function Catalog({ searchParams, params }: Params) {
       </div>
     </main>
   )
+}
+
+type Conditions = {
+  searchParamsSanitized: searchParamsSanitized
+  params: {
+    code: string
+    locale: Locale
+  }
+  highestValue: number
+  highestPrice: number
+}
+
+type searchParamsSanitized = {
+  page: number
+  minW: number | null
+  maxW: number | null
+  minH: number | null
+  maxH: number | null
+  minD: number | null
+  maxD: number | null
+  minP: number | null
+  maxP: number | null
+  order: string
+  range: string
+  clr: string[]
+  mat: string[]
+} | null
+
+function setConditions({
+  searchParamsSanitized,
+  params,
+  highestValue,
+  highestPrice,
+}: Conditions) {
+  const conditions = [
+    or(
+      eq(items.category_code, +params.code),
+      sql`LIKE(cast(${items.category_code} as varchar), ${params.code + "%"})`
+    ),
+  ]
+  if (!searchParamsSanitized) return conditions
+
+  const { minW, maxW, minH, maxH, minD, maxD, minP, maxP, clr, mat } =
+    searchParamsSanitized
+
+  if (minW || maxW) {
+    conditions.push(
+      between(characteristicsFurniture.width, minW || 0, maxW || highestValue)
+    )
+  }
+  if (minH || maxH) {
+    conditions.push(
+      between(characteristicsFurniture.height, minH || 0, maxH || highestValue)
+    )
+  }
+  if (minD || maxD) {
+    conditions.push(
+      between(characteristicsFurniture.depth, minD || 0, maxD || highestValue)
+    )
+  }
+  if (minP || maxP) {
+    conditions.push(between(items.final_price, minP || 0, maxP || highestPrice))
+  }
+  if (clr.length) {
+    const mappedColors = clr.map((color) =>
+      eq(characteristicsFurniture.color, color)
+    )
+    conditions.push(or(...mappedColors))
+  }
+  if (mat.length) {
+    const mappedMaterials = mat.map((material) =>
+      eq(characteristicsFurniture.material, material)
+    )
+    conditions.push(or(...mappedMaterials))
+  }
+
+  return conditions
+}
+
+function orderOption(
+  searchParamsSanitized: searchParamsSanitized,
+  locale: Locale
+) {
+  const order = searchParamsSanitized?.order
+  const range = searchParamsSanitized?.range
+
+  switch (`${range} ${order}`) {
+    case "desc name":
+      return desc(
+        locale === "en"
+          ? itemsName.en
+          : locale === "ro"
+          ? itemsName.ro
+          : locale === "ru"
+          ? itemsName.ru
+          : itemsName.en
+      )
+    case "asc name":
+      return asc(
+        locale === "en"
+          ? itemsName.en
+          : locale === "ro"
+          ? itemsName.ro
+          : locale === "ru"
+          ? itemsName.ru
+          : itemsName.en
+      )
+    case "desc price":
+      return desc(items.final_price)
+    case "asc price":
+      return asc(items.final_price)
+    case "desc discount":
+      return desc(items.discount)
+    case "asc discount":
+      return asc(items.discount)
+    default:
+      return asc(items.final_price)
+  }
 }

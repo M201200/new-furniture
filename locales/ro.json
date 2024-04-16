@@ -40,7 +40,13 @@
         "Depth": "Adâncime",
         "Price": "Preț",
         "From": "de la",
-        "To": "la"
+        "To": "la",
+        "Title": "Titlu",
+        "Discount": "Reducere",
+        "Order": "Ordin",
+        "Asc": "Ascendent",
+        "Desc": "Descendent",
+        "Range": "Interval"
     },
     "States": {
         "NothingFound": "Nimic găsit",

@@ -40,7 +40,13 @@
         "Depth": "Depth",
         "Price": "Price",
         "From": "from",
-        "To": "to"
+        "To": "to",
+        "Title": "Title",
+        "Discount": "Discount",
+        "Order": "Order",
+        "Asc": "Ascend",
+        "Desc": "Descend",
+        "Range": "Range"
         },
     "States": {
         "NothingFound": "Nothing found",
