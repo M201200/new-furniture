@@ -19,38 +19,40 @@ type ExchangeRates = {
 }
 
 export default async function getCurrencyConversion() {
-  // const currentDate = new Date(Date.now()).toISOString().slice(0, 9)
+  const currentDate = new Date(Date.now()).toISOString().slice(0, 9)
 
-  const exchangeRatesUSDArr = await db.select().from(exchange_rates_USD)
-  //   .where(like(exchange_rates_USD.date, `${currentDate}%`))
+  const exchangeRatesUSDArr = await db
+    .select()
+    .from(exchange_rates_USD)
+    .where(like(exchange_rates_USD.date, `${currentDate}%`))
 
   const exchangeRatesUSD = exchangeRatesUSDArr[0]
-  // if (!exchangeRatesUSD) {
-  //   const response = await fetch(
-  //     `https://api.currencyapi.com/v3/latest?apikey=${process.env.CURRENCY_API_KEY}&base_currency=USD&currencies=EUR%2CMDL`,
-  //     {
-  //       method: "GET",
-  //     }
-  //   )
-  //   const result = (await response.json()) as ExchangeRates
+  if (!exchangeRatesUSD) {
+    const response = await fetch(
+      `https://api.currencyapi.com/v3/latest?apikey=${process.env.CURRENCY_API_KEY}&base_currency=USD&currencies=EUR%2CMDL`,
+      {
+        method: "GET",
+      }
+    )
+    const result = (await response.json()) as ExchangeRates
 
-  //   await db
-  //     .insert(exchange_rates_USD)
-  //     .values({
-  //       id: 1,
-  //       EUR: result.data.EUR.value,
-  //       MDL: result.data.MDL.value,
-  //       date: result.meta.last_updated_at.slice(0, 10),
-  //     })
-  //     .onConflictDoNothing()
-  //     .execute()
+    await db
+      .insert(exchange_rates_USD)
+      .values({
+        id: 1,
+        EUR: result.data.EUR.value,
+        MDL: result.data.MDL.value,
+        date: result.meta.last_updated_at.slice(0, 10),
+      })
+      .onConflictDoNothing()
+      .execute()
 
-  //   return {
-  //     EUR: result.data.EUR.value,
-  //     MDL: result.data.MDL.value,
-  //   } as Rates
-  // } else {
-  // }
+    return {
+      EUR: result.data.EUR.value,
+      MDL: result.data.MDL.value,
+    } as Rates
+  } else {
+  }
   return {
     EUR: exchangeRatesUSD.EUR,
     MDL: exchangeRatesUSD.MDL,
