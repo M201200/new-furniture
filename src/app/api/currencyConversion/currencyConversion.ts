@@ -19,12 +19,12 @@ type ExchangeRates = {
 }
 
 export default async function getCurrencyConversion() {
-  const currentYearMonth = new Date(Date.now()).toISOString().slice(0, 7) // YYYY-MM
+  const currentYear = new Date(Date.now()).toISOString().slice(0, 4) // YYYY
 
   const exchangeRatesUSDArr = await db
     .select()
     .from(exchange_rates_USD)
-    .where(like(exchange_rates_USD.date, `${currentYearMonth}%`))
+    .where(like(exchange_rates_USD.date, `${currentYear}%`))
 
   const exchangeRatesUSD = exchangeRatesUSDArr[0]
   if (!exchangeRatesUSD) {
